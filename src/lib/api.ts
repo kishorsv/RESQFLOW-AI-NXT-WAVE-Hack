@@ -185,7 +185,7 @@ export class ApiError extends Error {
 
 function notifySessionExpired(path: string, status: number) {
   if (status === 401 && !isAuthApiPath(path) && typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('resqflow-session-expired'));
+    window.dispatchEvent(new CustomEvent('resqflow-session-expired', { detail: { path } }));
   }
 }
 
@@ -245,13 +245,25 @@ export async function apiRequest<T = any>(
       }
 
       if (contentType.includes('application/json')) {
-        const data = (await resp.json()) as T;
+        const data = (await resp.json()) as T & { gmpQuotaExceeded?: boolean };
+        if (typeof window !== 'undefined' && data?.gmpQuotaExceeded === true) {
+          window.__gmpQuotaExceeded = true;
+          window.dispatchEvent(new CustomEvent('gmp-quota-exceeded'));
+        }
         if (!authPath) {
           void cacheApiRead(fullUrl, data);
         }
         return data;
       }
-      return (await resp.text()) as unknown as T;
+      const textBody = await resp.text();
+      if (contentType.includes('text/html') || /^\s*<!doctype\s+html/i.test(textBody) || /^\s*<html/i.test(textBody)) {
+        throw new ApiError(
+          'API returned HTML instead of JSON. Check that the backend server and /api routes are running.',
+          502,
+          'INVALID_API_RESPONSE'
+        );
+      }
+      return textBody as unknown as T;
     } catch (err) {
       if (timer) window.clearTimeout(timer);
       if (err instanceof ApiError) throw err;
@@ -363,7 +375,15 @@ export async function apiRequest<T = any>(
       }
       return json as T;
     }
-    return (await resp.text()) as unknown as T;
+    const textBody = await resp.text();
+    if (contentType.includes('text/html') || /^\s*<!doctype\s+html/i.test(textBody) || /^\s*<html/i.test(textBody)) {
+      throw new ApiError(
+        'API returned HTML instead of JSON. Check that the backend server and /api routes are running.',
+        502,
+        'INVALID_API_RESPONSE'
+      );
+    }
+    return textBody as unknown as T;
   } catch (err) {
     if (mutTimer) window.clearTimeout(mutTimer);
     if (err instanceof ApiError) throw err;

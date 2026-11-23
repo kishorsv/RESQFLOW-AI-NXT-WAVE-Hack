@@ -207,8 +207,13 @@ export default function App() {
   const [authState, setAuthState] = useState<'INITIALIZING' | 'AUTHENTICATED' | 'UNAUTHENTICATED'>('INITIALIZING');
   const [authError, setAuthError] = useState<string | null>(null);
   const [directAccessError, setDirectAccessError] = useState<string | null>(null);
+  const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const bootstrapStartedRef = useRef<boolean>(false);
   const directAccessPromiseRef = useRef<Promise<void> | null>(null);
+  const recoveryWindowRef = useRef<{ windowStart: number; attempts: number }>({
+    windowStart: 0,
+    attempts: 0,
+  });
 
   const authLoading = authState === 'INITIALIZING';
 
@@ -366,7 +371,10 @@ export default function App() {
     }
   }, [applySessionTiming]);
 
-  const establishDirectAccess = useCallback(async () => {
+  const establishDirectAccess = useCallback(async (isManualRetry = false) => {
+    if (isManualRetry) {
+      recoveryWindowRef.current = { windowStart: Date.now(), attempts: 0 };
+    }
     if (directAccessPromiseRef.current) {
       return directAccessPromiseRef.current;
     }
@@ -381,8 +389,8 @@ export default function App() {
           sessionDurationMs?: number;
           serverNow?: string;
         }>('/auth/direct-access', { method: 'POST' });
-        if (!res.authenticated || !res.user) {
-          throw new Error('Unable to initialize direct workspace access.');
+        if (!res || typeof res !== 'object' || !res.authenticated || !res.user) {
+          throw new Error('Unable to initialize direct workspace access. Unexpected server response.');
         }
         if (res.sessionToken) {
           setSessionToken(res.sessionToken);
@@ -396,6 +404,7 @@ export default function App() {
         });
         setAuthError(null);
       } catch (err) {
+        setAuthState('UNAUTHENTICATED');
         setDirectAccessError(
           err instanceof Error ? err.message : 'Unable to launch RESQFLOW AI workspace.'
         );
@@ -408,12 +417,25 @@ export default function App() {
   }, [applySessionTiming]);
 
   const handleSessionExpired = useCallback(() => {
+    const now = Date.now();
+    if (now - recoveryWindowRef.current.windowStart > 15_000) {
+      recoveryWindowRef.current = { windowStart: now, attempts: 0 };
+    }
+    recoveryWindowRef.current.attempts += 1;
+
     setSessionToken(null);
     setAuthUser(null);
     setSessionExpiresAt(null);
     setAuthState('UNAUTHENTICATED');
+
     if (parseAppRoute().kind === 'dashboard') {
-      void establishDirectAccess();
+      if (recoveryWindowRef.current.attempts > 2) {
+        setDirectAccessError(
+          'Your command session could not be maintained across requests. Click "Retry Launch Platform" to establish a fresh session.'
+        );
+        return;
+      }
+      void establishDirectAccess(false);
     } else {
       clearOperationalSnapshots();
     }
@@ -513,9 +535,27 @@ export default function App() {
     if (authLoading) return;
 
     if (route.kind === 'dashboard' && !isAuthenticated && !directAccessError) {
-      void establishDirectAccess();
+      void establishDirectAccess(false);
     }
   }, [authLoading, isAuthenticated, route.kind, directAccessError, establishDirectAccess]);
+
+  // Safety watchdog so neither initial session check nor direct-access launch can ever hang indefinitely
+  useEffect(() => {
+    if (route.kind !== 'dashboard') return;
+    if (isAuthenticated || directAccessError) return;
+
+    const watchdog = window.setTimeout(() => {
+      if (authState === 'INITIALIZING') {
+        setAuthState('UNAUTHENTICATED');
+      }
+      setDirectAccessError((prev) =>
+        prev ||
+        'Platform startup took longer than expected. Check network connectivity or backend status and click Retry Launch Platform.'
+      );
+    }, 12_000);
+
+    return () => window.clearTimeout(watchdog);
+  }, [route.kind, authState, isAuthenticated, directAccessError]);
 
   const setActiveView = useCallback((nextView: string) => {
     const targetPath = buildDashboardPath(nextView);
@@ -564,8 +604,12 @@ export default function App() {
         setAiTasks(boot.tasks);
         setAnalytics(boot.analytics);
         setIntegrations(boot.integrations);
+        setBootstrapError(null);
       } catch (err) {
         console.error('Failed to refresh operational state:', err);
+        setBootstrapError(
+          err instanceof Error ? err.message : 'Unable to load live command center data from server.'
+        );
       } finally {
         setInitialLoading(false);
         fetchInFlightRef.current = null;
@@ -773,10 +817,11 @@ export default function App() {
   const handleEnterCommand = useCallback(
     (targetView?: string) => {
       const targetPath = buildDashboardPath(targetView);
+      recoveryWindowRef.current = { windowStart: Date.now(), attempts: 0 };
       setDirectAccessError(null);
       navigateTo(targetPath);
       if (!isAuthenticated && !authLoading) {
-        void establishDirectAccess();
+        void establishDirectAccess(true);
       }
       if (typeof window !== 'undefined') {
         window.scrollTo({ top: 0 });
@@ -856,6 +901,16 @@ export default function App() {
             <Loader2 className="w-4 h-4 animate-spin text-[#7185FF]" />
             <span>Initializing RESQFLOW AI Command Center...</span>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              setAuthState('UNAUTHENTICATED');
+              void establishDirectAccess(true);
+            }}
+            className="text-xs text-[#94A3B8] hover:text-white underline underline-offset-4 transition-colors"
+          >
+            Taking too long? Launch Workspace Now
+          </button>
         </div>
       </div>
     );
@@ -865,23 +920,41 @@ export default function App() {
   if (!isAuthenticated || !authUser) {
     return (
       <div className="min-h-screen bg-[#070B14] text-[#F7F9FF] flex flex-col items-center justify-center p-6">
-        <div className="flex flex-col items-center gap-3 text-center max-w-sm">
+        <div className="flex flex-col items-center gap-4 text-center max-w-md rounded-2xl border border-[#1E293B] bg-[#0B1221] p-6 shadow-xl">
+          <BrandMark size={36} />
           {directAccessError ? (
             <>
-              <div className="text-sm font-medium text-[#FFB3BD]">{directAccessError}</div>
-              <button
-                type="button"
-                onClick={() => void establishDirectAccess()}
-                className="px-4 h-10 rounded-[10px] bg-[#7185FF] hover:bg-[#8294FF] text-white text-sm font-semibold transition-colors"
-              >
-                Retry Launch Platform
-              </button>
+              <div className="space-y-1.5">
+                <div className="text-sm font-semibold text-[#FFB3BD]">Command Center Launch Failed</div>
+                <p className="text-xs text-[#CBD5E1] leading-relaxed">{directAccessError}</p>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => void establishDirectAccess(true)}
+                  className="px-4 h-10 rounded-[10px] bg-[#7185FF] hover:bg-[#8294FF] text-white text-sm font-semibold transition-colors"
+                >
+                  Retry Launch Platform
+                </button>
+                <button
+                  type="button"
+                  onClick={handleReturnLanding}
+                  className="px-4 h-10 rounded-[10px] border border-[#334155] hover:border-[#475569] text-[#CBD5E1] hover:text-white text-sm font-medium transition-colors"
+                >
+                  Back to Home
+                </button>
+              </div>
             </>
           ) : (
-            <div className="flex items-center gap-2.5 text-sm font-medium text-[#CBD5E1]">
-              <Loader2 className="w-4 h-4 animate-spin text-[#7185FF]" />
-              <span>Launching RESQFLOW AI Command Center...</span>
-            </div>
+            <>
+              <div className="flex items-center gap-2.5 text-sm font-medium text-[#CBD5E1]">
+                <Loader2 className="w-4 h-4 animate-spin text-[#7185FF]" />
+                <span>Launching RESQFLOW AI Command Center...</span>
+              </div>
+              <p className="text-xs text-[#94A3B8]">
+                Establishing secure command session and synchronizing live sector telemetry.
+              </p>
+            </>
           )}
         </div>
       </div>
@@ -1299,6 +1372,34 @@ export default function App() {
               >
                 <X className="w-4 h-4" />
               </button>
+            </div>
+          )}
+
+          {bootstrapError && (
+            <div className="mx-4 sm:mx-7 mt-4 p-3.5 rounded-xl border border-amber-500/40 bg-amber-500/10 text-xs text-amber-800 dark:text-amber-200 flex flex-wrap items-center justify-between gap-3">
+              <span className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500" />
+                <span>Operational data sync issue: {bootstrapError}</span>
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBootstrapError(null);
+                    void fetchAllData();
+                  }}
+                  className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold transition-colors"
+                >
+                  Retry Sync
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBootstrapError(null)}
+                  aria-label="Dismiss sync warning"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
 

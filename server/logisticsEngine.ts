@@ -383,7 +383,7 @@ export async function optimizeRouteWithAlternatives(params: {
   }
 
   const started = Date.now();
-  const googleKey = process.env.GOOGLE_MAPS_API_KEY || process.env.VITE_GOOGLE_MAPS_API_KEY;
+  const googleKey = process.env.GOOGLE_MAPS_API_KEY || '';
   const orsKey = process.env.OPENROUTESERVICE_API_KEY;
   let googleQuotaExceeded = false;
 

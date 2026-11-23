@@ -268,7 +268,7 @@ function createDefaultIntegrations(): IntegrationHealth[] {
     {
       id: 'int-routing',
       name: 'Route Optimization Engine',
-      provider: process.env.GOOGLE_MAPS_API_KEY || process.env.VITE_GOOGLE_MAPS_API_KEY ? 'Google Routes API v2 / OSRM' : 'OSRM Public Router',
+      provider: process.env.GOOGLE_MAPS_API_KEY ? 'Google Routes API v2 / OSRM' : 'OSRM Public Router',
       status: 'healthy',
       lastSuccessAt: null,
       lastError: null,

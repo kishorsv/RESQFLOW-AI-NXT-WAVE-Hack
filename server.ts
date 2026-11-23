@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
@@ -56,11 +57,13 @@ import {
   fetchLiveWeather,
   findNearestWarehouses,
   generateAllocationRecommendation,
+  geocodeAddressServer,
   getWeatherProviderStatus,
   haversineKm,
   isValidIncidentTransition,
   levelToSeverity,
   optimizeRoute,
+  reverseGeocodeServer,
   severityToLevel,
   validateCoordinates,
 } from './server/engines.ts';
@@ -306,7 +309,7 @@ const firebaseAuthProxyHandler: express.RequestHandler = async (req, res) => {
 
 app.all('/__/auth/*', firebaseAuthProxyHandler);
 
-app.get('/__/firebase/init.json', (req, res) => {
+app.get(['/__/firebase/init.json', '/api/firebase-init'], (req, res) => {
   const fwdHost = String(req.header('x-forwarded-host') || req.header('host') || '')
     .split(',')[0]
     .trim();
@@ -408,6 +411,8 @@ api.get('/health', (_req, res) => {
     databaseBackend: 'Firebase Firestore + Server Persistent Store',
     geminiConfigured: Boolean(process.env.GEMINI_API_KEY),
     googleMapsConfigured: Boolean(process.env.GOOGLE_MAPS_API_KEY || process.env.VITE_GOOGLE_MAPS_API_KEY),
+    googleMapsServerKeyConfigured: Boolean(process.env.GOOGLE_MAPS_API_KEY),
+    googleMapsBrowserKeyConfigured: Boolean(process.env.VITE_GOOGLE_MAPS_API_KEY),
   });
 });
 
@@ -2078,6 +2083,25 @@ api.get('/geospatial/radius-search', (req, res) => {
     .filter((w) => w.mode === mode && haversineKm(lat, lng, w.lat, w.lng) <= radiusKm)
     .map((w) => ({ ...w, distanceKm: haversineKm(lat, lng, w.lat, w.lng) }));
   res.json({ radiusKm, incidents, warehouses });
+});
+
+api.get('/geo/geocode', async (req, res) => {
+  const address = String(req.query.address || '').trim();
+  if (address.length < 2 || address.length > 250) {
+    return res.status(400).json({ error: 'Please provide an address or place query (2-250 characters).' });
+  }
+  const result = await geocodeAddressServer(address);
+  return res.json(result);
+});
+
+api.get('/geo/reverse', async (req, res) => {
+  const lat = Number(req.query.lat);
+  const lng = Number(req.query.lng);
+  if (!validateCoordinates(lat, lng)) {
+    return res.status(400).json({ error: 'Valid lat & lng query parameters required.' });
+  }
+  const result = await reverseGeocodeServer(lat, lng);
+  return res.json(result);
 });
 
 // ============================================================================
@@ -6020,6 +6044,11 @@ api.post('/demo/reset', requirePermission('admin:reset_demo'), (req: AuthedReque
 
 app.use('/api/v1', api);
 
+// Ensure unknown /api/* requests always receive JSON 404 rather than falling through to SPA index.html
+app.all('/api/*', (_req, res) => {
+  res.status(404).json({ error: 'API endpoint not found.', code: 'API_NOT_FOUND' });
+});
+
 // Global JSON error handler — handles malformed JSON (400/413) and unexpected server errors safely without leaking stack traces
 app.use((err: any, _req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (res.headersSent) return next(err);
@@ -6134,9 +6163,13 @@ async function startServer() {
         },
       })
     );
+    const indexPath = path.join(distPath, 'index.html');
     app.get('*', (_req, res) => {
-      res.setHeader('Cache-Control', 'no-cache');
-      res.sendFile(path.join(distPath, 'index.html'));
+      if (!fs.existsSync(indexPath)) {
+        return res.status(503).send('Production bundle not built yet. Run npm run build first.');
+      }
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      return res.sendFile(indexPath);
     });
   }
 

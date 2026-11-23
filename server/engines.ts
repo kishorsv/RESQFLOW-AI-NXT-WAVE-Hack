@@ -1539,7 +1539,7 @@ export async function optimizeRoute(params: {
   const started = Date.now();
   const waypoints = params.waypoints || [];
   const allPoints = [params.origin, ...waypoints, params.destination];
-  const gmpKey = process.env.GOOGLE_MAPS_API_KEY || process.env.VITE_GOOGLE_MAPS_API_KEY;
+  const gmpKey = process.env.GOOGLE_MAPS_API_KEY || '';
 
   // Attempt 1: Google Maps Routes API v2 (server-side proxy, zero CORS issues)
   if (gmpKey) {
@@ -1888,3 +1888,219 @@ export async function generateAllocationRecommendation(request: ReliefRequest): 
   store.save();
   return allocation;
 }
+
+export interface ServerGeocodeCandidate {
+  placeId: string | null;
+  formattedAddress: string;
+  lat: number;
+  lng: number;
+  granularity?: string;
+}
+
+export interface ServerGeocodeResponse {
+  provider: 'google_geocoding_v4' | 'nominatim_fallback' | 'unavailable';
+  googleConfigured: boolean;
+  gmpQuotaExceeded?: boolean;
+  notice?: string;
+  results: ServerGeocodeCandidate[];
+}
+
+export async function geocodeAddressServer(address: string): Promise<ServerGeocodeResponse> {
+  const query = address.trim();
+  const googleKey = (process.env.GOOGLE_MAPS_API_KEY || '').trim();
+  let gmpQuotaExceeded = false;
+
+  if (!query) {
+    return { provider: 'unavailable', googleConfigured: Boolean(googleKey), results: [] };
+  }
+
+  if (googleKey) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 7000);
+      const url = `https://geocode.googleapis.com/v4/geocode/address/${encodeURIComponent(query)}?languageCode=en`;
+      const resp = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': googleKey,
+          'X-Goog-FieldMask': 'results.placeId,results.location,results.formattedAddress,results.granularity',
+          'X-Goog-Maps-Solution-ID': 'gmp_git_agentskills_v1',
+        },
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      if (resp.ok) {
+        const data = (await resp.json()) as {
+          results?: Array<{
+            placeId?: string;
+            formattedAddress?: string;
+            granularity?: string;
+            location?: { latitude?: number; longitude?: number };
+          }>;
+        };
+        const mapped: ServerGeocodeCandidate[] = (data.results || [])
+          .filter(
+            (r) =>
+              typeof r.location?.latitude === 'number' &&
+              typeof r.location?.longitude === 'number' &&
+              validateCoordinates(r.location.latitude, r.location.longitude)
+          )
+          .slice(0, 5)
+          .map((r) => ({
+            placeId: r.placeId || null,
+            formattedAddress: r.formattedAddress || query,
+            lat: r.location!.latitude!,
+            lng: r.location!.longitude!,
+            granularity: r.granularity,
+          }));
+
+        return {
+          provider: 'google_geocoding_v4',
+          googleConfigured: true,
+          results: mapped,
+        };
+      }
+
+      if (resp.status === 429) {
+        gmpQuotaExceeded = true;
+      } else {
+        const errJson = (await resp.json().catch(() => null)) as { error?: { status?: string } } | null;
+        if (errJson?.error?.status === 'RESOURCE_EXHAUSTED') {
+          gmpQuotaExceeded = true;
+        }
+      }
+    } catch {
+      // fall through cleanly to Nominatim
+    }
+  }
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 6000);
+    const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=${encodeURIComponent(query)}`;
+    const resp = await fetch(nomUrl, {
+      headers: {
+        'User-Agent': 'RESQFLOW-AI-CommandCenter/1.0',
+        Accept: 'application/json',
+      },
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (resp.ok) {
+      const rows = (await resp.json()) as Array<{ lat?: string; lon?: string; display_name?: string; place_id?: number }>;
+      const mapped: ServerGeocodeCandidate[] = (Array.isArray(rows) ? rows : [])
+        .map((row) => ({
+          placeId: row.place_id ? `osm-${row.place_id}` : null,
+          formattedAddress: row.display_name || query,
+          lat: Number(row.lat),
+          lng: Number(row.lon),
+        }))
+        .filter((c) => validateCoordinates(c.lat, c.lng));
+
+      return {
+        provider: 'nominatim_fallback',
+        googleConfigured: Boolean(googleKey),
+        gmpQuotaExceeded: gmpQuotaExceeded || undefined,
+        notice: googleKey
+          ? 'Google Geocoding unavailable; using OpenStreetMap Nominatim lookup.'
+          : 'GOOGLE_MAPS_API_KEY is not configured on the server; using OpenStreetMap Nominatim lookup.',
+        results: mapped,
+      };
+    }
+  } catch {
+    // return unavailable
+  }
+
+  return {
+    provider: 'unavailable',
+    googleConfigured: Boolean(googleKey),
+    gmpQuotaExceeded: gmpQuotaExceeded || undefined,
+    notice: googleKey
+      ? 'Geocoding service temporarily unavailable.'
+      : 'GOOGLE_MAPS_API_KEY is not configured on the server and fallback geocoding is unreachable.',
+    results: [],
+  };
+}
+
+export async function reverseGeocodeServer(lat: number, lng: number): Promise<ServerGeocodeResponse> {
+  const googleKey = (process.env.GOOGLE_MAPS_API_KEY || '').trim();
+  let gmpQuotaExceeded = false;
+
+  if (!validateCoordinates(lat, lng)) {
+    return { provider: 'unavailable', googleConfigured: Boolean(googleKey), results: [] };
+  }
+
+  if (googleKey) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 7000);
+      const url = new URL('https://geocode.googleapis.com/v4/geocode/location');
+      url.searchParams.set('location.latitude', String(lat));
+      url.searchParams.set('location.longitude', String(lng));
+      url.searchParams.set('languageCode', 'en');
+
+      const resp = await fetch(url.toString(), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': googleKey,
+          'X-Goog-FieldMask': 'results.placeId,results.location,results.formattedAddress,results.granularity',
+          'X-Goog-Maps-Solution-ID': 'gmp_git_agentskills_v1',
+        },
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      if (resp.ok) {
+        const data = (await resp.json()) as {
+          results?: Array<{
+            placeId?: string;
+            formattedAddress?: string;
+            granularity?: string;
+            location?: { latitude?: number; longitude?: number };
+          }>;
+        };
+        const mapped: ServerGeocodeCandidate[] = (data.results || []).slice(0, 3).map((r) => ({
+          placeId: r.placeId || null,
+          formattedAddress: r.formattedAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+          lat: typeof r.location?.latitude === 'number' ? r.location.latitude : lat,
+          lng: typeof r.location?.longitude === 'number' ? r.location.longitude : lng,
+          granularity: r.granularity,
+        }));
+        return {
+          provider: 'google_geocoding_v4',
+          googleConfigured: true,
+          results: mapped,
+        };
+      }
+
+      if (resp.status === 429) {
+        gmpQuotaExceeded = true;
+      } else {
+        const errJson = (await resp.json().catch(() => null)) as { error?: { status?: string } } | null;
+        if (errJson?.error?.status === 'RESOURCE_EXHAUSTED') {
+          gmpQuotaExceeded = true;
+        }
+      }
+    } catch {
+      // fall through
+    }
+  }
+
+  return {
+    provider: 'unavailable',
+    googleConfigured: Boolean(googleKey),
+    gmpQuotaExceeded: gmpQuotaExceeded || undefined,
+    results: [
+      {
+        placeId: null,
+        formattedAddress: `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+        lat,
+        lng,
+      },
+    ],
+  };
+}
+

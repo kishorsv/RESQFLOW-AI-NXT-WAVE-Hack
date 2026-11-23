@@ -12,6 +12,24 @@ export const SESSION_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours authenticated ses
 const RESET_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 minutes single-use token
 const INITIAL_ADMIN_EMAIL = 'kishukishorsv123@gmail.com';
 const DEFAULT_ORG_ID = 'org-central-cmd';
+const SIGNED_TOKEN_PREFIX = 'rf1';
+const RUNTIME_EPHEMERAL_SECRET = crypto.randomBytes(32).toString('hex');
+const MAX_REVOKED_TOKENS = 2000;
+const revokedTokenHashes = new Set<string>();
+
+function markTokenHashRevoked(tokenHash: string): void {
+  if (!tokenHash) return;
+  revokedTokenHashes.add(tokenHash);
+  if (revokedTokenHashes.size > MAX_REVOKED_TOKENS) {
+    const first = revokedTokenHashes.values().next().value;
+    if (first) revokedTokenHashes.delete(first);
+  }
+}
+
+function getSessionSigningSecret(): string {
+  const configured = sanitizeEnvValue(process.env.SESSION_SECRET || process.env.AUTH_SECRET);
+  return configured || RUNTIME_EPHEMERAL_SECRET;
+}
 
 const SIGNUP_ALLOWED_ROLES: UserRole[] = ['field_responder', 'analyst', 'citizen_reporter'];
 const ALL_VALID_ROLES: UserRole[] = [
@@ -426,16 +444,92 @@ function pruneExpiredSessions(): boolean {
   return store.state.authSessions.length !== prevLen;
 }
 
+interface SignedSessionClaims {
+  sid: string;
+  uid: string;
+  userId: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  baseRole: UserRole;
+  orgId: string;
+  provider: AuthUserRecord['provider'];
+  exp: number;
+  iat: number;
+}
+
+function signSessionClaims(claims: SignedSessionClaims): string {
+  const payloadB64 = Buffer.from(JSON.stringify(claims), 'utf8').toString('base64url');
+  const sigB64 = crypto
+    .createHmac('sha256', getSessionSigningSecret())
+    .update(`${SIGNED_TOKEN_PREFIX}.${payloadB64}`)
+    .digest('base64url');
+  return `${SIGNED_TOKEN_PREFIX}.${payloadB64}.${sigB64}`;
+}
+
+function verifySignedSessionToken(rawToken: string): SignedSessionClaims | null {
+  const parts = rawToken.split('.');
+  if (parts.length !== 3 || parts[0] !== SIGNED_TOKEN_PREFIX) {
+    return null;
+  }
+  const [, payloadB64, sigB64] = parts;
+  if (!payloadB64 || !sigB64) return null;
+
+  try {
+    const expectedSig = crypto
+      .createHmac('sha256', getSessionSigningSecret())
+      .update(`${SIGNED_TOKEN_PREFIX}.${payloadB64}`)
+      .digest('base64url');
+    const actualBuf = Buffer.from(sigB64, 'utf8');
+    const expectedBuf = Buffer.from(expectedSig, 'utf8');
+    if (actualBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(actualBuf, expectedBuf)) {
+      return null;
+    }
+    const claims = JSON.parse(decodeBase64Url(payloadB64).toString('utf8')) as SignedSessionClaims;
+    if (
+      !claims ||
+      typeof claims.sid !== 'string' ||
+      typeof claims.uid !== 'string' ||
+      typeof claims.userId !== 'string' ||
+      typeof claims.exp !== 'number' ||
+      claims.exp <= Date.now()
+    ) {
+      return null;
+    }
+    if (!ALL_VALID_ROLES.includes(claims.role) || !ALL_VALID_ROLES.includes(claims.baseRole)) {
+      return null;
+    }
+    return claims;
+  } catch {
+    return null;
+  }
+}
+
 export function createSession(user: AuthUserRecord, userAgent = ''): {
   rawToken: string;
   session: AuthSessionRecord;
 } {
   pruneExpiredSessions();
-  const rawToken = crypto.randomBytes(32).toString('base64url');
-  const now = new Date();
-  const expires = new Date(now.getTime() + SESSION_TTL_MS);
+  const sessionId = uuidv4();
+  const nowMs = Date.now();
+  const now = new Date(nowMs);
+  const expiresMs = nowMs + SESSION_TTL_MS;
+  const expires = new Date(expiresMs);
+  const rawToken = signSessionClaims({
+    sid: sessionId,
+    uid: user.uid,
+    userId: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    baseRole: user.baseRole,
+    orgId: user.orgId,
+    provider: user.provider,
+    iat: nowMs,
+    exp: expiresMs,
+  });
   const session: AuthSessionRecord = {
-    id: uuidv4(),
+    id: sessionId,
     tokenHash: hashToken(rawToken),
     userId: user.id,
     createdAt: now.toISOString(),
@@ -455,6 +549,7 @@ export function createSession(user: AuthUserRecord, userAgent = ''): {
 export function revokeSessionByToken(rawToken: string | null): boolean {
   if (!rawToken) return false;
   const targetHash = hashToken(rawToken);
+  markTokenHashRevoked(targetHash);
   const before = store.state.authSessions.length;
   store.state.authSessions = store.state.authSessions.filter((s) => s.tokenHash !== targetHash);
   if (store.state.authSessions.length !== before) {
@@ -465,6 +560,11 @@ export function revokeSessionByToken(rawToken: string | null): boolean {
 }
 
 export function revokeAllUserSessions(userId: string, exceptSessionId?: string): void {
+  for (const s of store.state.authSessions) {
+    if (s.userId === userId && (!exceptSessionId || s.id !== exceptSessionId)) {
+      markTokenHashRevoked(s.tokenHash);
+    }
+  }
   store.state.authSessions = store.state.authSessions.filter(
     (s) => s.userId !== userId || (exceptSessionId && s.id === exceptSessionId)
   );
@@ -493,30 +593,79 @@ export interface ResolvedSession {
 export function resolveSessionByRawToken(rawToken: string | null, viaCookie = false): ResolvedSession | null {
   if (!rawToken) return null;
   const tokenHash = hashToken(rawToken);
+  if (revokedTokenHashes.has(tokenHash)) return null;
   const now = Date.now();
   const session = store.state.authSessions.find((s) => s.tokenHash === tokenHash);
-  if (!session) return null;
 
-  if (new Date(session.expiresAt).getTime() <= now) {
-    store.state.authSessions = store.state.authSessions.filter((s) => s.id !== session.id);
-    store.save();
-    return null;
+  if (session) {
+    if (new Date(session.expiresAt).getTime() <= now) {
+      store.state.authSessions = store.state.authSessions.filter((s) => s.id !== session.id);
+      store.save();
+      return null;
+    }
+
+    const user = store.state.authUsers.find((u) => u.id === session.userId);
+    if (!user) {
+      store.state.authSessions = store.state.authSessions.filter((s) => s.id !== session.id);
+      store.save();
+      return null;
+    }
+
+    // Track recent activity without silently shifting explicit session expiry
+    if (now - new Date(session.lastSeenAt).getTime() > 5 * 60 * 1000) {
+      session.lastSeenAt = new Date(now).toISOString();
+      store.save();
+    }
+
+    return { user, session, viaCookie };
   }
 
-  const user = store.state.authUsers.find((u) => u.id === session.userId);
+  // Stateless HMAC-signed token fallback (supports serverless cold starts / warm instance swaps when SESSION_SECRET is set)
+  const claims = verifySignedSessionToken(rawToken);
+  if (!claims) return null;
+
+  let user =
+    store.state.authUsers.find((u) => u.id === claims.userId) ||
+    store.state.authUsers.find((u) => u.uid === claims.uid);
+
   if (!user) {
-    store.state.authSessions = store.state.authSessions.filter((s) => s.id !== session.id);
-    store.save();
-    return null;
+    const nowIso = new Date(now).toISOString();
+    user = {
+      id: claims.userId,
+      uid: claims.uid,
+      email: claims.email,
+      name: claims.name,
+      role: claims.role,
+      baseRole: claims.baseRole,
+      orgId: claims.orgId || DEFAULT_ORG_ID,
+      provider: claims.provider || 'password',
+      emailVerified: true,
+      firebaseUid: null,
+      passwordHash: null,
+      passwordSalt: null,
+      createdAt: new Date(claims.iat || now).toISOString(),
+      updatedAt: nowIso,
+      lastLoginAt: nowIso,
+    };
+    store.state.authUsers.push(user);
   }
 
-  // Track recent activity without silently shifting explicit session expiry
-  if (now - new Date(session.lastSeenAt).getTime() > 5 * 60 * 1000) {
-    session.lastSeenAt = new Date(now).toISOString();
-    store.save();
+  const hydratedSession: AuthSessionRecord = {
+    id: claims.sid,
+    tokenHash,
+    userId: user.id,
+    createdAt: new Date(claims.iat || now).toISOString(),
+    expiresAt: new Date(claims.exp).toISOString(),
+    lastSeenAt: new Date(now).toISOString(),
+    userAgent: '',
+  };
+  store.state.authSessions.unshift(hydratedSession);
+  if (store.state.authSessions.length > 200) {
+    store.state.authSessions.length = 200;
   }
+  store.save();
 
-  return { user, session, viaCookie };
+  return { user, session: hydratedSession, viaCookie };
 }
 
 export function resolveSessionFromRequest(req: Request): ResolvedSession | null {

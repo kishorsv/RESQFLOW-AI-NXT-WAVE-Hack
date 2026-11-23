@@ -7,6 +7,18 @@
       ]
     },
     {
+      "source": "/index.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
@@ -24,11 +36,7 @@
     },
     {
       "source": "/__/firebase/init.json",
-      "destination": "/api"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api"
+      "destination": "/api/firebase-init"
     },
     {
       "source": "/((?!api/|__/).*)",
