@@ -18,7 +18,6 @@ import {
   Globe,
   LayoutDashboard,
   Loader2,
-  LogOut,
   Map as MapIcon,
   Menu,
   Moon,
@@ -43,10 +42,8 @@ import {
 } from './lib/api';
 import {
   buildDashboardPath,
-  buildLoginUrl,
   navigateTo,
   parseAppRoute,
-  sanitizeReturnPath,
   type ParsedAppRoute,
 } from './lib/authRoutes';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -57,21 +54,12 @@ import { BrandMark } from './components/ui/BrandMark';
 import { DashboardSkeleton } from './components/ui/DesignPrimitives';
 import {
   auth,
-  classifyFirebaseAuthError,
-  classifyMissingRedirectResult,
-  clearGoogleRedirectPending,
-  logSafeAuthDiagnostic,
   mapFirebaseAuthError,
-  readGoogleRedirectPending,
   refreshFirebaseIdTokenSilently,
-  resolveGoogleRedirectOnce,
   signInWithGoogleWorkspace,
-  signOutGoogle,
   subscribeWorkspaceToken,
   syncFirestoreUserProfile,
   testFirestoreConnection,
-  waitForFirebaseAuthUser,
-  type ClassifiedAuthError,
 } from './lib/firebase';
 import type {
   AlertRecord,
@@ -90,9 +78,14 @@ import type {
   Vehicle,
   Warehouse,
 } from './shared/types';
-// Keep public homepage & authentication screens eager for instant first paint
-import { AuthView, type SessionTimingMeta } from './components/views/AuthView';
+// Keep public homepage eager for instant first paint
 import { LandingView } from './components/views/LandingView';
+
+interface SessionTimingMeta {
+  sessionExpiresAt?: string | null;
+  sessionDurationMs?: number | null;
+  serverNow?: string | null;
+}
 
 // Lazy-load heavy authenticated Command Center views so public visitors never download Three.js, Recharts, Maps, or dashboard bundles
 const AICommandCenterView = lazy(() =>
@@ -206,24 +199,18 @@ export default function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  // Authoritative Auth & Session State Machine:
-  // INITIALIZING | REDIRECT_PENDING | AUTHENTICATED | UNAUTHENTICATED | AUTH_ERROR
+  // Direct Workspace Session State Machine: INITIALIZING | AUTHENTICATED | UNAUTHENTICATED
   const [authUser, setAuthUser] = useState<AuthUserProfile | null>(null);
   const [sessionExpiresAt, setSessionExpiresAt] = useState<string | null>(null);
   const [sessionDurationMs, setSessionDurationMs] = useState<number>(DEFAULT_SESSION_DURATION_MS);
   const [serverClockOffsetMs, setServerClockOffsetMs] = useState<number>(0);
-  const [authState, setAuthState] = useState<
-    'INITIALIZING' | 'REDIRECT_PENDING' | 'AUTHENTICATED' | 'UNAUTHENTICATED' | 'AUTH_ERROR'
-  >(() => (readGoogleRedirectPending() || parseAppRoute().kind === 'auth-callback' ? 'REDIRECT_PENDING' : 'INITIALIZING'));
-  const [redirectAuthError, setRedirectAuthError] = useState<ClassifiedAuthError | null>(null);
-  const [sessionNotice, setSessionNotice] = useState<string | null>(null);
+  const [authState, setAuthState] = useState<'INITIALIZING' | 'AUTHENTICATED' | 'UNAUTHENTICATED'>('INITIALIZING');
   const [authError, setAuthError] = useState<string | null>(null);
   const [directAccessError, setDirectAccessError] = useState<string | null>(null);
-  const explicitSignOutRef = useRef<boolean>(false);
   const bootstrapStartedRef = useRef<boolean>(false);
   const directAccessPromiseRef = useRef<Promise<void> | null>(null);
 
-  const authLoading = authState === 'INITIALIZING' || authState === 'REDIRECT_PENDING';
+  const authLoading = authState === 'INITIALIZING';
 
   // Firebase User & Workspace OAuth Token State
   const [fbUser, setFbUser] = useState<User | null>(null);
@@ -379,18 +366,58 @@ export default function App() {
     }
   }, [applySessionTiming]);
 
+  const establishDirectAccess = useCallback(async () => {
+    if (directAccessPromiseRef.current) {
+      return directAccessPromiseRef.current;
+    }
+    const task = (async () => {
+      setDirectAccessError(null);
+      try {
+        const res = await apiRequest<{
+          authenticated: boolean;
+          user: AuthUserProfile;
+          sessionToken?: string;
+          sessionExpiresAt?: string;
+          sessionDurationMs?: number;
+          serverNow?: string;
+        }>('/auth/direct-access', { method: 'POST' });
+        if (!res.authenticated || !res.user) {
+          throw new Error('Unable to initialize direct workspace access.');
+        }
+        if (res.sessionToken) {
+          setSessionToken(res.sessionToken);
+        }
+        setAuthUser(res.user);
+        setAuthState('AUTHENTICATED');
+        applySessionTiming({
+          sessionExpiresAt: res.sessionExpiresAt,
+          sessionDurationMs: res.sessionDurationMs,
+          serverNow: res.serverNow,
+        });
+        setAuthError(null);
+      } catch (err) {
+        setDirectAccessError(
+          err instanceof Error ? err.message : 'Unable to launch RESQFLOW AI workspace.'
+        );
+      } finally {
+        directAccessPromiseRef.current = null;
+      }
+    })();
+    directAccessPromiseRef.current = task;
+    return task;
+  }, [applySessionTiming]);
+
   const handleSessionExpired = useCallback(() => {
     setSessionToken(null);
     setAuthUser(null);
     setSessionExpiresAt(null);
     setAuthState('UNAUTHENTICATED');
-    clearOperationalSnapshots();
-    setSessionNotice('Your session has expired. Please sign in again to continue.');
-    const currentRoute = parseAppRoute();
-    if (currentRoute.kind === 'dashboard') {
-      navigateTo(buildLoginUrl(currentRoute.rawPath), { replace: true });
+    if (parseAppRoute().kind === 'dashboard') {
+      void establishDirectAccess();
+    } else {
+      clearOperationalSnapshots();
     }
-  }, [clearOperationalSnapshots]);
+  }, [clearOperationalSnapshots, establishDirectAccess]);
 
   useEffect(() => {
     if (fbUser) {
@@ -401,165 +428,27 @@ export default function App() {
   useEffect(() => {
     let active = true;
 
-    const exchangeFirebaseUser = async (
-      firebaseUser: User,
-      idToken: string,
-      redirectDestination: string | null
-    ): Promise<boolean> => {
-      const exchanged = await apiRequest<{
-        authenticated: boolean;
-        user: AuthUserProfile;
-        sessionToken?: string;
-        sessionExpiresAt?: string;
-        sessionDurationMs?: number;
-        serverNow?: string;
-      }>('/auth/firebase-exchange', {
-        method: 'POST',
-        body: { idToken },
-      });
-      if (!active || !exchanged.authenticated || !exchanged.user) return false;
-      await syncFirestoreUserProfile(firebaseUser, exchanged.user.role);
-      if (!active) return false;
-      setSessionToken(exchanged.sessionToken || null);
-      setAuthUser(exchanged.user);
-      setAuthState('AUTHENTICATED');
-      applySessionTiming({
-        sessionExpiresAt: exchanged.sessionExpiresAt,
-        sessionDurationMs: exchanged.sessionDurationMs,
-        serverNow: exchanged.serverNow,
-      });
-      setRedirectAuthError(null);
-      setSessionNotice(null);
-      broadcastAuthChange('SIGNED_IN');
-      if (redirectDestination) {
-        navigateTo(sanitizeReturnPath(redirectDestination, '/dashboard'), { replace: true });
-      }
-      return true;
-    };
-
-    const bootstrapAuth = async () => {
+    const bootstrapSession = async () => {
       if (bootstrapStartedRef.current) return;
       bootstrapStartedRef.current = true;
-
-      const pendingRedirect = readGoogleRedirectPending();
-      const currentRoute = parseAppRoute();
-      const fallbackNext = pendingRedirect?.next || currentRoute.next || '/dashboard';
-
-      if (pendingRedirect || currentRoute.kind === 'auth-callback') {
-        setAuthState('REDIRECT_PENDING');
-      } else {
-        setAuthState('INITIALIZING');
-      }
+      setAuthState('INITIALIZING');
 
       try {
-        // 1. Process Firebase OAuth redirect callback strictly once per page load
-        const redirectOutcome = await resolveGoogleRedirectOnce();
-        if (!active) return;
-
-        if (redirectOutcome.status === 'success') {
-          clearGoogleRedirectPending();
-          try {
-            const ok = await exchangeFirebaseUser(redirectOutcome.user, redirectOutcome.idToken, fallbackNext);
-            if (ok) return;
-          } catch (err) {
-            if (active) {
-              const classified: ClassifiedAuthError = {
-                category: 'redirect_processing_failed',
-                code: 'auth/session-exchange-failed',
-                message:
-                  err instanceof Error
-                    ? err.message
-                    : 'Google sign-in succeeded, but creating your RESQFLOW AI session failed. Please try again.',
-                retryable: true,
-              };
-              logSafeAuthDiagnostic('session_exchange_failed', classified.code);
-              setRedirectAuthError(classified);
-              setAuthState('AUTH_ERROR');
-            }
-            return;
-          }
-        }
-
-        if (redirectOutcome.status === 'error') {
-          clearGoogleRedirectPending();
-          // Preserve an already-valid server session if one exists; otherwise transition to AUTH_ERROR
-          const existingSession = await verifyServerSession();
-          if (!active) return;
-          if (existingSession) {
-            setAuthState('AUTHENTICATED');
-            return;
-          }
-          setRedirectAuthError(redirectOutcome.error);
-          setAuthState('AUTH_ERROR');
-          return;
-        }
-
-        // 2. Restore existing HttpOnly server session (null redirect result is normal when no redirect was pending)
         const restored = await verifyServerSession();
         if (!active) return;
         if (restored) {
           setAuthState('AUTHENTICATED');
-          if (pendingRedirect) {
-            clearGoogleRedirectPending();
-            navigateTo(sanitizeReturnPath(pendingRedirect.next, '/dashboard'), { replace: true });
-          }
           return;
         }
-
-        // 3. Coordinate with authStateReady() + onAuthStateChanged settlement without racing getRedirectResult
-        const hydratedUser = await waitForFirebaseAuthUser(pendingRedirect ? 1500 : 0);
-        if (!active) return;
-
-        if (hydratedUser && !explicitSignOutRef.current) {
-          try {
-            const idToken = await hydratedUser.getIdToken();
-            const ok = await exchangeFirebaseUser(
-              hydratedUser,
-              idToken,
-              pendingRedirect ? pendingRedirect.next : null
-            );
-            clearGoogleRedirectPending();
-            if (ok) {
-              logSafeAuthDiagnostic('recovered_via_auth_state_ready');
-              return;
-            }
-          } catch (err) {
-            if (pendingRedirect && active) {
-              const classified = classifyFirebaseAuthError(err);
-              logSafeAuthDiagnostic(`auth_state_exchange_failed:${classified.category}`, classified.code);
-              clearGoogleRedirectPending();
-              setRedirectAuthError(classified);
-              setAuthState('AUTH_ERROR');
-              return;
-            }
-          }
-        }
-
-        // 4. Only surface a redirect recovery failure if a redirect was actually pending
-        if (pendingRedirect && active) {
-          clearGoogleRedirectPending();
-          const classified = classifyMissingRedirectResult();
-          logSafeAuthDiagnostic(`redirect_missing:${classified.category}`, classified.code);
-          setRedirectAuthError(classified);
-          setAuthState('AUTH_ERROR');
-          return;
-        }
-
-        // 5. Normal unauthenticated visit (null redirect result is NOT an error)
+        setAuthState('UNAUTHENTICATED');
+      } catch {
         if (active) {
           setAuthState('UNAUTHENTICATED');
-        }
-      } catch (err) {
-        if (active) {
-          const classified = classifyFirebaseAuthError(err);
-          logSafeAuthDiagnostic(`bootstrap_unexpected:${classified.category}`, classified.code);
-          setRedirectAuthError(classified);
-          setAuthState('AUTH_ERROR');
         }
       }
     };
 
-    void bootstrapAuth();
+    void bootstrapSession();
 
     const unsubAuth = auth
       ? onAuthStateChanged(auth, (u) => {
@@ -570,20 +459,13 @@ export default function App() {
       setHasWorkspaceToken(Boolean(tok));
     });
 
-    // Multi-tab authentication synchronization
+    // Multi-tab session synchronization
     let channel: BroadcastChannel | null = null;
     try {
       if (typeof BroadcastChannel !== 'undefined') {
         channel = new BroadcastChannel(AUTH_BROADCAST_CHANNEL);
         channel.onmessage = (evt: MessageEvent<{ type?: string }>) => {
-          if (evt.data?.type === 'SIGNED_OUT') {
-            setSessionToken(null);
-            setAuthUser(null);
-            setSessionExpiresAt(null);
-            setAuthState('UNAUTHENTICATED');
-            clearOperationalSnapshots();
-            setSessionNotice('You were signed out in another tab.');
-          } else if (
+          if (
             evt.data?.type === 'SIGNED_IN' ||
             evt.data?.type === 'ROLE_UPDATED' ||
             evt.data?.type === 'SESSION_REFRESHED'
@@ -609,7 +491,7 @@ export default function App() {
         // ignore
       }
     };
-  }, [verifyServerSession, applySessionTiming, clearOperationalSnapshots, handleSessionExpired]);
+  }, [verifyServerSession, handleSessionExpired]);
 
   // Keep client actor context mirrored strictly for offline optimistic UI metadata
   useEffect(() => {
@@ -626,71 +508,14 @@ export default function App() {
     }
   }, [authUser]);
 
-  const establishDirectAccess = useCallback(async () => {
-    if (directAccessPromiseRef.current) {
-      return directAccessPromiseRef.current;
-    }
-    const task = (async () => {
-      setDirectAccessError(null);
-      try {
-        const res = await apiRequest<{
-          authenticated: boolean;
-          user: AuthUserProfile;
-          sessionToken?: string;
-          sessionExpiresAt?: string;
-          sessionDurationMs?: number;
-          serverNow?: string;
-        }>('/auth/direct-access', { method: 'POST' });
-        if (!res.authenticated || !res.user) {
-          throw new Error('Unable to initialize direct workspace access.');
-        }
-        explicitSignOutRef.current = false;
-        if (res.sessionToken) {
-          setSessionToken(res.sessionToken);
-        }
-        setAuthUser(res.user);
-        setAuthState('AUTHENTICATED');
-        applySessionTiming({
-          sessionExpiresAt: res.sessionExpiresAt,
-          sessionDurationMs: res.sessionDurationMs,
-          serverNow: res.serverNow,
-        });
-        setRedirectAuthError(null);
-        setSessionNotice(null);
-        setAuthError(null);
-      } catch (err) {
-        setDirectAccessError(
-          err instanceof Error ? err.message : 'Unable to launch RESQFLOW AI workspace.'
-        );
-      } finally {
-        directAccessPromiseRef.current = null;
-      }
-    })();
-    directAccessPromiseRef.current = task;
-    return task;
-  }, [applySessionTiming]);
-
-  // Declarative Route Guard: direct platform access for /dashboard, and redirect already-signed-in users out of /login
+  // Direct platform access for /dashboard routes
   useEffect(() => {
     if (authLoading) return;
 
-    if (route.kind === 'dashboard' && !isAuthenticated) {
-      if (!directAccessError) {
-        void establishDirectAccess();
-      }
-      return;
+    if (route.kind === 'dashboard' && !isAuthenticated && !directAccessError) {
+      void establishDirectAccess();
     }
-
-    if (
-      isAuthenticated &&
-      (route.kind === 'login' ||
-        route.kind === 'forgot-password' ||
-        route.kind === 'auth-callback')
-    ) {
-      const target = sanitizeReturnPath(route.next, '/dashboard');
-      navigateTo(target, { replace: true });
-    }
-  }, [authLoading, isAuthenticated, route, directAccessError, establishDirectAccess]);
+  }, [authLoading, isAuthenticated, route.kind, directAccessError, establishDirectAccess]);
 
   const setActiveView = useCallback((nextView: string) => {
     const targetPath = buildDashboardPath(nextView);
@@ -878,28 +703,6 @@ export default function App() {
     isAuthenticated
   );
 
-  // Handle successful login/signup/Google auth completion
-  const handleAuthenticated = useCallback(
-    (user: AuthUserProfile, token: string | null, destination: string, sessionMeta?: SessionTimingMeta) => {
-      explicitSignOutRef.current = false;
-      if (token) {
-        setSessionToken(token);
-      }
-      setAuthUser(user);
-      setAuthState('AUTHENTICATED');
-      applySessionTiming(sessionMeta);
-      setRedirectAuthError(null);
-      setSessionNotice(null);
-      setAuthError(null);
-      broadcastAuthChange('SIGNED_IN');
-      navigateTo(sanitizeReturnPath(destination, '/dashboard'), { replace: true });
-      if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0 });
-      }
-    },
-    [applySessionTiming]
-  );
-
   // Explicitly extend active server session (+24h) and refresh Firebase token if linked
   const handleRefreshSession = useCallback(async () => {
     await refreshFirebaseIdTokenSilently();
@@ -923,27 +726,6 @@ export default function App() {
     });
     broadcastAuthChange('SESSION_REFRESHED');
   }, [applySessionTiming]);
-
-  // Clean full logout: revoke server session, clear cookie, sign out Firebase, clear local state
-  const handleSignOut = useCallback(async () => {
-    explicitSignOutRef.current = true;
-    try {
-      await apiRequest('/auth/logout', { method: 'POST' });
-    } catch {
-      // Proceed with local cleanup even if server is unreachable
-    }
-    await signOutGoogle();
-    setSessionToken(null);
-    setAuthUser(null);
-    setSessionExpiresAt(null);
-    setAuthState('UNAUTHENTICATED');
-    setRedirectAuthError(null);
-    setAuthError(null);
-    setSessionNotice(null);
-    clearOperationalSnapshots();
-    broadcastAuthChange('SIGNED_OUT');
-    navigateTo('/login', { replace: true });
-  }, [clearOperationalSnapshots]);
 
   // Opt-in Google Workspace scope authorization inside WorkspaceHubView
   const handleConnectGoogleWorkspace = useCallback(async () => {
@@ -1064,7 +846,7 @@ export default function App() {
     );
   }
 
-  // 2. Auth Loading Guard — prevents dashboard flash before auth verification & prevents login flash while session/redirect restores
+  // 2. Session Loading Guard
   if (authLoading) {
     return (
       <div className="min-h-screen bg-[#070B14] text-[#F7F9FF] flex flex-col items-center justify-center p-6">
@@ -1072,58 +854,14 @@ export default function App() {
           <BrandMark size={40} />
           <div className="flex items-center gap-2.5 text-sm font-medium text-[#CBD5E1]">
             <Loader2 className="w-4 h-4 animate-spin text-[#7185FF]" />
-            <span>
-              {authState === 'REDIRECT_PENDING' || route.kind === 'auth-callback'
-                ? 'Completing Google authentication...'
-                : 'Verifying your secure session...'}
-            </span>
+            <span>Initializing RESQFLOW AI Command Center...</span>
           </div>
-          <p className="text-xs text-[#64748B]">RESQFLOW AI Command Access</p>
         </div>
       </div>
     );
   }
 
-  // 3. Dedicated Auth Routes (/login, /forgot-password, /reset-password, /auth/callback)
-  if (
-    route.kind === 'login' ||
-    route.kind === 'forgot-password' ||
-    route.kind === 'reset-password' ||
-    route.kind === 'auth-callback'
-  ) {
-    // If already authenticated (except explicit /reset-password), redirect effect is running; show clean transition state
-    if (isAuthenticated && route.kind !== 'reset-password') {
-      return (
-        <div className="min-h-screen bg-[#070B14] text-[#F7F9FF] flex flex-col items-center justify-center p-6">
-          <div className="flex items-center gap-2.5 text-sm font-medium text-[#CBD5E1]">
-            <Loader2 className="w-4 h-4 animate-spin text-[#7185FF]" />
-            <span>Preparing your command center...</span>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <AuthView
-        mode={route.kind}
-        nextPath={route.next}
-        resetToken={route.resetToken}
-        sessionNotice={sessionNotice}
-        externalError={redirectAuthError?.message || null}
-        externalErrorRetryable={redirectAuthError ? redirectAuthError.retryable : true}
-        onClearSessionNotice={() => setSessionNotice(null)}
-        onClearExternalError={() => {
-          setRedirectAuthError(null);
-          if (authState === 'AUTH_ERROR') {
-            setAuthState('UNAUTHENTICATED');
-          }
-        }}
-        onAuthenticated={handleAuthenticated}
-      />
-    );
-  }
-
-  // 4. Direct Dashboard Initialization Screen (opens directly without signup or login requirement)
+  // 3. Direct Dashboard Initialization Screen (opens directly without sign-in requirement)
   if (!isAuthenticated || !authUser) {
     return (
       <div className="min-h-screen bg-[#070B14] text-[#F7F9FF] flex flex-col items-center justify-center p-6">
@@ -1536,7 +1274,6 @@ export default function App() {
                 userEmail={authUser.email}
                 onRefreshSession={handleRefreshSession}
                 onSessionExpired={handleSessionExpired}
-                onSignOut={() => void handleSignOut()}
               />
 
               <div className="flex items-center gap-2 pl-2 border-l border-[var(--rf-border-default)]">
@@ -1548,15 +1285,6 @@ export default function App() {
                     {authUser.email}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => void handleSignOut()}
-                  className="w-9 h-9 inline-flex items-center justify-center rounded-[10px] border border-[var(--rf-border-default)] bg-[var(--rf-surface-elevated)] text-[var(--rf-text-muted)] hover:text-[#E5465D] dark:hover:text-[#FF5C70] transition-colors"
-                  title="Sign out"
-                  aria-label="Sign out"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
               </div>
             </div>
           </header>

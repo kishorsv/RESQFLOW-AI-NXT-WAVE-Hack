@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, CheckCircle2, Clock, Loader2, LogOut, RefreshCw, ShieldCheck, X } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock, Loader2, RefreshCw, ShieldCheck, X } from 'lucide-react';
 
 interface SessionTimerIndicatorProps {
   expiresAt: string | null;
@@ -8,7 +8,6 @@ interface SessionTimerIndicatorProps {
   userEmail: string;
   onRefreshSession: () => Promise<void>;
   onSessionExpired: () => void;
-  onSignOut: () => void;
 }
 
 const WARNING_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
@@ -41,7 +40,6 @@ export const SessionTimerIndicator: React.FC<SessionTimerIndicatorProps> = ({
   userEmail,
   onRefreshSession,
   onSessionExpired,
-  onSignOut,
 }) => {
   const [nowMs, setNowMs] = useState<number>(() => Date.now());
   const [open, setOpen] = useState(false);
@@ -403,18 +401,6 @@ export const SessionTimerIndicator: React.FC<SessionTimerIndicatorProps> = ({
                   <span>Refresh Session</span>
                 </>
               )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                onSignOut();
-              }}
-              className="h-9 px-3 rounded-[9px] border border-[var(--rf-border-default)] bg-[var(--rf-bg-secondary)] hover:bg-[var(--rf-surface-hover)] text-xs font-medium text-[var(--rf-text-secondary)] hover:text-[#E5465D] dark:hover:text-[#FF5C70] inline-flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out</span>
             </button>
           </div>
         </div>
