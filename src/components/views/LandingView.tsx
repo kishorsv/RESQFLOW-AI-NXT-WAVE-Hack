@@ -21,9 +21,6 @@ interface LandingViewProps {
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
   onEnterApp: (targetView?: string) => void;
-  onOpenLogin: () => void;
-  onSignInGoogle?: () => Promise<void> | void;
-  isSignedIn?: boolean;
   mode: DataMode;
   connectionState: string;
   liveCounts: {
@@ -77,8 +74,6 @@ const NAV_LINKS = [
 
 export const LandingView: React.FC<LandingViewProps> = ({
   onEnterApp,
-  onOpenLogin,
-  isSignedIn = false,
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -98,14 +93,6 @@ export const LandingView: React.FC<LandingViewProps> = ({
       window.removeEventListener('keydown', onKey);
     };
   }, []);
-
-  const handleSignIn = () => {
-    if (isSignedIn) {
-      onEnterApp('overview');
-      return;
-    }
-    onOpenLogin();
-  };
 
   return (
     <div className="min-h-screen bg-[#070B14] text-[#F7F9FF] selection:bg-[#7185FF]/30 selection:text-white overflow-x-clip">
@@ -147,15 +134,8 @@ export const LandingView: React.FC<LandingViewProps> = ({
             ))}
           </nav>
 
-          {/* Zone 3: Sign In + Launch Platform */}
+          {/* Zone 3: Launch Platform */}
           <div className="hidden md:flex items-center gap-4 shrink-0">
-            <button
-              type="button"
-              onClick={handleSignIn}
-              className="text-[13.5px] font-medium text-[#CBD5E1] hover:text-white transition-colors whitespace-nowrap px-2 py-1.5"
-            >
-              {isSignedIn ? 'Account' : 'Sign In'}
-            </button>
             <button
               type="button"
               onClick={() => onEnterApp('overview')}
@@ -193,16 +173,6 @@ export const LandingView: React.FC<LandingViewProps> = ({
               ))}
             </nav>
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileNavOpen(false);
-                  void handleSignIn();
-                }}
-                className="h-11 px-4 rounded-[10px] border border-white/15 bg-[#111A2A] text-sm font-medium text-[#F7F9FF]"
-              >
-                {isSignedIn ? 'Open Workspace' : 'Sign In'}
-              </button>
               <button
                 type="button"
                 onClick={() => {

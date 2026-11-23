@@ -1003,17 +1003,6 @@ export default function App() {
     [isAuthenticated, authLoading, establishDirectAccess]
   );
 
-  const handleOpenLogin = useCallback(() => {
-    if (isAuthenticated) {
-      navigateTo('/dashboard');
-    } else {
-      navigateTo('/login');
-    }
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0 });
-    }
-  }, [isAuthenticated]);
-
   const handleReturnLanding = useCallback(() => {
     navigateTo('/');
     if (typeof window !== 'undefined') {
@@ -1063,8 +1052,6 @@ export default function App() {
         theme={theme}
         onToggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
         onEnterApp={handleEnterCommand}
-        onOpenLogin={handleOpenLogin}
-        isSignedIn={isAuthenticated}
         mode={mode}
         connectionState={connectionState}
         liveCounts={{
