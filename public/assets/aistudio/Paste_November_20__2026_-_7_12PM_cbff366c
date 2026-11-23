@@ -1,0 +1,2324 @@
+# RESQFLOW AI — ADVANCED REAL-TIME SYSTEM IMPLEMENTATION
+
+**Project:** RESQFLOW AI  
+**Full name:** Autonomous Emergency Response & Supply Chain Intelligence Network  
+**Hackathon:** IDEA//FORGE — Track 2  
+**Mission:** Predict risks. Coordinate resources. Deliver relief. Save lives.
+
+---
+
+## MASTER DIRECTIVE
+
+Act as a senior AI systems architect, principal full-stack engineer, disaster-management technology expert, backend engineer, data engineer, geospatial engineer, DevOps engineer, security engineer, and product designer.
+
+Transform my EXISTING RESQFLOW AI repository into a deeply functional, advanced, real-time emergency-response and resource-coordination platform.
+
+This is not a UI-only project.
+
+Do not merely create a dashboard containing mock statistics, simulated live status, decorative maps, hardcoded charts, nonfunctional buttons, or AI-generated responses without real data.
+
+Build the complete working system:
+
+- Advanced frontend
+- Secure backend
+- Real database
+- Real authentication
+- Real API integrations
+- Real-time event pipeline
+- Geospatial intelligence
+- Emergency management
+- Risk assessment engine
+- Resource and inventory management
+- Relief request management
+- Intelligent allocation algorithms
+- Route optimization
+- AI agents
+- Notification system
+- Analytics
+- Background jobs
+- Monitoring
+- Testing
+- Deployment configuration
+
+## NON-NEGOTIABLE RULE
+
+**Inspect the existing project before changing anything.**
+
+Do not delete the existing project and rebuild from scratch.
+
+Do not replace working features unnecessarily.
+
+Preserve existing architecture, design elements, integrations, routes, components, data, and features wherever practical.
+
+First understand the codebase. Then identify what already works, what is broken, what is missing, and what needs to be upgraded.
+
+Implement directly in the existing project.
+
+Do not stop after generating an implementation plan. Continue into actual code implementation.
+
+---
+
+# 1. PRODUCT VISION
+
+RESQFLOW AI should function as a connected emergency coordination intelligence network.
+
+It should connect:
+
+- Emergency command centers
+- Government and local response agencies
+- NGOs and relief organizations
+- Warehouses
+- Supply chains
+- Ambulance and transport teams
+- Field responders
+- Volunteers
+- Shelters
+- Affected communities
+- Emergency data providers
+
+The platform should answer five operational questions:
+
+1. **WHAT is happening?** — Emergency detection and situation awareness.
+2. **WHERE is the highest need?** — Geographic risk and population vulnerability.
+3. **WHAT is needed?** — Demand and relief-resource estimation.
+4. **WHERE can we get it?** — Inventory, warehouses, and resource availability.
+5. **HOW can it reach safely and efficiently?** — Allocation, routing, coordination, and tracking.
+
+Build the application around a real operational workflow connecting these five questions.
+
+---
+
+# 2. REPOSITORY AUDIT AND ARCHITECTURE DISCOVERY
+
+Before implementation, perform a complete audit.
+
+Inspect:
+
+- Frontend framework and version
+- Backend framework and version
+- Project directory structure
+- Existing routes
+- Components
+- UI framework
+- CSS architecture
+- Authentication
+- Database connection
+- Existing schema
+- APIs
+- Environment variables
+- Map implementation
+- Realtime implementation
+- Deployment configuration
+- Existing tests
+- Errors
+- Dependencies
+- Performance problems
+
+Create an internal implementation checklist.
+
+Identify:
+- Working components to preserve
+- Broken features to repair
+- Missing functionality to implement
+- Security vulnerabilities
+- Duplicate or unnecessary code
+- Database inconsistencies
+- API failures
+- Dead navigation
+- Mock data mistakenly presented as live
+- Performance bottlenecks
+
+Then implement improvements in place.
+
+Do not stop at the audit.
+
+---
+
+# 3. ADVANCED SYSTEM ARCHITECTURE
+
+Use a modular architecture with independent services.
+
+## Frontend
+
+Use the existing framework if it is already working.
+
+Suggested technologies:
+- React
+- TypeScript
+- Tailwind CSS or existing CSS system
+- Leaflet
+- Chart library already present or suitable equivalent
+- Supabase client for authentication and permitted realtime subscriptions
+- REST API client to the backend
+
+## Backend
+
+Use Python FastAPI if compatible with the existing backend.
+
+Structure the backend into modules:
+
+- Authentication
+- User management
+- Organizations
+- Incidents
+- Risk intelligence
+- Weather integration
+- Geospatial operations
+- Relief requests
+- Inventory
+- Warehouses
+- Resource allocation
+- Logistics
+- Route planning
+- Dispatch
+- Delivery tracking
+- AI orchestration
+- Agent tasks
+- Notifications
+- Analytics
+- Audit
+- Integrations
+- Monitoring
+
+Use:
+
+- Async endpoints where appropriate
+- Pydantic validation
+- REST API versioning
+- Service layer
+- Repository layer
+- Central configuration
+- Structured logging
+- Error handling
+- Rate limiting
+- Pagination
+- Filtering
+- Sorting
+- API documentation
+
+Use API prefix:
+
+`/api/v1`
+
+---
+
+# 4. REAL-TIME ENGINE — PRIORITY IMPLEMENTATION
+
+This is one of the most important components of RESQFLOW AI.
+
+Build a real event-driven architecture.
+
+Do not use frontend timers to pretend that data is updating.
+
+Do not continuously reload the entire page.
+
+Do not simulate real-time events in production mode.
+
+## Architecture
+
+Implement this event pipeline:
+
+**External API / User Action / Sensor / Database Change**
+
+↓
+
+**Backend Validation**
+
+↓
+
+**Database Persistence**
+
+↓
+
+**Event Publisher**
+
+↓
+
+**Realtime Event Channel**
+
+↓
+
+**Connected Clients**
+
+↓
+
+**Dashboard / Map / Notifications / Operational Modules Update**
+
+## Technologies
+
+Use:
+
+- Supabase PostgreSQL
+- Supabase Realtime where suitable
+- WebSockets or SSE where appropriate
+- Redis for cache and job coordination if configured
+- Background workers for long-running tasks
+- Scheduled jobs for data refresh
+
+Use the existing infrastructure if already implemented correctly.
+
+## Real-time event categories
+
+Create a centralized event system for:
+
+- `incident.created`
+- `incident.updated`
+- `incident.severity_changed`
+- `incident.closed`
+- `weather.updated`
+- `risk.assessment_completed`
+- `risk.threshold_crossed`
+- `relief_request.created`
+- `relief_request.updated`
+- `relief_request.prioritized`
+- `inventory.updated`
+- `inventory.low_stock`
+- `inventory.critical_shortage`
+- `warehouse.updated`
+- `allocation.created`
+- `allocation.approved`
+- `allocation.rejected`
+- `allocation.reserved`
+- `dispatch.created`
+- `dispatch.updated`
+- `delivery.started`
+- `delivery.location_updated`
+- `delivery.completed`
+- `delivery.failed`
+- `route.updated`
+- `notification.created`
+- `ai.task.started`
+- `ai.task.completed`
+- `ai.task.failed`
+- `system.integration_status_changed`
+
+Every event should have a structured format.
+
+Example:
+
+{
+  "event_id": "uuid",
+  "event_type": "incident.severity_changed",
+  "organization_id": "uuid",
+  "entity_id": "uuid",
+  "timestamp": "ISO-8601",
+  "version": 1,
+  "source": "incident_service",
+  "payload": {},
+  "correlation_id": "uuid"
+}
+
+## Event system requirements
+
+- Persist important operational changes.
+- Publish events only after successful database transactions.
+- Avoid duplicate event processing.
+- Support retryable events.
+- Use idempotency keys.
+- Detect stale updates.
+- Validate payloads.
+- Support event ordering where needed.
+- Prevent event loops.
+- Log event processing.
+- Monitor failed event deliveries.
+- Support reconnection.
+- Recover client subscriptions after network loss.
+- Avoid exposing sensitive information in broadcast events.
+
+## Frontend real-time behavior
+
+When an event arrives:
+
+- Update only the relevant component.
+- Update dashboard metrics if affected.
+- Update map markers if affected.
+- Update notifications.
+- Update incident lists.
+- Update inventory tables.
+- Update delivery statuses.
+- Refresh affected analytics.
+- Avoid duplicate records.
+- Avoid full page reload.
+- Show connection state.
+
+Display connection indicators:
+
+- LIVE
+- CONNECTING
+- RECONNECTING
+- DEGRADED
+- OFFLINE
+
+If the realtime connection disconnects, automatically reconnect with exponential backoff.
+
+If reconnection succeeds, reconcile missed events with a backend snapshot or cursor.
+
+Never display a LIVE indicator when the system is disconnected.
+
+---
+
+# 5. DATA FRESHNESS AND SOURCE TRANSPARENCY
+
+Every external-data record must include:
+
+- Provider
+- Source type
+- Timestamp
+- Fetch timestamp
+- Data timestamp
+- Location
+- Data quality
+- Confidence where applicable
+- Status
+- Expiry or freshness limit
+- Last successful update
+
+Build a data freshness service.
+
+Each provider should have configurable freshness limits.
+
+Example:
+
+- Weather: configurable refresh interval
+- Incident reports: update on creation/change
+- Inventory: update immediately after transaction
+- Delivery: update whenever status changes
+- Risk: recalculate when relevant signals change
+- Route: recalculate when route request or relevant information changes
+
+The system must detect:
+
+- Fresh data
+- Stale data
+- Delayed data
+- Missing data
+- Provider outage
+- Partial data
+
+Display timestamps in the UI.
+
+Do not treat stale information as current.
+
+Do not invent timestamps.
+
+---
+
+# 6. COMMAND CENTER — ADVANCED DASHBOARD
+
+Build a fully operational command center.
+
+## Metrics
+
+Use actual database records:
+
+- Active emergencies
+- Critical incidents
+- Incidents by severity
+- People affected
+- High-risk areas
+- Open relief requests
+- Critical shortages
+- Total available inventory
+- Warehouses operational
+- Resources allocated
+- Deliveries active
+- Deliveries completed
+- Failed deliveries
+- Unfulfilled demand
+- Average response time
+- Estimated delivery time
+
+## Dashboard components
+
+- Incident overview
+- Priority distribution
+- Emergency timeline
+- Risk trend
+- Supply demand
+- Stock shortage indicators
+- Warehouse status
+- Delivery status
+- Geographic risk overview
+- Recent event stream
+- AI-generated situation summary
+- Operational alerts
+- System integration health
+
+## Filters
+
+- Time period
+- Incident type
+- Severity
+- Region
+- Organization
+- Status
+- Resource type
+
+## Real-time behavior
+
+When a relevant database event occurs, update affected metrics.
+
+Every chart must use real database data.
+
+If no records exist, show a useful empty state.
+
+For demo data, visibly label it:
+
+`DEMO DATA — NOT LIVE OPERATIONAL INFORMATION`
+
+Never mix demonstration data and verified data without clear separation.
+
+---
+
+# 7. EMERGENCY INCIDENT MANAGEMENT ENGINE
+
+Build complete incident management.
+
+Incident types:
+
+- Flood
+- Flash flood
+- Landslide
+- Cyclone
+- Severe storm
+- Heatwave
+- Wildfire
+- Earthquake
+- Infrastructure failure
+- Water shortage
+- Power failure
+- Chemical incident
+- Other
+
+Incident record:
+
+- Incident ID
+- Title
+- Description
+- Type
+- Severity
+- Status
+- Latitude
+- Longitude
+- Address
+- Region
+- Reported time
+- Source
+- Reporter
+- People affected
+- Vulnerable population
+- Estimated impact area
+- Immediate needs
+- Supporting evidence
+- Verification status
+- Risk score
+- Priority score
+- Assigned organization
+- Assigned response team
+- Created by
+- Updated by
+- Created timestamp
+- Updated timestamp
+
+Statuses:
+
+- Reported
+- Under Review
+- Verified
+- Active
+- Escalated
+- Contained
+- Resolved
+- Archived
+
+Implement:
+
+- Create incident
+- Edit incident
+- Verify report
+- Escalate
+- Assign team
+- Update status
+- Attach evidence
+- Add operational notes
+- View history
+- Close incident
+- Reopen incident
+
+Use audit logs for every important action.
+
+## Incident validation
+
+Detect possible duplicate incidents using:
+
+- Geographic proximity
+- Incident type
+- Time window
+- Similar descriptions
+- Related reports
+
+Do not automatically merge incidents without proper validation or an authorized action.
+
+---
+
+# 8. GEOSPATIAL INTELLIGENCE ENGINE
+
+Implement genuine geospatial capabilities.
+
+Use:
+
+- PostGIS if available
+- Latitude and longitude validation
+- GeoJSON
+- Spatial indexes
+- Geographic distance calculations
+- Bounding boxes
+- Radius searches
+- Point-in-polygon operations where supported
+
+Implement:
+
+- Nearest warehouse
+- Nearest shelter
+- Nearest relief center
+- Incidents within a region
+- Relief requests within an area
+- Risk zone intersections
+- Route distance
+- Geographic clustering
+- Geographic priority visualization
+
+The application should support spatial queries from the backend.
+
+Do not perform critical geographic calculations only in frontend JavaScript.
+
+---
+
+# 9. REAL MAP SYSTEM
+
+Build a functional map using Leaflet and OpenStreetMap, or preserve a valid existing map implementation.
+
+Map layers:
+
+1. Active incidents
+2. Severity markers
+3. Risk zones
+4. Relief request locations
+5. Warehouses
+6. Shelters
+7. Hospitals where relevant
+8. Vehicles
+9. Delivery locations
+10. Routes
+11. Weather overlays where actual data is available
+
+## Map functionality
+
+- Zoom
+- Pan
+- Search
+- Layer toggles
+- Marker filtering
+- Marker clustering
+- Incident selection
+- Location details
+- Route visualization
+- Warehouse selection
+- Destination selection
+- Geographic boundaries
+- Responsive design
+
+Marker colors should represent actual severity.
+
+Selecting a marker should open a useful details panel with the underlying record.
+
+The map must use actual coordinates.
+
+Do not fabricate:
+
+- Flood polygons
+- Blocked roads
+- Vehicle positions
+- Shelter capacities
+- Hospital capacities
+- Risk boundaries
+
+If a layer is unavailable, show:
+
+`DATA NOT AVAILABLE`
+
+If a feature is simulated for a demonstration, label it:
+
+`SIMULATED DEMO LAYER`
+
+---
+
+# 10. WEATHER AND ENVIRONMENTAL INTELLIGENCE
+
+Integrate real weather services.
+
+Provider options:
+
+- Open-Meteo
+- OpenWeather
+- WeatherAPI
+
+Create a provider-independent weather service so providers can be changed without modifying the risk engine.
+
+## Collect supported fields
+
+- Temperature
+- Feels-like temperature
+- Rainfall
+- Precipitation
+- Wind speed
+- Wind direction
+- Humidity
+- Weather condition
+- Forecast
+- Severe-weather indicators
+- Timestamp
+- Source
+
+## Weather processing
+
+- Normalize provider responses.
+- Validate values.
+- Store observations.
+- Cache appropriately.
+- Detect stale data.
+- Handle missing values.
+- Handle provider failures.
+- Log failures.
+- Retry when appropriate.
+- Avoid excessive requests.
+
+## Weather risk triggers
+
+Create configurable rule-based triggers such as:
+
+- Extreme rainfall
+- Heavy rainfall duration
+- Severe wind
+- High temperature
+- Rapidly changing forecast
+- Weather conditions near an active incident
+
+Use documented thresholds.
+
+Do not claim that a threshold is officially validated if it is not.
+
+Show weather data with:
+
+- Value
+- Source
+- Timestamp
+- Location
+- Freshness
+- Risk classification
+- Explanation
+
+---
+
+# 11. ADVANCED RISK INTELLIGENCE ENGINE
+
+Build a real risk assessment service.
+
+Do not use an LLM as the risk calculator.
+
+Use deterministic calculations and documented rules for numerical scores. AI can interpret and explain verified results.
+
+## Risk factors
+
+- Incident severity
+- Rainfall
+- Temperature
+- Wind
+- Geographic exposure
+- Population affected
+- Population vulnerability
+- Infrastructure exposure
+- Incident progression
+- Access disruption
+- Relief demand
+- Resource shortage
+- Time sensitivity
+- Data confidence
+
+## Risk score
+
+Calculate a configurable score between 0 and 100.
+
+Separate:
+
+- Environmental risk
+- Human impact risk
+- Infrastructure risk
+- Supply risk
+- Access risk
+- Overall operational risk
+
+Build a configurable scoring model.
+
+Validate every factor.
+
+Store the full calculation:
+
+- Input values
+- Factor weights
+- Normalization
+- Calculation version
+- Result
+- Timestamp
+- Source records
+- Missing factors
+- Confidence/uncertainty
+
+If some input data is missing, do not silently assume zero risk.
+
+Show an incomplete-data warning.
+
+## Risk classifications
+
+Example configurable bands:
+
+- 0–19: Low
+- 20–39: Guarded
+- 40–59: Elevated
+- 60–79: High
+- 80–100: Critical
+
+These are system classifications, not official disaster declarations.
+
+## Risk escalation
+
+Trigger a new assessment when:
+
+- Incident data changes
+- New weather data arrives
+- A relief request indicates worsening conditions
+- A verified report is submitted
+- Population impact changes
+- Infrastructure status changes
+- Risk thresholds are crossed
+
+Avoid unnecessary repeated calculations.
+
+Use task deduplication and event-based triggers.
+
+---
+
+# 12. PREDICTIVE INTELLIGENCE
+
+Build the architecture for predictive capabilities.
+
+Do not falsely claim prediction accuracy.
+
+Initially use:
+
+- Rules
+- Historical observations
+- Trend analysis
+- Regression or suitable statistical models where data supports them
+- Threshold detection
+- Anomaly detection
+
+Predict:
+
+- Potential escalation
+- Resource shortage
+- Demand growth
+- Warehouse depletion
+- Delivery delays
+- Geographic demand concentration
+
+For each prediction, store:
+
+- Prediction type
+- Target
+- Forecast horizon
+- Model version
+- Input features
+- Prediction
+- Uncertainty
+- Actual outcome when available
+- Timestamp
+
+Implement model evaluation against actual historical outcomes.
+
+Do not train models using fabricated historical data and present their results as scientifically validated.
+
+---
+
+# 13. RELIEF REQUEST SYSTEM
+
+Create a complete relief request workflow.
+
+Requests can be submitted by:
+
+- Citizen / reporter
+- Field responder
+- NGO
+- Emergency command
+- Authorized organization
+
+## Request information
+
+- Request ID
+- Incident ID
+- Location
+- Contact details with privacy controls
+- Number of people affected
+- Number of families
+- Vulnerable groups
+- Urgency
+- Required items
+- Quantities
+- Notes
+- Evidence
+- Submitted timestamp
+- Status
+- Verification
+- Assigned organization
+
+## Resource categories
+
+- Drinking water
+- Food
+- Medical kits
+- Medicines through authorized supply channels
+- Shelter
+- Blankets
+- Clothing
+- Hygiene kits
+- Rescue equipment
+- Fuel
+- Power equipment
+- Communication equipment
+- Transportation
+- Other
+
+## Workflow
+
+Submitted  
+→ Validation  
+→ Duplicate detection  
+→ Verification  
+→ Priority assessment  
+→ Resource availability check  
+→ Allocation proposal  
+→ Approval  
+→ Dispatch  
+→ Delivery  
+→ Confirmation  
+→ Closure
+
+Every transition should persist.
+
+Provide real-time status updates.
+
+---
+
+# 14. EMERGENCY PRIORITY ENGINE
+
+Build a transparent numerical priority engine.
+
+Use configurable factors such as:
+
+- Incident severity
+- Number of people affected
+- Vulnerability
+- Time sensitivity
+- Geographic exposure
+- Access difficulty
+- Essential resource shortage
+
+Normalize factors to 0–100.
+
+Implement a configurable weighted formula.
+
+Example starting model:
+
+P = 0.30S + 0.25N + 0.20V + 0.15U + 0.10A
+
+Where:
+
+- S = incident severity
+- N = need / shortage
+- V = population vulnerability
+- U = urgency
+- A = access risk
+
+Do not treat this example as validated.
+
+## Priority categories
+
+- Critical
+- High
+- Medium
+- Low
+
+Store:
+
+- Factor values
+- Weight values
+- Result
+- Reason
+- Missing information
+- Calculation version
+- Time
+- Assessor
+- Review status
+
+Allow authorized users to override priority.
+
+Require:
+
+- Reason
+- User ID
+- Timestamp
+- Previous value
+- New value
+
+Display both algorithmic priority and any human override.
+
+---
+
+# 15. WAREHOUSE AND INVENTORY ENGINE
+
+Build a genuine inventory management system.
+
+## Warehouse fields
+
+- ID
+- Name
+- Location
+- Coordinates
+- Organization
+- Capacity
+- Status
+- Contact
+- Operating hours
+- Accessibility
+- Last verified
+- Inventory summary
+
+Statuses:
+
+- Operational
+- Limited
+- Temporarily Closed
+- Unknown
+
+## Inventory fields
+
+- Item
+- SKU
+- Category
+- Unit
+- Total quantity
+- Available quantity
+- Reserved quantity
+- In transit
+- Damaged
+- Expired
+- Minimum stock
+- Reorder threshold
+- Warehouse
+- Last updated
+
+## Inventory movements
+
+- Inbound
+- Outbound
+- Transfer
+- Reservation
+- Release
+- Adjustment
+- Damage
+- Expiry
+- Reconciliation
+
+Every stock movement must create an immutable transaction record.
+
+Do not directly modify stock quantities without recording a movement.
+
+## Inventory integrity
+
+Implement:
+
+- Atomic transactions
+- Row locking or safe concurrency control
+- Optimistic versioning if appropriate
+- Idempotency
+- Reservation expiry
+- Stock reconciliation
+- Prevent negative inventory
+- Prevent double allocation
+- Prevent concurrent over-allocation
+- Audit history
+
+Build low-stock alerts.
+
+Build critical shortage alerts.
+
+Calculate:
+
+- Stock coverage
+- Demand
+- Reorder recommendation
+- Stockout risk
+- Warehouse availability
+
+---
+
+# 16. ADVANCED RESOURCE ALLOCATION ENGINE
+
+Build actual resource matching algorithms.
+
+Inputs:
+
+- Relief request
+- Priority
+- Requested items
+- Quantities
+- Destination coordinates
+- Warehouse stock
+- Warehouse status
+- Warehouse distance
+- Route distance
+- ETA
+- Vehicle capacity
+- Route constraints
+- Delivery deadlines
+- Other pending allocations
+
+## Allocation algorithm
+
+1. Validate request.
+2. Determine urgency.
+3. Retrieve required items.
+4. Query available stock.
+5. Filter unavailable warehouses.
+6. Check inventory freshness.
+7. Calculate geographic distances.
+8. Query routes for shortlisted warehouses.
+9. Compare route duration.
+10. Check vehicle availability.
+11. Check capacity.
+12. Rank feasible candidates.
+13. Calculate allocation options.
+14. Consider splitting a request across warehouses.
+15. Calculate unmet quantities.
+16. Generate a structured recommendation.
+17. Require human approval.
+18. Reserve stock atomically.
+19. Create dispatch records.
+20. Update request status.
+21. Publish real-time events.
+22. Record audit logs.
+
+## Candidate ranking
+
+Use configurable criteria:
+
+- Availability
+- Quantity fulfilment
+- Distance
+- ETA
+- Route feasibility
+- Vehicle capacity
+- Warehouse status
+- Supply shortage impact
+- Delivery deadline
+
+Do not simply select the nearest warehouse.
+
+The most suitable warehouse is the one with the best feasible overall operational outcome.
+
+## Recommendation output
+
+Return:
+
+- Request
+- Recommended warehouses
+- Recommended items
+- Quantities
+- Split allocation
+- ETA
+- Route distance
+- Unfulfilled quantities
+- Alternative plans
+- Explanation
+- Constraints
+- Warnings
+- Confidence
+- Approval requirement
+
+Never automatically dispatch real supplies.
+
+---
+
+# 17. ROUTE OPTIMIZATION ENGINE
+
+Integrate real routing.
+
+Providers:
+
+- OSRM
+- OpenRouteService
+- Suitable alternative provider
+
+## Route data
+
+- Origin
+- Destination
+- Distance
+- Estimated duration
+- Geometry
+- Instructions where supported
+- Route alternatives
+- Provider
+- Timestamp
+
+## Route comparison
+
+Evaluate:
+
+- Distance
+- Estimated travel time
+- Vehicle suitability
+- Destination accessibility
+- Confirmed road restrictions
+- Verified road closure information
+- Route freshness
+- Alternative paths
+
+If road restrictions are not available, explicitly state:
+
+`ROAD CONDITIONS NOT VERIFIED`
+
+Do not claim the shortest route is safest.
+
+Do not claim a road is blocked based on AI inference alone.
+
+## Multi-stop planning
+
+Implement:
+
+- Multiple deliveries
+- Stop ordering
+- Vehicle capacity
+- Delivery priority
+- Total distance
+- Estimated total duration
+- Individual stop ETAs
+
+Allow dispatchers to review and change stop order.
+
+---
+
+# 18. VEHICLE AND DELIVERY MANAGEMENT
+
+Create a real vehicle registry.
+
+Vehicle data:
+
+- ID
+- Vehicle type
+- Organization
+- Capacity
+- Capacity units
+- Status
+- Driver/team
+- Current location if available
+- Last location timestamp
+- Assigned dispatch
+- Operational availability
+
+Statuses:
+
+- Available
+- Assigned
+- Loading
+- Dispatched
+- In Transit
+- Delayed
+- Completed
+- Unavailable
+
+Delivery tracking:
+
+- Dispatch created
+- Vehicle assigned
+- Loading
+- Departed
+- In transit
+- Arrived
+- Delivered
+- Delivery failed
+- Cancelled
+
+Each update must be recorded.
+
+## GPS integration
+
+If real GPS data is available:
+
+- Ingest authorized device data
+- Validate device and vehicle identity
+- Validate coordinates
+- Record timestamps
+- Handle stale locations
+- Publish location updates
+- Show last known location
+
+If GPS is not available:
+
+- Do not fabricate live GPS.
+- Show last known location if available.
+- If demo movement is used, clearly label it `SIMULATED DEMO TRACKING`.
+
+---
+
+# 19. AI ORCHESTRATION SYSTEM
+
+Implement a centralized AI orchestrator with separate task agents.
+
+## Agents
+
+### 1. Risk Intelligence Agent
+
+Analyzes verified environmental and incident data.
+
+### 2. Priority Agent
+
+Explains urgency and the deterministic priority score.
+
+### 3. Resource Agent
+
+Finds resource gaps and possible supply sources.
+
+### 4. Allocation Agent
+
+Proposes warehouse-to-request allocations.
+
+### 5. Route Agent
+
+Analyzes real routing results and route constraints.
+
+### 6. Demand Forecast Agent
+
+Forecasts supply demand when historical data supports it.
+
+### 7. Situation Report Agent
+
+Produces concise operational summaries.
+
+### 8. Coordination Agent
+
+Creates a structured response plan for human review.
+
+## AI orchestration workflow
+
+Gather verified data  
+→ Validate data  
+→ Identify task  
+→ Select agent  
+→ Execute permitted tools  
+→ Validate output  
+→ Check constraints  
+→ Generate recommendation  
+→ Store result  
+→ Publish event  
+→ Notify relevant users  
+→ Wait for human approval when required
+
+## AI output schema
+
+Every agent must produce a validated response such as:
+
+{
+  "task_id": "uuid",
+  "agent_type": "risk_analysis",
+  "status": "completed",
+  "summary": "Short summary",
+  "recommendations": [],
+  "evidence": [],
+  "source_ids": [],
+  "missing_information": [],
+  "uncertainty": {},
+  "confidence": null,
+  "created_at": "ISO-8601",
+  "requires_approval": true
+}
+
+Use proper structured output.
+
+Validate AI responses against Pydantic schemas.
+
+Do not rely on unvalidated text to execute operations.
+
+## AI safety
+
+AI cannot:
+
+- Invent data
+- Invent road closures
+- Invent stock
+- Invent people affected
+- Invent GPS locations
+- Invent official warnings
+- Modify inventory directly
+- Approve its own allocation
+- Dispatch vehicles
+- Execute irreversible actions
+
+AI is a decision-support system.
+
+Human approval is required for consequential operations.
+
+---
+
+# 20. AUTONOMOUS COORDINATION WORKFLOW
+
+Create an advanced event-driven coordination workflow.
+
+Example:
+
+### Scenario: Flood emergency
+
+1. Weather API returns heavy rainfall forecast.
+2. Weather data is stored.
+3. Risk engine detects threshold crossing.
+4. Risk assessment is created.
+5. Risk Agent interprets verified inputs.
+6. Affected geographic area is identified using available data.
+7. High-risk locations are highlighted.
+8. Priority Agent calculates incident priority.
+9. Relief request is created by a citizen or responder.
+10. Request is validated.
+11. Resource Agent identifies needs.
+12. Inventory service retrieves stock.
+13. Allocation engine evaluates warehouses.
+14. Route service calculates candidate routes.
+15. Vehicle service checks capacity and availability.
+16. Coordination Agent creates response plan.
+17. Dispatcher reviews recommendation.
+18. Authorized user approves.
+19. Inventory is reserved.
+20. Dispatch is created.
+21. Delivery team receives assignment.
+22. Delivery status updates in real time.
+23. Arrival is recorded.
+24. Delivery is confirmed.
+25. Inventory and request records are reconciled.
+26. Impact data is updated.
+27. Analytics are recalculated.
+28. AI Situation Report is generated.
+29. Audit records are created.
+
+Build this as a working pipeline, not merely a presentation of the workflow.
+
+---
+
+# 21. NOTIFICATION ENGINE
+
+Create an event-based notification system.
+
+Notify authorized users about:
+
+- Critical incident
+- Escalated incident
+- Risk threshold crossed
+- New verified report
+- Relief request submitted
+- Request priority changed
+- Resource shortage
+- Warehouse low stock
+- Allocation proposal
+- Approval required
+- Dispatch created
+- Delivery delayed
+- Delivery failed
+- Delivery completed
+- Integration outage
+
+Notification record:
+
+- ID
+- User
+- Organization
+- Event type
+- Severity
+- Title
+- Message
+- Related entity
+- Created time
+- Read status
+- Delivery status
+- Channel
+
+Implement:
+
+- In-app notifications
+- Real-time delivery
+- Read/unread
+- Mark all read
+- Notification preferences
+- Severity filters
+- Grouping
+- Optional email integration
+
+Do not send unnecessary repeated alerts.
+
+Deduplicate alert events.
+
+---
+
+# 22. OPERATIONAL ANALYTICS
+
+Create analytics using database data.
+
+Calculate:
+
+- Total incidents
+- Incidents by type
+- Incidents by severity
+- Risk trends
+- Population affected
+- Relief requests
+- Request fulfilment rate
+- Unfulfilled demand
+- Supply shortages
+- Warehouse stock levels
+- Inventory utilization
+- Allocation success
+- Delivery success
+- Failed delivery
+- Average delivery time
+- Response time
+- Resource utilization
+- Geographic demand
+- Warehouse performance
+- Incident resolution time
+
+Support:
+
+- Date range
+- Region
+- Incident type
+- Organization
+- Resource category
+- Status
+
+Implement exports.
+
+Charts must be computed from actual records.
+
+Do not generate hardcoded statistics.
+
+---
+
+# 23. ADMINISTRATOR AND SYSTEM HEALTH
+
+Create an operational admin center.
+
+Monitor:
+
+- Frontend health
+- Backend health
+- Database connection
+- Realtime connection
+- WebSocket connections
+- AI provider
+- Weather provider
+- Maps provider
+- Routing provider
+- Redis
+- Background workers
+- Scheduled tasks
+- Event failures
+- API latency
+- Error rate
+- Recent failed requests
+
+Endpoints:
+
+- `GET /api/v1/health`
+- `GET /api/v1/health/database`
+- `GET /api/v1/health/realtime`
+- `GET /api/v1/health/integrations`
+- `GET /api/v1/health/workers`
+
+Only return safe operational information.
+
+Never expose secrets.
+
+---
+
+# 24. DATABASE ARCHITECTURE
+
+Use Supabase PostgreSQL as the primary persistent database.
+
+Use PostGIS where available.
+
+Implement proper schema migrations.
+
+Tables:
+
+- users
+- organizations
+- organization_members
+- incidents
+- incident_reports
+- incident_history
+- risk_assessments
+- risk_factor_values
+- weather_observations
+- risk_zones
+- warehouses
+- inventory_items
+- inventory_stock
+- stock_movements
+- relief_requests
+- request_items
+- allocations
+- allocation_items
+- allocation_approvals
+- vehicles
+- dispatches
+- deliveries
+- delivery_events
+- route_records
+- route_legs
+- notifications
+- notification_preferences
+- ai_recommendations
+- ai_agent_runs
+- ai_agent_tasks
+- system_events
+- event_outbox
+- audit_logs
+- integration_status
+- data_sources
+- prediction_records
+
+Implement:
+
+- Foreign keys
+- Check constraints
+- Unique constraints
+- Indexes
+- Spatial indexes
+- Created timestamps
+- Updated timestamps
+- Organization isolation
+- Row Level Security
+- Proper transaction boundaries
+- Migration versioning
+- Backup strategy
+
+Use an outbox pattern for reliable event publication where appropriate.
+
+Never expose database service-role credentials to the frontend.
+
+---
+
+# 25. AUTHENTICATION AND ACCESS CONTROL
+
+Support roles:
+
+- Super Admin
+- Emergency Commander
+- Logistics Manager
+- Field Responder
+- Warehouse Operator
+- Analyst
+- Citizen / Reporter
+
+Enforce:
+
+- Authentication
+- Authorization
+- Organization membership
+- Role permissions
+- Protected routes
+- Session persistence
+- Password reset
+- User profile
+- Audit logs
+
+Permission examples:
+
+**Emergency Commander**
+- Manage incidents
+- Escalate incidents
+- Approve response plans
+- Approve allocation
+- View command analytics
+
+**Logistics Manager**
+- Manage warehouses
+- View inventory
+- Generate allocations
+- Manage dispatches
+
+**Warehouse Operator**
+- Update stock
+- Record movement
+- Confirm loading
+
+**Field Responder**
+- View assigned tasks
+- Submit reports
+- Update delivery status within permissions
+
+**Analyst**
+- View permitted analytics
+- Generate reports
+
+**Citizen / Reporter**
+- Submit emergency reports
+- Submit relief requests
+- View permitted request status
+
+Permissions must be enforced server-side and through database security.
+
+---
+
+# 26. ADVANCED FRONTEND EXPERIENCE
+
+Create a premium emergency operations command center.
+
+## Design
+
+- Dark navy / charcoal
+- Emergency red
+- Amber
+- Cyan
+- Blue
+- Clear typography
+- Professional spacing
+- Responsive layout
+- Smooth animations
+- Accessible contrast
+- Functional light mode
+- Mobile-first layouts
+
+## Sidebar
+
+- Overview
+- Emergency Map
+- Incidents
+- Risk Intelligence
+- Relief Requests
+- Warehouses
+- Inventory
+- Allocation
+- Logistics
+- Dispatch
+- Live Tracking
+- AI Intelligence
+- Agent Center
+- Analytics
+- Notifications
+- Organizations
+- Admin
+- Settings
+
+## Interaction requirements
+
+- All buttons must work.
+- All links must navigate correctly.
+- All forms must validate.
+- All actions must return feedback.
+- All pages must load backend data.
+- All data must persist.
+- All filters must function.
+- All search must work.
+- All tables must support useful pagination.
+- Every destructive action must require confirmation.
+- Every loading state must be meaningful.
+- Every error state must explain what happened.
+- Every empty state must provide a next action.
+- No dead controls.
+- No placeholder routes.
+- No fake live indicators.
+
+---
+
+# 27. API CONTRACT
+
+Build REST APIs with consistent schemas.
+
+Examples:
+
+### Incidents
+
+- `GET /api/v1/incidents`
+- `POST /api/v1/incidents`
+- `GET /api/v1/incidents/{id}`
+- `PATCH /api/v1/incidents/{id}`
+- `POST /api/v1/incidents/{id}/verify`
+- `POST /api/v1/incidents/{id}/assess`
+- `POST /api/v1/incidents/{id}/escalate`
+- `POST /api/v1/incidents/{id}/close`
+
+### Risk
+
+- `GET /api/v1/risks`
+- `GET /api/v1/risks/overview`
+- `POST /api/v1/risks/assess`
+- `GET /api/v1/risks/{id}`
+
+### Relief
+
+- `GET /api/v1/relief-requests`
+- `POST /api/v1/relief-requests`
+- `GET /api/v1/relief-requests/{id}`
+- `PATCH /api/v1/relief-requests/{id}`
+- `POST /api/v1/relief-requests/{id}/prioritize`
+
+### Inventory
+
+- `GET /api/v1/warehouses`
+- `POST /api/v1/warehouses`
+- `GET /api/v1/inventory`
+- `POST /api/v1/inventory/movements`
+- `GET /api/v1/inventory/shortages`
+- `GET /api/v1/inventory/forecast`
+
+### Allocation
+
+- `POST /api/v1/allocations/recommend`
+- `GET /api/v1/allocations`
+- `GET /api/v1/allocations/{id}`
+- `POST /api/v1/allocations/{id}/approve`
+- `POST /api/v1/allocations/{id}/reject`
+- `POST /api/v1/allocations/{id}/reserve`
+
+### Logistics
+
+- `POST /api/v1/routes/optimize`
+- `GET /api/v1/routes/{id}`
+- `GET /api/v1/vehicles`
+- `POST /api/v1/dispatches`
+- `GET /api/v1/dispatches`
+- `GET /api/v1/dispatches/{id}`
+- `PATCH /api/v1/dispatches/{id}/status`
+
+### AI
+
+- `POST /api/v1/ai/analyze`
+- `POST /api/v1/ai/plan`
+- `POST /api/v1/ai/situation-report`
+- `GET /api/v1/ai/tasks`
+- `GET /api/v1/ai/tasks/{id}`
+
+### Analytics
+
+- `GET /api/v1/analytics/overview`
+- `GET /api/v1/analytics/incidents`
+- `GET /api/v1/analytics/resources`
+- `GET /api/v1/analytics/logistics`
+- `GET /api/v1/analytics/impact`
+
+### Notifications
+
+- `GET /api/v1/notifications`
+- `PATCH /api/v1/notifications/{id}/read`
+- `POST /api/v1/notifications/read-all`
+
+Add endpoints as required.
+
+Every endpoint must include:
+
+- Validation
+- Authorization
+- Structured response
+- Error handling
+- Logging
+- Pagination where applicable
+- API documentation
+
+---
+
+# 28. API INTEGRATION ENGINE
+
+Create a centralized integration framework.
+
+Every provider must have:
+
+- Configuration
+- Authentication
+- Timeout
+- Retry policy
+- Rate-limit handling
+- Cache
+- Health status
+- Last successful fetch
+- Error tracking
+- Data validation
+- Fallback strategy
+
+Integrations:
+
+### Weather
+
+Open-Meteo / OpenWeather.
+
+### Maps
+
+OpenStreetMap / Leaflet.
+
+### Routing
+
+OSRM / OpenRouteService.
+
+### Environmental data
+
+Copernicus / NASA data sources where relevant and available.
+
+### AI
+
+Gemini or OpenAI.
+
+Never call privileged provider APIs directly from the frontend.
+
+Do not expose API keys.
+
+Do not hardcode keys.
+
+---
+
+# 29. RESILIENCE ENGINE
+
+The platform must remain usable if providers fail.
+
+Implement:
+
+- Timeouts
+- Retry with exponential backoff
+- Circuit breaker where appropriate
+- Rate-limit handling
+- Cache fallback
+- Graceful degradation
+- Background retry
+- Integration health reporting
+- Error logging
+- Offline UI
+
+Example:
+
+If the weather provider fails:
+
+- Preserve last successful observation.
+- Display its timestamp.
+- Mark it stale.
+- Do not describe it as current.
+- Allow the rest of the system to continue.
+
+If routing fails:
+
+- Do not invent an ETA.
+- Show routing unavailable.
+- Allow the dispatcher to review manually.
+
+If AI fails:
+
+- Keep deterministic incident and allocation workflows functioning.
+- Show AI unavailable.
+- Do not block emergency records from being created.
+
+---
+
+# 30. PERFORMANCE
+
+Implement:
+
+- Database indexes
+- Spatial indexes
+- Pagination
+- Efficient queries
+- Connection pooling
+- Async external requests
+- Caching
+- Debounced search
+- Lazy loading
+- Background jobs
+- Optimized realtime subscriptions
+- Map marker clustering
+- Avoid unnecessary frontend rerenders
+- Avoid full dashboard reloads
+- Avoid excessive polling
+- Efficient event payloads
+
+Build performance monitoring for critical endpoints.
+
+---
+
+# 31. SECURITY
+
+Implement:
+
+- Secure authentication
+- Server-side authorization
+- Row Level Security
+- Organization isolation
+- Rate limiting
+- Input validation
+- SQL injection prevention
+- Secure CORS
+- HTTPS-ready deployment
+- Secret management
+- Audit logging
+- Safe file uploads
+- Secure API error responses
+- Sensitive data protection
+- AI prompt-injection protections
+- AI tool allowlisting
+- Human approval gates
+- Event authorization
+
+Never expose:
+
+- Service-role keys
+- Database passwords
+- AI keys
+- JWT secrets
+- Sensitive user information
+- Private responder information
+
+Do not allow AI to bypass permissions.
+
+---
+
+# 32. TESTING — ACTUALLY RUN TESTS
+
+Create tests and execute them.
+
+## Backend tests
+
+- Authentication
+- Role authorization
+- Organization isolation
+- Incident CRUD
+- Incident validation
+- Duplicate detection
+- Risk calculation
+- Weather validation
+- Relief request creation
+- Request prioritization
+- Inventory movements
+- Stock reconciliation
+- Concurrent allocation
+- Allocation approval
+- Reservation
+- Dispatch
+- Delivery updates
+- AI structured output
+- Provider failure
+- Realtime event publication
+- Notification delivery
+- Database constraints
+
+## Frontend tests
+
+- Login
+- Navigation
+- Dashboard data
+- Incident forms
+- Incident updates
+- Map layers
+- Relief request forms
+- Inventory updates
+- Allocation workflow
+- Dispatch workflow
+- Notification read status
+- Realtime connection
+- Error states
+- Responsive layout
+
+## End-to-end scenario
+
+Test this complete flow:
+
+1. User logs in.
+2. Emergency Commander creates flood incident.
+3. Incident is stored in PostgreSQL.
+4. Incident appears on dashboard.
+5. Incident appears on map.
+6. Weather integration retrieves available real weather data.
+7. Risk engine assesses incident.
+8. Risk assessment is saved.
+9. Priority score is calculated.
+10. A relief request is submitted.
+11. Request appears in the command center.
+12. Inventory is retrieved.
+13. Suitable warehouse is identified.
+14. Allocation engine proposes resources.
+15. Route provider calculates routes.
+16. Vehicle capacity is validated.
+17. Commander reviews allocation.
+18. Commander approves.
+19. Inventory is reserved transactionally.
+20. Dispatch is created.
+21. Warehouse operator confirms loading.
+22. Delivery is marked in transit.
+23. Authorized location updates are received, if GPS is configured.
+24. Delivery is confirmed.
+25. Stock transactions are reconciled.
+26. Relief request is updated.
+27. Analytics are recalculated.
+28. Notification is delivered.
+29. AI situation report is generated from verified records.
+30. Audit logs show all major actions.
+
+Fix the bugs found.
+
+Do not claim a test passed if it was not executed.
+
+---
+
+# 33. DEMO AND REAL DATA MODES
+
+Implement two clearly separated modes.
+
+## Operational Mode
+
+Uses:
+
+- Real configured APIs
+- Actual database records
+- Actual authenticated users
+- Real routing responses
+- Actual event updates
+- Real inventory transactions
+
+## Demo Mode
+
+Uses:
+
+- Seeded sample emergencies
+- Sample warehouses
+- Sample resources
+- Sample vehicles
+- Sample deliveries
+
+Clearly label all demo data.
+
+Never mix demo data with real operational records without clear labeling and isolation.
+
+Provide a resettable demo dataset for hackathon judging.
+
+Do not reset production data.
+
+---
+
+# 34. ENVIRONMENT CONFIGURATION
+
+Create a complete `.env.example`.
+
+Frontend variables:
+
+- `VITE_API_BASE_URL`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Backend variables:
+
+- `DATABASE_URL`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `GEMINI_API_KEY`
+- `OPENAI_API_KEY`
+- `WEATHER_API_KEY`
+- `OPENROUTESERVICE_API_KEY`
+- `REDIS_URL`
+- `JWT_SECRET`
+- `CORS_ORIGINS`
+- `APP_ENV`
+- `LOG_LEVEL`
+
+Only implement keys actually required.
+
+Document:
+
+- Which provider requires which key
+- Where to get it
+- Where to store it
+- Which keys are public
+- Which keys must remain private
+
+Never place private credentials in source code.
+
+---
+
+# 35. DEPLOYMENT
+
+Prepare deployment configuration.
+
+## Frontend
+
+Vercel.
+
+## Backend
+
+Render or an appropriate production server.
+
+## Database
+
+Supabase PostgreSQL.
+
+## Realtime
+
+Supabase Realtime or backend WebSocket architecture.
+
+## Cache and background jobs
+
+Redis-compatible managed service where needed.
+
+Configure:
+
+- Production environment
+- Development environment
+- HTTPS
+- CORS
+- Database migrations
+- Build scripts
+- Start scripts
+- Health checks
+- Logs
+- Error reporting
+- Deployment documentation
+- API documentation
+
+Ensure the production frontend calls the deployed backend.
+
+Never accidentally use localhost in production.
+
+---
+
+# 36. IMPLEMENTATION PHASES
+
+Execute all phases.
+
+### PHASE 1 — Existing project audit
+Inspect, document, preserve and fix existing architecture.
+
+### PHASE 2 — Core infrastructure
+Database, authentication, permissions, migrations and backend configuration.
+
+### PHASE 3 — Emergency intelligence
+Incident creation, validation, severity, risk engine, weather integration and risk explanations.
+
+### PHASE 4 — Geospatial system
+Real map, coordinates, layers, spatial queries, warehouses, incidents and relief requests.
+
+### PHASE 5 — Relief request system
+Request submission, verification, needs, prioritization and statuses.
+
+### PHASE 6 — Inventory engine
+Warehouses, items, stock movements, reservations, shortages and reconciliation.
+
+### PHASE 7 — Allocation engine
+Real stock matching, candidate ranking, split allocation, constraints and approval.
+
+### PHASE 8 — Route and logistics
+Routing API, vehicle management, dispatch, delivery tracking and status updates.
+
+### PHASE 9 — AI intelligence
+Specialized agents, structured outputs, evidence, explanations, task management and approval gates.
+
+### PHASE 10 — Realtime infrastructure
+Event pipeline, subscriptions, WebSockets, event outbox, reconnection and reconciliation.
+
+### PHASE 11 — Frontend integration
+Complete pages, connect backend, responsive UI, loading, error and empty states.
+
+### PHASE 12 — Analytics and notifications
+Database-backed metrics, realtime alerts, reports and exports.
+
+### PHASE 13 — Testing
+Unit tests, integration tests, frontend tests and full workflow tests.
+
+### PHASE 14 — Deployment
+Production environment, migrations, configuration, health checks, documentation and deployment readiness.
+
+Do not stop at a phase plan.
+
+Implement the work, run the project, inspect errors, fix them, and continue.
+
+---
+
+# 37. FINAL DEFINITION OF DONE
+
+RESQFLOW AI is complete only when:
+
+- The existing project is preserved and improved.
+- Authentication works.
+- Users can log in.
+- Permissions work server-side.
+- Database persistence works.
+- Incident creation works.
+- Risk calculations work.
+- Weather data is real when configured.
+- Data sources are transparent.
+- The map works.
+- Geographic operations work.
+- Relief requests work.
+- Inventory transactions are safe.
+- Allocation recommendations are feasible.
+- Approval works.
+- Dispatch works.
+- Delivery tracking works.
+- Realtime events work.
+- Reconnection works.
+- Notifications work.
+- AI agents return structured validated outputs.
+- AI uses actual evidence.
+- AI cannot execute unauthorized actions.
+- Analytics use database data.
+- Provider outages are handled.
+- Demo mode is clearly separated.
+- Tests have been executed.
+- Critical bugs have been fixed.
+- Deployment is configured.
+- Documentation is complete.
+
+---
+
+# 38. FINAL REPORT REQUIRED
+
+At the end of implementation, provide a truthful completion report.
+
+Include:
+
+1. Existing architecture discovered
+2. What was preserved
+3. What was implemented
+4. Frontend pages completed
+5. Backend services completed
+6. Database tables and migrations
+7. APIs implemented
+8. External APIs connected
+9. API keys still required
+10. Realtime features implemented
+11. AI agents implemented
+12. Algorithms implemented
+13. Security features implemented
+14. Tests executed
+15. Tests passed
+16. Tests failed
+17. Bugs fixed
+18. Remaining limitations
+19. Local run instructions
+20. Deployment instructions
+21. Exact next steps
+
+Never claim a feature is complete unless the implementation exists and has been verified.
+
+**BUILD THE ACTUAL WORKING SYSTEM. DO NOT STOP AT THE DESIGN, PLAN, OR UI.**
+
+RESQFLOW AI must operate as a real-time emergency intelligence, resource allocation and relief logistics platform with real data, explainable decisions, persistent operations and human-controlled execution.

@@ -1,0 +1,1586 @@
+# RESQFLOW AI — MASTER UI/UX VISUAL REDESIGN PROMPT
+## Premium Frontend Transformation | Cinematic Landing Page | Design System | Motion | Responsive Polish
+
+You are a world-class product designer, senior frontend engineer, design systems architect, motion designer, and SaaS UI/UX specialist.
+
+Your mission is to completely redesign and elevate the existing RESQFLOW AI website into a visually exceptional, premium, cinematic, enterprise-grade emergency intelligence and disaster-response platform.
+
+The current UI/UX is visually weak. Its colors, spacing, padding, layout consistency, typography, font sizes, font weights, card design, frontend presentation, landing page, and visual hierarchy need a complete professional overhaul.
+
+I want this to look like an advanced technology product created by a world-class product design team—not a basic hackathon dashboard, template website, AI-generated generic interface, or ordinary admin panel.
+
+---
+
+# 1. CRITICAL RULE — DO NOT REBUILD THE PROJECT
+
+Before modifying anything:
+
+- Inspect the entire existing repository.
+- Identify the existing framework, routes, components, CSS, UI libraries, authentication, layouts, dashboard, API integrations, database, realtime functionality, and deployment setup.
+- Understand the existing component hierarchy and page structure.
+- Identify what is already functional.
+- Identify broken UI, inconsistent styling, spacing problems, layout problems, and design inconsistencies.
+
+DO NOT rebuild the application from scratch.
+
+DO NOT replace the backend.
+
+DO NOT remove existing features.
+
+DO NOT break API connections, database operations, authentication, realtime updates, AI agents, incident management, warehouse management, logistics, resource allocation, route planning, or user roles.
+
+Do not create fake dashboard data to make the interface look better.
+
+Preserve all working functionality while redesigning the presentation layer.
+
+Make the redesign directly inside the existing codebase.
+
+---
+
+# 2. NEW DESIGN IDENTITY — RESQFLOW AI
+
+Brand:
+RESQFLOW AI
+
+Full title:
+Autonomous Emergency Response & Supply Chain Intelligence Network
+
+Tagline:
+Predict risks. Coordinate resources. Deliver relief. Save lives.
+
+Design identity:
+MIDNIGHT COMMAND — GLOBAL EMERGENCY INTELLIGENCE
+
+Visual direction:
+
+- Premium dark technology aesthetic
+- Midnight navy foundation
+- Graphite and slate surfaces
+- Electric indigo accents
+- Ice-blue intelligence highlights
+- Carefully controlled emergency red
+- Sophisticated typography
+- Spatial, clean layout
+- Cinematic movement
+- High-precision visual details
+- Modern professional command-center appearance
+
+The interface should visually communicate:
+
+- Intelligence
+- Urgency
+- Reliability
+- Clarity
+- Coordination
+- Technology
+- Trust
+- Speed
+- Human impact
+
+Avoid visually overwhelming the user.
+
+---
+
+# 3. CREATE A COMPLETE GLOBAL DESIGN SYSTEM
+
+Do not style each page independently.
+
+Create one unified design system with centralized CSS variables or the equivalent styling architecture used by the existing framework.
+
+All pages, dashboards, cards, modals, forms, navigation, maps, tables, and buttons must use the same design tokens.
+
+## COLOR PALETTE
+
+### Main backgrounds
+
+Primary:
+#080D18
+
+Secondary:
+#0B1220
+
+Page background:
+#0A101C
+
+Sidebar background:
+#0A0F19
+
+Elevated surface:
+#111A2A
+
+Card surface:
+#131D2D
+
+Card hover:
+#19263A
+
+Raised surface:
+#1C293C
+
+### Borders
+
+Default border:
+rgba(148, 163, 184, 0.12)
+
+Strong border:
+rgba(148, 163, 184, 0.20)
+
+Active border:
+rgba(109, 124, 255, 0.48)
+
+Focus border:
+#7C8BFF
+
+### Primary brand color
+
+Electric indigo:
+#6D7CFF
+
+Primary hover:
+#8190FF
+
+Soft primary:
+rgba(109, 124, 255, 0.12)
+
+Primary glow:
+rgba(109, 124, 255, 0.22)
+
+### Secondary brand
+
+Ice cyan:
+#35C8F5
+
+Cyan soft:
+rgba(53, 200, 245, 0.12)
+
+### Status colors
+
+Success:
+#35D6A0
+
+Warning:
+#FFB547
+
+Danger:
+#FF5C70
+
+Critical:
+#FF465A
+
+Information:
+#61B8FF
+
+Use semantic colors consistently.
+
+Never use red for ordinary decorative purposes.
+
+Red should indicate emergency, critical risk, danger, failure, or destructive actions.
+
+Green should represent verified success, operational availability, completion, or healthy status.
+
+Amber should indicate caution, degraded conditions, warning, or pending action.
+
+Blue and indigo should represent intelligence, primary interactions, selected elements, AI features, and active navigation.
+
+Do not randomly mix colors between components.
+
+---
+
+# 4. TYPOGRAPHY — COMPLETE FONT HIERARCHY
+
+Implement a premium typography system.
+
+Use a modern font pairing:
+
+- Inter for general interface text, labels, tables, forms, navigation, and controls.
+- Manrope for headings and hero display text if it works with the existing stack.
+
+Use locally available fonts or reliable font loading methods. Provide fallback fonts.
+
+Typography must be consistent across every page.
+
+### Typography scale
+
+Hero headline:
+56–76px desktop, responsive clamp
+
+Hero secondary heading:
+30–42px
+
+Page title:
+28–36px
+
+Section title:
+20–24px
+
+Card heading:
+15–18px
+
+Body:
+14–16px
+
+Secondary body:
+13–14px
+
+Navigation:
+13–14px
+
+Small metadata:
+11–12px
+
+Micro-label:
+10–11px, use sparingly
+
+### Font weights
+
+Hero:
+700–800
+
+Page heading:
+650–750
+
+Section heading:
+600–700
+
+Card heading:
+550–650
+
+Body:
+400–500
+
+Labels:
+500–600
+
+Numbers:
+500–700
+
+Use a proper typography hierarchy.
+
+Do not use bold text everywhere.
+
+Do not use excessively small text.
+
+Do not use random font sizes across components.
+
+Use tabular numbers for statistics, counters, dates, timestamps, and measurements where appropriate.
+
+Make text readable and accessible.
+
+---
+
+# 5. SPACING, PADDING & LAYOUT SYSTEM
+
+Create a consistent 4px-based spacing system.
+
+Tokens:
+
+4px — micro spacing
+
+8px — compact
+
+12px — small
+
+16px — standard
+
+20px — medium
+
+24px — comfortable
+
+32px — section spacing
+
+40px — large
+
+48px — page section spacing
+
+64px — hero and major sections
+
+80–120px — cinematic landing page sections
+
+### Dashboard spacing
+
+Main page padding:
+24–32px desktop
+
+Mobile:
+16px
+
+Card padding:
+20–24px
+
+Compact card padding:
+16px
+
+Large featured card:
+24–32px
+
+Card gap:
+16–20px
+
+Section gap:
+28–36px
+
+Form control height:
+42–46px
+
+Button height:
+40–46px
+
+Table cell height:
+48–56px
+
+Sidebar:
+240–260px expanded
+
+Top header:
+64–72px
+
+Make all page layouts align to a consistent grid.
+
+Do not create random spacing values in every component.
+
+Do not make cards cramped.
+
+Do not make dashboard content unnecessarily oversized.
+
+Ensure balanced whitespace and proper density.
+
+---
+
+# 6. CARD SYSTEM — REDESIGN EVERY CARD
+
+Every card across the entire website must follow a consistent premium card design.
+
+Default card:
+
+- Dark elevated background
+- Subtle border
+- 14–18px radius
+- Balanced padding
+- Proper typography
+- Clean alignment
+- Minimal shadow
+- Controlled hover interaction
+- No excessive glow
+
+Suggested:
+
+Background:
+#111A2A
+
+Border:
+1px solid rgba(148, 163, 184, 0.12)
+
+Radius:
+16px
+
+Padding:
+20–24px
+
+Hover:
+
+- Border slightly brighter
+- Surface slightly brighter
+- Transition approximately 180–240ms
+- Minimal translateY(-1px) only where appropriate
+
+Do not apply dramatic animations to every card.
+
+### Card types
+
+1. Standard information card
+2. Metric/statistics card
+3. Emergency/critical card
+4. AI insight card
+5. Interactive action card
+6. Map card
+7. Warehouse/resource card
+8. Incident card
+9. Agent status card
+10. Featured hero card
+
+Each type should have a consistent structure.
+
+Create consistent icon size, icon background, title placement, metadata, action placement, and card spacing.
+
+Eliminate:
+
+- Random card heights
+- Inconsistent corner radii
+- Different padding on similar cards
+- Misaligned icons
+- Text clipping
+- Overflow
+- Unnecessary nested cards
+- Too many borders
+- Excessive glow
+
+---
+
+# 7. COMPLETE SIDEBAR REDESIGN
+
+Make the sidebar feel like a premium emergency operations product.
+
+Create:
+
+- Refined brand logo area
+- RESQFLOW AI branding
+- Compact workspace/org selector if existing
+- Clean navigation groups
+- Consistent navigation icons
+- Active route highlighting
+- Smooth hover states
+- Subtle active indicator
+- Proper vertical rhythm
+- User profile at bottom
+- Collapse/expand behavior if supported
+
+Navigation groups should be organized based on the actual existing pages.
+
+Potential groups:
+
+COMMAND
+- Overview
+- Emergency Intelligence
+- Live Incidents
+- Risk Map
+
+OPERATIONS
+- Relief Requests
+- Resources & Inventory
+- Warehouses
+- Allocation
+- Logistics & Dispatch
+
+INTELLIGENCE
+- AI Coordination
+- Agents
+- Response Plans
+- Simulation
+
+MANAGEMENT
+- Notifications
+- Analytics
+- Settings
+
+Do not add navigation items that lead to nonexistent pages.
+
+Use the actual routes from the project.
+
+Sidebar active state:
+
+- Soft indigo background
+- Small glowing indicator or subtle vertical line
+- White text
+- Clear icon
+
+Inactive:
+
+- Muted slate
+- Subtle hover surface
+
+Do not use excessive bright colors in the sidebar.
+
+---
+
+# 8. TOPBAR REDESIGN
+
+Make the top header refined and minimal.
+
+Include existing functionality such as:
+
+- Breadcrumbs
+- Search
+- Realtime system status
+- Notification bell
+- Theme toggle
+- User avatar
+- User menu
+- Organization context
+
+Use a subtle translucent background only if it improves readability.
+
+Add a thin border.
+
+Avoid oversized topbars.
+
+The topbar should feel integrated into the application.
+
+---
+
+# 9. DASHBOARD REDESIGN
+
+Redesign the entire dashboard into a real emergency command center.
+
+The first screen must immediately communicate the current operational picture.
+
+### Dashboard layout
+
+Top:
+
+- Clear greeting or command title
+- Current region/organization context
+- Current date/time if already available
+- Real operational status
+- Refresh action if available
+
+### Main overview metrics
+
+Create refined metric cards for actual available metrics, such as:
+
+- Active Emergencies
+- Critical Risk Areas
+- Relief Requests
+- Available Resources
+- Active Dispatches
+- Operational Warehouses
+
+Do not fabricate numbers.
+
+If no data is available, display a meaningful empty state.
+
+Each metric card should include:
+
+- Label
+- Large value
+- Optional trend only if calculated from real historical data
+- Status context
+- Small icon
+- Consistent alignment
+
+Avoid unnecessary charts.
+
+Only show charts when the actual data provides meaningful insight.
+
+### Dashboard content
+
+Organize the dashboard into balanced sections:
+
+- Operational overview
+- Active emergency incidents
+- Live emergency map
+- Risk distribution
+- Resource readiness
+- Supply shortages
+- Recent activity
+- AI-generated response insights
+- Logistics overview
+
+Prioritize high-value information.
+
+Do not make every card equally important.
+
+The critical information should be visually dominant.
+
+---
+
+# 10. CINEMATIC LANDING PAGE — COMPLETE FRONT PAGE TRANSFORMATION
+
+This is the highest-priority part of the redesign.
+
+The existing landing page should be transformed into an unforgettable, premium animated technology landing page.
+
+The landing page should feel like a product launch film for an advanced emergency-response intelligence platform.
+
+Reference the visual quality of modern technology product websites, premium AI platforms, futuristic mission-control interfaces, and cinematic SaaS landing pages—but create a unique RESQFLOW identity.
+
+Do not copy any website exactly.
+
+## LANDING PAGE STRUCTURE
+
+### SECTION 1 — CINEMATIC HERO
+
+Full-screen or near-full-screen hero.
+
+Height:
+90–100svh desktop.
+
+Background:
+
+- Deep midnight navy
+- Animated gradient atmosphere
+- Subtle atmospheric particles
+- Glowing geographical grid
+- Animated emergency network
+- Subtle topographic or map texture
+- Moving light trails
+- Floating location signals
+- Low-intensity indigo/cyan glow
+
+Keep the background dark and sophisticated.
+
+Do not overwhelm the page with effects.
+
+### HERO BRAND
+
+Small upper label:
+
+INTELLIGENCE FOR A WORLD IN CRISIS
+
+Main headline:
+
+When every second matters,
+intelligence changes everything.
+
+Create beautiful line breaks.
+
+Use large typography.
+
+Use a subtle gradient highlight on selected words such as:
+
+"intelligence"
+
+or
+
+"every second"
+
+The gradient should use white, soft cyan, and subtle indigo.
+
+Avoid rainbow gradients.
+
+### HERO DESCRIPTION
+
+RESQFLOW AI connects emergency intelligence, environmental risk, relief resources, and logistics into one coordinated response network—helping decision-makers move from uncertainty to action.
+
+### HERO CTA
+
+Primary:
+
+Explore Command Center
+
+Secondary:
+
+Discover How It Works
+
+Use premium button styles.
+
+Primary button:
+
+- Indigo gradient or solid brand surface
+- Soft glow on hover
+- Smooth arrow movement
+- 48–54px height
+
+Secondary:
+
+- Transparent surface
+- Subtle border
+- Clean hover state
+
+### HERO VISUAL
+
+Create a sophisticated, animated central visual showing:
+
+- A stylized live disaster intelligence map
+- Multiple incident markers
+- Warehouse nodes
+- Supply routes
+- Connected network lines
+- Resource movement
+- An animated route between incident and relief warehouse
+- Subtle pulses around critical points
+- Floating intelligence panels
+
+This must look like a premium command-center visualization.
+
+If a working map already exists, reuse it and enhance the styling.
+
+If a real map is not available for the landing hero, create a lightweight SVG/CSS visualization—not a fake real-world map with falsely live data.
+
+Mark decorative content clearly as a visualization/demo.
+
+The hero visualization should have depth, subtle motion, and a sense of intelligence.
+
+### FLOATING UI PANELS
+
+Add 2–4 carefully designed floating panels surrounding the main visual, where responsive layout permits.
+
+Examples:
+
+Risk Intelligence:
+ELEVATED
+Assessment updated
+
+Resource Availability:
+12 Supply Categories
+Live inventory connected
+
+Network Status:
+CONNECTED
+Realtime services
+
+Response Plan:
+3 actions awaiting review
+
+These panels must be driven by real data if connected.
+
+If they are purely illustrative, clearly mark them as DEMO / SAMPLE or replace them with a static decorative visualization without implying operational data.
+
+Motion:
+
+- Slight floating movement
+- Slow, staggered animation
+- Soft opacity transitions
+- Small indicator pulses
+- No aggressive bouncing
+- No rapid flashing
+
+### HERO BACKGROUND ANIMATION
+
+Create layered movement:
+
+1. Slow-moving ambient gradient
+2. Subtle grid parallax
+3. Small particle movement
+4. Soft light beams
+5. Network nodes appearing and disappearing
+6. Route line drawing animation
+7. Hero visual parallax
+
+Movement must remain subtle.
+
+Use CSS and SVG whenever practical.
+
+Do not introduce heavyweight animation dependencies without evaluating the existing project.
+
+---
+
+# 11. LANDING PAGE — TRUST & CAPABILITY STRIP
+
+Immediately below the hero, create a refined capability strip.
+
+Title:
+
+BUILT FOR COORDINATED EMERGENCY RESPONSE
+
+Use 4–5 capability items:
+
+- Real-Time Intelligence
+- Risk-Aware Decision Support
+- Resource Coordination
+- Intelligent Logistics
+- Human-Controlled Response
+
+Each item has:
+
+- Small icon
+- Concise label
+- One-line description
+
+Use subtle dividers.
+
+Avoid huge marketing cards.
+
+---
+
+# 12. PROBLEM SECTION — VISUAL STORYTELLING
+
+Section title:
+
+Disasters don't wait for systems to catch up.
+
+Explain the real coordination failures:
+
+- Information arrives fragmented.
+- Risks evolve faster than manual coordination.
+- Resources are scattered across locations.
+- Supply shortages are difficult to see.
+- Routes may become unsafe.
+- Decisions lack a unified operational picture.
+
+Design:
+
+- Editorial layout
+- Asymmetric columns
+- Large readable text
+- Subtle visual illustrations
+- Dark gradient transition
+- Animated text reveal
+
+Make it emotional but professional.
+
+Avoid exaggerated claims.
+
+---
+
+# 13. SOLUTION SECTION — ONE CONNECTED RESPONSE NETWORK
+
+Title:
+
+One intelligence layer.
+Every response connected.
+
+Show the complete workflow:
+
+Incident Detection
+↓
+Risk Intelligence
+↓
+Environmental Assessment
+↓
+Resource Intelligence
+↓
+Smart Allocation
+↓
+Route Planning
+↓
+Dispatch
+↓
+Monitoring
+
+Create a beautifully animated workflow.
+
+Each node should:
+
+- Reveal sequentially
+- Have a consistent icon
+- Use a subtle connector
+- Highlight the current active node
+- Display a short explanation
+
+On desktop, use a horizontal network or connected flow.
+
+On mobile, use a vertical timeline.
+
+The animation must respect reduced-motion preferences.
+
+---
+
+# 14. FEATURE SECTIONS — PREMIUM EDITORIAL LAYOUT
+
+Create feature sections with alternating layouts.
+
+### Emergency Intelligence
+
+Identify incidents, assess severity, analyze environmental conditions, and organize verified information.
+
+Visual:
+
+- Incident interface
+- Risk score visualization
+- Severity indicators
+- Evidence timeline
+
+### Environmental Intelligence
+
+Connect environmental observations and forecasts to emergency assessments.
+
+Visual:
+
+- Weather layers
+- Environmental indicators
+- Forecast timeline
+
+Only display actual connected information as live.
+
+### Resource Intelligence
+
+Understand supply availability, warehouse stock, incoming inventory, and shortages.
+
+Visual:
+
+- Warehouse cards
+- Supply category visualization
+- Inventory indicators
+
+### Smart Allocation
+
+Support resource decisions using incident needs, availability, urgency, and suitability.
+
+Visual:
+
+- Resource allocation flow
+- Matching animation
+- Allocation summary
+
+### Logistics Intelligence
+
+Coordinate transportation, route evaluation, delivery, and dispatch.
+
+Visual:
+
+- Route line
+- Vehicle visualization
+- Destination node
+- ETA if actually available
+
+### Multi-Agent AI
+
+Show how specialized agents analyze different operational domains and produce a unified response recommendation.
+
+Visual:
+
+- AI agent nodes
+- Central orchestrator
+- Agent connections
+- Structured response plan
+
+Make these sections visually rich, not monotonous.
+
+Do not use the same three-card layout for every section.
+
+Use alternating layouts, large visual panels, diagrams, and thoughtful whitespace.
+
+---
+
+# 15. AI VISUAL DESIGN
+
+Create a distinctive AI intelligence interface.
+
+AI should not look like a generic chatbot.
+
+Design a sophisticated intelligence panel featuring:
+
+- AI coordination status
+- Agent activity
+- Agent name and role
+- Current task
+- Progress
+- Structured insights
+- Evidence references
+- Recommendations
+- Confidence or uncertainty when supported
+- Human approval status
+
+Use subtle indigo/cyan illumination.
+
+Use structured layouts.
+
+Avoid giant glowing AI circles.
+
+Avoid fake agent thinking animation.
+
+Do not indicate an agent is running unless the backend confirms its actual state.
+
+---
+
+# 16. MAP & GEOGRAPHIC UI REDESIGN
+
+Maps are one of the most important parts of this project.
+
+Improve:
+
+- Map container
+- Zoom controls
+- Layers
+- Marker style
+- Incident severity markers
+- Warehouse markers
+- Route visualization
+- Selected incident panel
+- Map legends
+- Tooltip
+- Map loading states
+- Empty states
+- Map responsiveness
+
+Use a premium dark map theme when technically appropriate.
+
+Maintain map usability and geographical accuracy.
+
+Ensure map controls remain visible.
+
+Avoid excessive glowing markers that make the map unreadable.
+
+Clearly distinguish:
+
+- Incidents
+- Warehouses
+- Resources
+- Routes
+- Risk zones
+- User/vehicle locations
+
+Do not break real routing or location functionality.
+
+---
+
+# 17. BUTTONS & INTERACTIONS
+
+Redesign all buttons consistently.
+
+Primary button:
+
+- Brand indigo
+- Clear text
+- Subtle hover
+- Smooth transition
+- Focus-visible ring
+- Loading state
+- Disabled state
+
+Secondary button:
+
+- Dark surface
+- Border
+- Clear hover state
+
+Danger button:
+
+- Semantic red
+- Reserved for destructive actions
+
+Icon button:
+
+- Consistent 36–42px touch target
+- Tooltip
+- Accessible label
+
+Interactions:
+
+- 160–220ms transitions
+- Hover state
+- Focus state
+- Active state
+- Disabled state
+- Loading state
+
+Do not make buttons excessively rounded.
+
+Use a consistent radius system.
+
+---
+
+# 18. FORMS & INPUTS
+
+Redesign:
+
+- Input fields
+- Selects
+- Textareas
+- Search fields
+- Filters
+- Dropdowns
+- Date controls
+- Dialogs
+
+Use:
+
+- Consistent heights
+- Proper labels
+- Clean borders
+- Accessible focus states
+- Clear validation messages
+- Helpful placeholder text
+- Proper spacing
+
+Do not use placeholder text instead of labels.
+
+Make forms feel modern and professional.
+
+---
+
+# 19. TABLES & DATA DENSITY
+
+Emergency-response platforms must display complex information without becoming visually exhausting.
+
+Redesign:
+
+- Incident lists
+- Warehouse inventories
+- Relief requests
+- Allocations
+- Vehicles
+- Dispatches
+- AI tasks
+- Activity history
+
+Use:
+
+- Clear table headers
+- Proper row height
+- Subtle row separators
+- Semantic status labels
+- Consistent typography
+- Responsive overflow
+- Search/filter controls
+- Pagination if supported
+
+Do not shrink font sizes to fit everything.
+
+Do not use overly bright table rows.
+
+Maintain information hierarchy.
+
+---
+
+# 20. MODALS, DRAWERS & DETAIL PANELS
+
+All dialogs and drawers should use the same design language.
+
+Implement:
+
+- Consistent overlay
+- Soft backdrop
+- Proper modal width
+- Clean header
+- Description
+- Structured content
+- Footer actions
+- Keyboard support
+- Escape behavior where appropriate
+- Focus handling
+
+Use side drawers for detailed records when this improves the workflow.
+
+Do not make every action open a massive modal.
+
+---
+
+# 21. MOTION DESIGN — GLOBAL ANIMATION SYSTEM
+
+Create a carefully controlled animation language.
+
+### Landing page
+
+- Ambient background movement
+- Particle movement
+- Network line drawing
+- Hero object movement
+- Floating UI panels
+- Scroll reveal
+- Text reveal
+- Section transitions
+- Parallax
+
+### Dashboard
+
+- Gentle card entrance
+- Metric transitions
+- Realtime update indication
+- Smooth dropdowns
+- Modal transitions
+- Loading skeletons
+
+### Micro-interactions
+
+- Button hover
+- Navigation transition
+- Active indicator
+- Card hover
+- Tooltip
+- Notification arrival
+- Toggle transition
+
+Use consistent timing:
+
+Fast:
+120–160ms
+
+Normal:
+180–240ms
+
+Slow:
+300–450ms
+
+Cinematic:
+600–1200ms
+
+Use smooth easing.
+
+Do not animate every element simultaneously.
+
+Do not use flashing.
+
+Do not use excessive spring or bounce.
+
+Do not make the dashboard slow or difficult to navigate.
+
+Respect:
+
+prefers-reduced-motion
+
+Disable or reduce nonessential animation for users who prefer reduced motion.
+
+Optimize animations to avoid expensive layout recalculations.
+
+Prefer transform and opacity.
+
+---
+
+# 22. LIGHT MODE — DO NOT IGNORE IT
+
+Create a premium light mode.
+
+Background:
+
+#F4F7FB
+
+Surface:
+
+#FFFFFF
+
+Secondary surface:
+
+#EDF2F8
+
+Text:
+
+#111827
+
+Secondary text:
+
+#64748B
+
+Border:
+
+#DCE4EF
+
+Primary:
+
+#5869E8
+
+Cyan:
+
+#089FCB
+
+Danger:
+
+#E5465D
+
+Success:
+
+#15966C
+
+Warning:
+
+#B97716
+
+Light mode must be intentionally designed.
+
+Do not simply invert dark mode.
+
+Ensure:
+
+- Proper contrast
+- Soft surfaces
+- Clean cards
+- Premium shadows
+- Accessible text
+- Correct maps and charts
+- Correct status colors
+- Consistent theme behavior
+
+Theme switching must persist according to the existing app behavior and should not cause flickering on reload.
+
+---
+
+# 23. RESPONSIVE DESIGN — DESKTOP, TABLET & MOBILE
+
+Audit every existing page.
+
+Desktop:
+
+- Multi-column dashboards
+- Sidebar navigation
+- Proper map layouts
+- Comfortable whitespace
+- Balanced information density
+
+Tablet:
+
+- Collapsible sidebar
+- Reduced grid columns
+- Responsive panels
+- Proper map height
+
+Mobile:
+
+- Compact navigation
+- Bottom navigation or mobile drawer where appropriate
+- Single-column layout
+- Cards stack
+- Touch-friendly controls
+- Full-width actions where needed
+- Tables adapt or scroll
+- Maps remain usable
+- Hero typography scales correctly
+- Landing animations are reduced
+- No horizontal overflow
+
+Test widths:
+
+320px
+375px
+390px
+430px
+768px
+1024px
+1280px
+1440px
+1920px
+
+Do not merely make the desktop design smaller.
+
+Redesign layouts appropriately for mobile.
+
+---
+
+# 24. PREMIUM LOADING & EMPTY STATES
+
+Replace ugly loading states with polished skeletons.
+
+Loading:
+
+- Card skeleton
+- Table skeleton
+- Map skeleton
+- Dashboard skeleton
+- AI task loading state
+
+Empty states:
+
+- No active incidents
+- No relief requests
+- No inventory
+- No warehouses
+- No AI sessions
+- No notifications
+
+Empty states should include:
+
+- Small elegant illustration or icon
+- Clear explanation
+- Useful action if available
+
+Never create fake records to fill empty screens.
+
+---
+
+# 25. LANDING PAGE FOOTER
+
+Create a sophisticated footer.
+
+Include:
+
+- RESQFLOW AI logo
+- Full product name
+- Tagline
+- Product links based on real routes
+- Capabilities
+- Documentation if available
+- Contact or project links if configured
+- Copyright
+
+Use a subtle background transition.
+
+Add a refined final CTA:
+
+Every minute matters.
+Every decision should count.
+
+RESQFLOW AI
+
+Predict risks. Coordinate resources. Deliver relief. Save lives.
+
+---
+
+# 26. LOGO & BRAND ELEMENTS
+
+Refine the existing logo if it exists.
+
+If the current logo is poor, improve it without losing brand identity.
+
+Create a simple, unique geometric emergency-intelligence symbol using:
+
+- Network nodes
+- Connected routes
+- Flow
+- Shield or coordination concepts
+
+Do not create a generic medical cross as the primary logo.
+
+Do not overcomplicate the logo.
+
+The brand should remain recognizable at small sizes.
+
+---
+
+# 27. IMPLEMENTATION RULES
+
+First audit.
+
+Then define design tokens.
+
+Then implement in this order:
+
+1. Global CSS variables and typography
+2. Base layout and theme
+3. Sidebar and topbar
+4. Buttons and inputs
+5. Cards and reusable components
+6. Dashboard
+7. Incident pages
+8. Risk visualization
+9. Resources and warehouses
+10. Allocation
+11. Logistics and dispatch
+12. AI coordination and agents
+13. Other existing pages
+14. Landing page
+15. Responsive behavior
+16. Animation polish
+17. Accessibility
+18. Performance optimization
+19. Final QA
+
+Use existing UI libraries where they are already appropriate.
+
+Do not install multiple competing design libraries.
+
+Do not unnecessarily add dependencies.
+
+Keep components reusable.
+
+Keep styling maintainable.
+
+Avoid giant monolithic components.
+
+Avoid duplicate CSS.
+
+Do not use inline styling for every element.
+
+Use design tokens.
+
+Use semantic HTML.
+
+Use correct keyboard navigation.
+
+---
+
+# 28. FRONTEND PERFORMANCE
+
+Cinematic does not mean slow.
+
+Optimize:
+
+- Image loading
+- Font loading
+- Animation
+- Component rendering
+- Map rendering
+- Large data tables
+- Dashboard calculations
+- Route transitions
+
+Avoid:
+
+- Huge background videos
+- Excessive particle counts
+- Heavy animation packages
+- Unnecessary rerenders
+- Excessive blur effects
+- Large unoptimized images
+- Blocking page load
+
+Hero animations must be lightweight.
+
+The landing page should feel fast and smooth even on mid-range mobile devices.
+
+---
+
+# 29. STRICT DATA INTEGRITY
+
+This project is an emergency intelligence platform.
+
+Never:
+
+- Fabricate live incident data.
+- Fabricate weather.
+- Fabricate operational readiness.
+- Fabricate warehouse stock.
+- Fabricate vehicle locations.
+- Fabricate delivery statuses.
+- Fabricate AI agents' activity.
+- Fabricate routing results.
+- Fabricate success metrics.
+
+Decorative landing-page visuals may use clearly identified illustrative/demo content.
+
+Dashboard data must come from actual connected systems.
+
+If a provider fails, show a clear unavailable or degraded state.
+
+Preserve freshness indicators.
+
+Preserve the distinction between AI recommendation, verified information, calculation, and unknown information.
+
+---
+
+# 30. FINAL UI/UX QUALITY AUDIT
+
+After implementation, inspect the entire application page by page.
+
+Verify:
+
+- The frontend is visually consistent.
+- All colors come from the design system.
+- Font sizes are consistent.
+- Font weights are controlled.
+- Padding is consistent.
+- Card layouts are aligned.
+- Border radii are consistent.
+- Sidebar looks premium.
+- Header looks premium.
+- Landing page looks cinematic.
+- Hero animations work.
+- Light mode works.
+- Dark mode works.
+- Mobile layout works.
+- Tablet layout works.
+- No overflow.
+- No broken buttons.
+- No missing icons.
+- No clipping.
+- No inconsistent spacing.
+- No unreadable text.
+- No unnecessary decorative elements.
+- No duplicated components.
+- No broken API functionality.
+- No broken authentication.
+- No broken realtime connections.
+- No backend changes that were not necessary.
+
+Run the existing lint, build, and tests.
+
+Fix UI-related errors.
+
+Check browser console.
+
+Check the actual deployed pages if deployment is available.
+
+Do not claim the redesign is complete unless it has actually been implemented and tested.
+
+---
+
+# FINAL OBJECTIVE
+
+Transform RESQFLOW AI into a premium, cinematic, modern AI emergency intelligence platform with:
+
+- World-class visual identity
+- Beautiful animated landing page
+- Sophisticated typography
+- Consistent color system
+- Premium cards
+- Excellent spacing
+- Clean dashboard
+- Refined sidebar
+- Advanced map presentation
+- AI intelligence visualizations
+- Smooth interactions
+- Professional light and dark modes
+- Responsive layouts
+- Accessible design
+- Fast performance
+- Zero broken functionality
+
+I want judges to open the website and immediately feel:
+
+"This is not an ordinary student dashboard. This looks like a serious, well-designed AI emergency coordination product."
+
+Make the entire frontend feel polished, cohesive, premium, futuristic, trustworthy, and memorable.
+
+Do not stop after changing the landing page.
+
+Redesign the complete existing UI/UX system and every relevant page while preserving the actual functionality.
+
+Finish with a factual implementation report describing what changed, which pages were redesigned, what animations were added, what was tested, what issues remain, and whether the production build succeeds.

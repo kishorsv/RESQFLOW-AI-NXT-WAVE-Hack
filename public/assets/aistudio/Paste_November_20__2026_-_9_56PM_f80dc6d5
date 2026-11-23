@@ -1,0 +1,1611 @@
+# PHASE 3 — RESQFLOW AI EMERGENCY INTELLIGENCE ENGINE
+## Deep Implementation Prompt — Real-Time, Data-Driven, Production-Ready
+
+Act as a senior backend engineer, AI/ML engineer, geospatial engineer, disaster intelligence specialist, and real-time systems architect.
+
+I am building **RESQFLOW AI — Autonomous Emergency Response & Supply Chain Intelligence Network**.
+
+Phase 1 and Phase 2 have already been initiated. The existing project contains or is being built with a frontend, FastAPI backend, Supabase PostgreSQL database, authentication, and infrastructure.
+
+Your task now is to implement **Phase 3: Emergency Intelligence Engine** directly into the existing codebase.
+
+Do not rebuild the project.
+
+Do not create a separate application.
+
+Do not give me only a plan.
+
+Inspect the existing project, understand the existing database and backend, and implement this phase completely by extending the current architecture.
+
+---
+
+# 1. PHASE 3 MISSION
+
+Build an intelligent emergency analysis engine that processes real emergency information and continuously evaluates operational risk.
+
+The engine must be capable of:
+
+- Registering emergency incidents
+- Validating emergency reports
+- Detecting duplicate reports
+- Retrieving live environmental information
+- Analyzing weather conditions
+- Calculating deterministic risk scores
+- Evaluating incident escalation
+- Identifying missing or unreliable information
+- Generating AI explanations
+- Creating evidence-based recommendations
+- Storing assessments in the database
+- Triggering alerts when risk changes significantly
+- Updating the dashboard and map in real time
+
+The system must never generate fake emergencies or pretend that simulated data is real.
+
+---
+
+# 2. FIRST — AUDIT EXISTING PHASE 1 AND PHASE 2
+
+Before writing new code, inspect the existing project.
+
+Identify:
+
+- Current backend structure
+- Existing FastAPI application
+- Database connection
+- Supabase configuration
+- Existing database tables
+- Existing incident models
+- Authentication implementation
+- Organization and role system
+- API routes
+- Frontend dashboard
+- Map components
+- Existing realtime connections
+- Weather integrations
+- AI integrations
+- Existing migrations
+- Dependencies
+- Current errors
+
+Determine which components can be reused.
+
+Do not create duplicate:
+
+- Database tables
+- Authentication systems
+- API clients
+- Incident models
+- Weather services
+- Realtime systems
+- AI services
+- Configuration files
+
+If an existing component is incomplete, upgrade it.
+
+If it works, preserve it.
+
+---
+
+# 3. IMPLEMENT THE EMERGENCY INTELLIGENCE ARCHITECTURE
+
+Create a modular intelligence pipeline.
+
+Architecture:
+
+```text
+EMERGENCY REPORT
+      |
+      v
+INPUT VALIDATION
+      |
+      v
+INCIDENT SERVICE
+      |
+      +---- Duplicate detection
+      |
+      +---- Geographic validation
+      |
+      v
+DATA COLLECTION ENGINE
+      |
+      +---- Incident database
+      +---- Weather provider
+      +---- Geographic context
+      +---- Verified reports
+      +---- Historical records
+      |
+      v
+DATA QUALITY ENGINE
+      |
+      +---- Freshness
+      +---- Missing information
+      +---- Source reliability
+      +---- Conflicting data
+      |
+      v
+RISK CALCULATION ENGINE
+      |
+      +---- Environmental risk
+      +---- Population impact
+      +---- Incident severity
+      +---- Vulnerability
+      +---- Access constraints
+      +---- Resource shortage signals
+      |
+      v
+RISK ASSESSMENT
+      |
+      +---- Score
+      +---- Classification
+      +---- Explanation
+      +---- Evidence
+      +---- Confidence limitations
+      |
+      v
+AI INTERPRETATION AGENT
+      |
+      +---- Situation summary
+      +---- Potential escalation
+      +---- Recommendations
+      +---- Missing information
+      |
+      v
+DATABASE PERSISTENCE
+      |
+      +---- Assessment history
+      +---- Risk factors
+      +---- Evidence
+      +---- AI outputs
+      |
+      v
+EVENT PUBLISHER
+      |
+      +---- Dashboard
+      +---- Map
+      +---- Notifications
+      +---- Incident center
+      +---- Analytics
+```
+
+Every step must have proper validation, logging, failure handling, and persistence.
+
+---
+
+# 4. INCIDENT MANAGEMENT ENGINE
+
+Implement a fully functional incident service.
+
+## Incident types
+
+- Flood
+- Flash flood
+- Landslide
+- Cyclone
+- Severe storm
+- Heatwave
+- Wildfire
+- Earthquake
+- Infrastructure failure
+- Water shortage
+- Power outage
+- Chemical incident
+- Other
+
+## Incident record
+
+Store:
+
+- Incident ID
+- Incident title
+- Description
+- Incident type
+- Severity
+- Status
+- Latitude
+- Longitude
+- Address
+- District
+- State
+- Country
+- Reported time
+- Incident start time, if known
+- Source type
+- Source ID
+- Reporter ID
+- Organization ID
+- People affected
+- Families affected
+- Vulnerable population
+- Estimated impact area
+- Immediate needs
+- Infrastructure affected
+- Verification status
+- Risk score
+- Priority score
+- Assigned team
+- Created timestamp
+- Updated timestamp
+
+## Severity levels
+
+- Level 1 — Minor
+- Level 2 — Moderate
+- Level 3 — Serious
+- Level 4 — Severe
+- Level 5 — Catastrophic
+
+Implement validation and permitted transitions.
+
+## Status workflow
+
+```text
+REPORTED
+   ↓
+UNDER_REVIEW
+   ↓
+VERIFIED
+   ↓
+ACTIVE
+   ↓
+ESCALATED
+   ↓
+CONTAINED
+   ↓
+RESOLVED
+   ↓
+ARCHIVED
+```
+
+Allow permitted transitions only.
+
+Do not automatically mark an incident verified simply because AI analyzed it.
+
+## Incident operations
+
+Implement:
+
+- Create incident
+- Edit incident
+- Retrieve incident
+- List incidents
+- Search incidents
+- Filter incidents
+- Update severity
+- Verify incident
+- Reject report
+- Escalate incident
+- Assign team
+- Add operational notes
+- Attach evidence
+- Update status
+- Resolve incident
+- Reopen incident
+- Archive incident
+- Retrieve incident history
+
+Every operation must be connected to the database.
+
+---
+
+# 5. ADVANCED INCIDENT VALIDATION
+
+Validate every incoming report.
+
+## Coordinate validation
+
+Check:
+
+- Latitude within valid range
+- Longitude within valid range
+- Both coordinates present where required
+- Coordinates are not accidentally swapped
+- Location accuracy when available
+- Coordinates are plausible for the submitted location
+
+Never silently modify coordinates.
+
+If coordinates are missing, allow a location search or address geocoding flow where configured.
+
+If geocoding fails, clearly explain that geographic intelligence cannot be calculated for the report.
+
+## Input validation
+
+Check:
+
+- Empty title
+- Invalid incident type
+- Invalid severity
+- Negative population
+- Impossible quantities
+- Invalid dates
+- Invalid coordinates
+- Malformed attachments
+- Oversized inputs
+- Duplicate requests
+- Unauthorized submissions
+
+Use Pydantic schemas.
+
+## Duplicate detection
+
+Implement duplicate detection based on:
+
+- Geographic distance
+- Incident type
+- Reported time
+- Similar titles
+- Description similarity
+- Existing incident status
+
+Use a deterministic matching process first.
+
+Optional AI similarity can assist but must not automatically merge incidents.
+
+Return:
+
+- Possible duplicate incident IDs
+- Distance
+- Time difference
+- Similarity factors
+- Duplicate likelihood
+- Recommendation to review
+
+Do not automatically delete or merge reports.
+
+---
+
+# 6. LIVE WEATHER INTELLIGENCE
+
+Integrate real weather data into the incident assessment pipeline.
+
+## Primary provider
+
+Use Open-Meteo where supported.
+
+Provider documentation:
+
+https://open-meteo.com/
+
+Use actual API responses.
+
+Do not hardcode current weather.
+
+## Weather data fields
+
+Retrieve and store available fields:
+
+- Temperature
+- Apparent temperature
+- Precipitation
+- Rainfall
+- Relative humidity
+- Wind speed
+- Wind direction
+- Weather condition
+- Pressure if available
+- Forecast precipitation
+- Forecast wind
+- Forecast temperature
+- Forecast time range
+
+Use appropriate weather endpoints for:
+
+- Current conditions
+- Hourly forecasts
+- Daily forecasts
+
+Only request necessary fields.
+
+## Incident weather context
+
+For every incident with valid coordinates:
+
+1. Retrieve weather information.
+2. Validate the provider response.
+3. Normalize units.
+4. Save the observation.
+5. Link it to the incident assessment.
+6. Calculate weather-related risk.
+7. Determine freshness.
+8. Publish an update if the assessment changes.
+
+Do not request weather repeatedly for the same coordinates within an unnecessary interval.
+
+Implement:
+
+- Cache
+- Request deduplication
+- Timeout
+- Retry
+- Provider status
+- Last successful update
+- Cache age
+- Stale detection
+- Graceful provider failure
+
+## Weather freshness
+
+Each weather record must include:
+
+- Provider
+- Latitude
+- Longitude
+- Observation timestamp
+- Fetch timestamp
+- Current/forecast indicator
+- Values
+- Unit
+- Data quality
+- Status
+
+Status:
+
+- FRESH
+- STALE
+- UNAVAILABLE
+- INVALID
+
+Do not display stale observations as current conditions.
+
+If the weather API is unavailable, preserve the last valid observation and show:
+
+**Weather data unavailable — displaying last available observation, if any.**
+
+---
+
+# 7. WEATHER RISK CALCULATION
+
+Implement a deterministic weather-risk module.
+
+Do not allow an LLM to calculate the numerical score.
+
+Create a configurable rule engine.
+
+## Flood risk signals
+
+Use only fields that are available and valid:
+
+- Precipitation
+- Rainfall intensity
+- Forecast precipitation
+- Rainfall accumulation
+- Existing flood incident
+- Verified flood reports
+- Geographic exposure
+- Historical context, if available
+
+## Heat risk signals
+
+- Temperature
+- Apparent temperature
+- Forecast temperature
+- Duration of elevated temperature
+- Verified population vulnerability
+
+## Wind risk signals
+
+- Wind speed
+- Forecast wind
+- Official warning information when connected
+
+## Storm risk signals
+
+- Rainfall
+- Wind
+- Thunderstorm indicators
+- Verified warning data
+
+## Risk calculations
+
+Implement provider-independent functions.
+
+For example:
+
+```python
+def calculate_flood_weather_risk(weather):
+    """
+    Return a validated, explainable score.
+
+    Must not infer missing weather values.
+    Must identify unavailable factors.
+    Must return evidence and calculation details.
+    """
+```
+
+Implement similar modules for:
+
+- Heat
+- Wind
+- Storm
+- General environmental risk
+
+Do not claim that the numerical thresholds are official disaster-management thresholds unless sourced from verified authoritative guidelines.
+
+Store the rule configuration and version.
+
+---
+
+# 8. INCIDENT RISK SCORING ENGINE
+
+Build a configurable risk score from 0 to 100.
+
+Risk must not be a single AI-generated number.
+
+Create a deterministic risk calculation service.
+
+## Factors
+
+- Incident severity
+- Environmental conditions
+- Population affected
+- Vulnerable population
+- Geographic exposure
+- Infrastructure impact
+- Time sensitivity
+- Access disruption
+- Verified reports
+- Data completeness
+
+Use configurable weights.
+
+Example starting formula:
+
+```text
+OVERALL RISK =
+    0.25 × SEVERITY
+  + 0.20 × ENVIRONMENTAL RISK
+  + 0.20 × HUMAN IMPACT
+  + 0.15 × VULNERABILITY
+  + 0.10 × ACCESS RISK
+  + 0.10 × INFRASTRUCTURE IMPACT
+```
+
+Normalize factors from 0 to 100.
+
+These weights are experimental starting values, not validated operational standards.
+
+## Risk bands
+
+Use configurable bands:
+
+| Score | Classification |
+|---|---|
+| 0–19 | LOW |
+| 20–39 | GUARDED |
+| 40–59 | ELEVATED |
+| 60–79 | HIGH |
+| 80–100 | CRITICAL |
+
+## Calculation requirements
+
+For every assessment:
+
+- Normalize factors
+- Validate ranges
+- Identify missing data
+- Apply configured weights
+- Calculate score
+- Calculate classification
+- Store the score
+- Store factor inputs
+- Store factor weights
+- Store rule version
+- Store evidence
+- Store timestamp
+- Store assessment source
+
+## Missing-data handling
+
+Do not silently convert missing values into zero.
+
+Implement:
+
+- Missing-factor detection
+- Data completeness percentage
+- Available-factor weighting policy
+- Minimum data requirements
+- Confidence limitations
+
+If the score is calculated with incomplete data, explicitly indicate it.
+
+For example:
+
+`RISK: HIGH | DATA COMPLETENESS: 62% | ASSESSMENT: PARTIAL`
+
+If the assessment lacks sufficient data, return:
+
+`INSUFFICIENT DATA FOR RELIABLE RISK ASSESSMENT`
+
+Do not force a numerical score where the model cannot support one.
+
+---
+
+# 9. RISK ASSESSMENT HISTORY
+
+Create an immutable assessment history.
+
+Every assessment should be stored separately from the current incident record.
+
+Record:
+
+- Assessment ID
+- Incident ID
+- Environmental score
+- Human-impact score
+- Vulnerability score
+- Access score
+- Infrastructure score
+- Overall score
+- Classification
+- Factors
+- Weights
+- Data completeness
+- Confidence/uncertainty
+- Evidence references
+- Weather observation IDs
+- Rule version
+- Assessment source
+- Assessor or process
+- Timestamp
+- AI explanation reference, if generated
+
+Do not overwrite previous risk assessments.
+
+Implement:
+
+- Assessment history
+- Risk trend
+- Score comparison
+- Escalation history
+- Previous vs current score
+
+---
+
+# 10. AUTOMATIC RISK REASSESSMENT
+
+Build an event-driven reassessment system.
+
+Trigger reassessment when:
+
+- Incident is created
+- Incident severity changes
+- Incident location changes
+- Population affected changes
+- Vulnerability information changes
+- New weather observation arrives
+- Weather forecast changes significantly
+- Verified report is received
+- Infrastructure impact changes
+- Access status changes
+- Relief request indicates worsening needs
+
+Do not reassess every incident continuously without reason.
+
+Implement:
+
+- Debouncing
+- Task deduplication
+- Per-incident processing locks
+- Rate control
+- Assessment versions
+- Retry on failure
+- Failed task handling
+- Reassessment timestamps
+
+If an assessment is running and new relevant data arrives, mark the assessment as potentially superseded and schedule a new one safely.
+
+---
+
+# 11. RISK CHANGE DETECTION
+
+Compare the new assessment with the previous assessment.
+
+Detect:
+
+- Score increase
+- Score decrease
+- Classification change
+- Critical threshold crossing
+- Data confidence deterioration
+- Weather risk escalation
+- New missing information
+
+Example:
+
+```text
+Previous risk: 42 — ELEVATED
+Current risk: 71 — HIGH
+
+Change: +29 points
+
+Detected:
+- Rainfall forecast increased
+- Verified incident reports increased
+- Affected population estimate changed
+
+Action:
+- Notify authorized emergency personnel
+- Review incident escalation
+- Reassess resource requirements
+```
+
+All explanations must use actual factors.
+
+Do not invent a reason for a score change.
+
+---
+
+# 12. AUTOMATED ALERT ENGINE
+
+Implement automatic alerts based on configured thresholds.
+
+Examples:
+
+- Risk becomes HIGH
+- Risk becomes CRITICAL
+- Score increases substantially
+- Flood conditions exceed configured thresholds
+- Incident severity increases
+- Population affected increases substantially
+- Weather provider becomes unavailable
+- Data becomes stale
+- Assessment is incomplete
+- Incident requires manual verification
+
+Alert record:
+
+- Alert ID
+- Incident ID
+- Type
+- Severity
+- Title
+- Description
+- Trigger factor
+- Previous value
+- Current value
+- Source
+- Timestamp
+- Status
+- Recipients
+- Read status
+
+## Alert deduplication
+
+Do not create repeated alerts for the same condition every refresh.
+
+Use:
+
+- Deduplication key
+- Cooldown period
+- Condition state
+- Alert lifecycle
+
+Alert lifecycle:
+
+```text
+TRIGGERED
+   ↓
+ACTIVE
+   ↓
+ACKNOWLEDGED
+   ↓
+RESOLVED
+```
+
+Allow authorized users to acknowledge alerts.
+
+Every alert must be traceable to the source condition.
+
+---
+
+# 13. AI RISK INTERPRETATION AGENT
+
+Implement an AI agent that explains the results of the deterministic risk engine.
+
+Use Gemini or the existing AI provider.
+
+Do not allow AI to invent the underlying facts.
+
+## Input to the AI
+
+Only provide validated data:
+
+- Incident information
+- Deterministic risk score
+- Factor scores
+- Weather observation
+- Weather forecast
+- Verified reports
+- Geographic information
+- Data freshness
+- Data completeness
+- Historical assessment comparison
+
+## AI tasks
+
+Generate:
+
+1. Situation summary
+2. Main risk drivers
+3. Potential escalation factors
+4. Missing information
+5. Recommended verification steps
+6. Suggested preparedness actions
+7. Suggested operational next steps
+8. Short command-center briefing
+
+## Output schema
+
+```json
+{
+  "incident_id": "uuid",
+  "assessment_id": "uuid",
+  "summary": "string",
+  "risk_drivers": [],
+  "potential_escalation": [],
+  "recommended_actions": [],
+  "verification_required": [],
+  "missing_information": [],
+  "evidence_references": [],
+  "uncertainty": [],
+  "generated_at": "ISO-8601",
+  "model": "provider/model",
+  "requires_human_review": true
+}
+```
+
+Validate output.
+
+Reject malformed AI responses.
+
+Save the AI analysis in the database.
+
+AI recommendations must not independently change incident severity, verify reports, dispatch resources, or execute operational actions.
+
+---
+
+# 14. AI EXPLANATION UI
+
+Create an advanced risk-detail panel.
+
+Show:
+
+## Risk Overview
+
+- Risk score
+- Classification
+- Data completeness
+- Last assessed
+- Assessment version
+
+## Risk Drivers
+
+Example:
+
+- Rainfall risk: Elevated
+- Population impact: High
+- Access risk: Unknown
+- Infrastructure impact: Moderate
+- Weather data freshness: 8 minutes
+
+Only display values calculated or sourced from actual records.
+
+## AI Briefing
+
+Example format:
+
+**Situation**
+
+Brief description of the emergency.
+
+**Main Risk Drivers**
+
+Explain why the score is elevated.
+
+**What Could Change**
+
+Describe the factors that could worsen the situation.
+
+**Recommended Next Steps**
+
+Suggest verification or preparation actions.
+
+**Data Gaps**
+
+Explain which critical information is missing.
+
+**Evidence**
+
+Link to source records.
+
+Do not show fabricated facts.
+
+---
+
+# 15. EMERGENCY MAP INTEGRATION
+
+Connect the incident engine to the existing map.
+
+Every valid incident should appear on the map.
+
+Implement:
+
+- Severity markers
+- Risk classification
+- Incident type
+- Location
+- Reported time
+- Risk score
+- Data completeness
+
+Clicking an incident should open a detail panel.
+
+The map should update when:
+
+- An incident is created
+- Incident location changes
+- Incident is escalated
+- Incident is resolved
+- Risk classification changes
+
+Add filters:
+
+- Incident type
+- Severity
+- Risk classification
+- Status
+- Date
+- Verification
+
+Do not show incidents without valid coordinates on the map.
+
+Do not fabricate geographic data.
+
+---
+
+# 16. DATABASE IMPLEMENTATION
+
+Inspect existing schema first.
+
+Reuse tables if they are already present.
+
+Create migrations only for missing fields, relationships, or tables.
+
+## Incidents table
+
+Ensure the existing incidents table supports:
+
+- ID
+- Organization ID
+- Title
+- Description
+- Type
+- Severity
+- Status
+- Latitude
+- Longitude
+- Location
+- People affected
+- Families affected
+- Vulnerable population
+- Infrastructure impact
+- Source
+- Verification status
+- Created by
+- Updated by
+- Created timestamp
+- Updated timestamp
+
+## Risk assessments table
+
+Create or extend:
+
+- ID
+- Incident ID
+- Overall score
+- Risk classification
+- Environmental score
+- Human impact score
+- Vulnerability score
+- Access score
+- Infrastructure score
+- Data completeness
+- Missing factors
+- Factor inputs
+- Factor weights
+- Rule version
+- Evidence
+- Weather observation references
+- Assessment source
+- Created timestamp
+
+## Weather observations table
+
+Create or extend:
+
+- ID
+- Provider
+- Incident ID
+- Latitude
+- Longitude
+- Temperature
+- Apparent temperature
+- Rainfall
+- Precipitation
+- Wind speed
+- Wind direction
+- Humidity
+- Condition
+- Forecast data
+- Observation time
+- Fetch time
+- Freshness status
+- Data quality
+- Raw normalized payload where appropriate
+
+## AI analysis table
+
+Create or extend:
+
+- ID
+- Incident ID
+- Assessment ID
+- Provider
+- Model
+- Summary
+- Risk drivers
+- Recommendations
+- Missing information
+- Evidence references
+- Uncertainty
+- Status
+- Created timestamp
+
+## Incident reports table
+
+Create or extend:
+
+- ID
+- Incident ID
+- Reporter
+- Source
+- Description
+- Coordinates
+- Evidence
+- Verification status
+- Reported timestamp
+
+## Alert table
+
+Create or extend:
+
+- ID
+- Incident ID
+- Type
+- Severity
+- Trigger condition
+- Previous value
+- Current value
+- Deduplication key
+- Status
+- Created timestamp
+- Acknowledged timestamp
+- Resolved timestamp
+
+Add:
+
+- Foreign keys
+- Indexes
+- Organization isolation
+- Row Level Security
+- Constraints
+- Migration scripts
+
+Never duplicate existing tables.
+
+---
+
+# 17. BACKEND API IMPLEMENTATION
+
+Implement and connect these endpoints.
+
+## Incident endpoints
+
+```http
+GET    /api/v1/incidents
+POST   /api/v1/incidents
+GET    /api/v1/incidents/{incident_id}
+PATCH  /api/v1/incidents/{incident_id}
+POST   /api/v1/incidents/{incident_id}/verify
+POST   /api/v1/incidents/{incident_id}/assess
+POST   /api/v1/incidents/{incident_id}/escalate
+POST   /api/v1/incidents/{incident_id}/resolve
+GET    /api/v1/incidents/{incident_id}/history
+GET    /api/v1/incidents/{incident_id}/duplicates
+```
+
+## Risk endpoints
+
+```http
+GET    /api/v1/risks
+GET    /api/v1/risks/overview
+POST   /api/v1/risks/assess
+GET    /api/v1/risks/{assessment_id}
+GET    /api/v1/incidents/{incident_id}/risk-history
+POST   /api/v1/incidents/{incident_id}/risk-explanation
+```
+
+## Weather endpoints
+
+```http
+GET    /api/v1/weather/current
+GET    /api/v1/weather/forecast
+GET    /api/v1/incidents/{incident_id}/weather
+POST   /api/v1/weather/refresh/{incident_id}
+GET    /api/v1/weather/providers/status
+```
+
+## Alerts
+
+```http
+GET    /api/v1/alerts
+GET    /api/v1/alerts/{alert_id}
+POST   /api/v1/alerts/{alert_id}/acknowledge
+POST   /api/v1/alerts/{alert_id}/resolve
+```
+
+## Health
+
+```http
+GET    /api/v1/health
+GET    /api/v1/health/database
+GET    /api/v1/health/weather
+GET    /api/v1/health/ai
+```
+
+All endpoints must have:
+
+- Authentication where required
+- Role-based access
+- Organization isolation
+- Validation
+- Error handling
+- Logging
+- Rate limiting
+- Pagination
+- API documentation
+- Correct status codes
+
+---
+
+# 18. REAL-TIME FRONTEND INTEGRATION
+
+Connect the frontend to the actual API.
+
+When an incident is created:
+
+- Save to database.
+- Display success feedback.
+- Update incident list.
+- Update dashboard metrics.
+- Add map marker.
+- Trigger risk assessment.
+- Show assessment status.
+- Notify relevant users.
+
+When risk changes:
+
+- Update the risk score.
+- Update classification.
+- Update dashboard.
+- Update map marker.
+- Add a risk event to the activity timeline.
+- Create alert if required.
+
+When weather updates:
+
+- Update the weather panel.
+- Update the source timestamp.
+- Trigger reassessment if the change is relevant.
+- Update risk explanation.
+
+## UI connection states
+
+Display:
+
+- LIVE
+- SYNCING
+- OFFLINE
+- RECONNECTING
+- DATA STALE
+
+Do not use fake realtime timers.
+
+---
+
+# 19. FRONTEND PAGES TO IMPLEMENT
+
+Upgrade existing pages and components.
+
+## Emergency Command Center
+
+- Total incidents
+- Active emergencies
+- Critical risk
+- High-risk incidents
+- Population affected
+- Latest weather updates
+- Risk trend
+- Incident map
+- Recent alerts
+- Emergency activity stream
+
+## Incident Management
+
+- Incident table
+- Search
+- Filters
+- Sorting
+- Severity
+- Verification status
+- Risk classification
+- Location
+- Reported time
+
+## Create Incident
+
+Form:
+
+- Title
+- Incident type
+- Description
+- Severity
+- Location search
+- Coordinates
+- People affected
+- Vulnerable population
+- Infrastructure impact
+- Immediate needs
+- Evidence
+- Reporter information according to permissions
+
+Validate all fields.
+
+## Incident Details
+
+- Incident overview
+- Location map
+- Current risk
+- Weather
+- Risk factors
+- Data quality
+- AI briefing
+- Assessment history
+- Related reports
+- Alerts
+- Operational notes
+- Actions
+- Audit history
+
+## Risk Intelligence
+
+- Risk overview
+- Geographic risk
+- Risk trends
+- Risk factor comparison
+- Escalating incidents
+- Missing-data alerts
+- Weather exposure
+
+## Weather Intelligence
+
+- Current weather
+- Forecast
+- Weather risk
+- Provider
+- Location
+- Last update
+- Data freshness
+- Historical observation graph where stored
+
+## Alerts Center
+
+- Critical alerts
+- High alerts
+- Medium alerts
+- Acknowledged alerts
+- Resolved alerts
+- Filters
+- Incident links
+
+All pages must be responsive and connected to the backend.
+
+---
+
+# 20. TESTING
+
+Create and execute tests.
+
+## Incident tests
+
+- Create valid incident
+- Invalid coordinates
+- Invalid severity
+- Invalid incident type
+- Missing title
+- Unauthorized user
+- Organization isolation
+- Update incident
+- Resolve incident
+- Reopen incident
+- Duplicate detection
+
+## Weather tests
+
+- Successful provider response
+- Missing data
+- Invalid response
+- Timeout
+- Provider outage
+- Cache behavior
+- Stale data
+- Retry
+- Normalization
+
+## Risk tests
+
+- Low-risk case
+- High-risk case
+- Critical-risk case
+- Missing factors
+- Incomplete data
+- Invalid inputs
+- Threshold change
+- Weight change
+- Version change
+- Score reproducibility
+
+## Reassessment tests
+
+- Incident updated
+- Weather updated
+- Population updated
+- Duplicate task
+- Concurrent assessment
+- Failed assessment retry
+- Assessment superseded
+
+## Alert tests
+
+- Threshold crossed
+- Classification increased
+- Repeated event deduplication
+- Cooldown
+- Acknowledgement
+- Resolution
+
+## AI tests
+
+- Valid structured response
+- Invalid JSON
+- Missing fields
+- Unsupported recommendations
+- No source evidence
+- Provider unavailable
+- Timeout
+- Prompt injection in incident description
+
+Do not just write tests.
+
+Run them.
+
+Fix failures.
+
+---
+
+# 21. COMPLETE END-TO-END TEST SCENARIO
+
+Use a clearly labeled test environment.
+
+Create an emergency test:
+
+**Test Incident:** Heavy rainfall and possible flooding  
+**Location:** Test coordinates selected by the user or within a permitted demo area  
+**Data mode:** TEST
+
+Execute:
+
+1. Create emergency incident.
+2. Validate the incident.
+3. Save incident.
+4. Publish incident event.
+5. Fetch real weather data if provider is available.
+6. Store weather observation.
+7. Calculate data completeness.
+8. Calculate environmental risk.
+9. Calculate population impact.
+10. Calculate overall risk.
+11. Save assessment.
+12. Compare with previous assessment.
+13. Generate alert if threshold is crossed.
+14. Run AI interpretation.
+15. Validate AI output.
+16. Save AI briefing.
+17. Publish realtime events.
+18. Update dashboard.
+19. Update map.
+20. Display risk detail.
+21. Display evidence and source timestamps.
+22. Verify data remains after refresh.
+
+If an external provider is unavailable, test the failure path instead.
+
+Do not invent successful responses.
+
+---
+
+# 22. PERFORMANCE AND RELIABILITY
+
+Implement:
+
+- Weather request caching
+- Duplicate request prevention
+- Async API calls
+- Background assessment tasks
+- Database indexing
+- Rate limiting
+- Assessment locking
+- Event deduplication
+- Efficient incident queries
+- Realtime reconnection
+- Error boundaries
+- Retry policies
+- Circuit breaker where appropriate
+- Structured logs
+- Monitoring
+
+Do not allow one provider failure to break the whole dashboard.
+
+The incident creation flow must still work even if weather or AI is unavailable.
+
+---
+
+# 23. IMPLEMENTATION ORDER
+
+Execute in this exact order:
+
+### Step 1
+Audit the existing code and infrastructure.
+
+### Step 2
+Identify existing incident and risk schemas.
+
+### Step 3
+Update database migrations without duplicating schema.
+
+### Step 4
+Implement incident service and validation.
+
+### Step 5
+Implement duplicate detection.
+
+### Step 6
+Implement the weather provider service.
+
+### Step 7
+Implement weather persistence and caching.
+
+### Step 8
+Implement the deterministic risk engine.
+
+### Step 9
+Implement risk assessment history.
+
+### Step 10
+Implement automatic reassessment.
+
+### Step 11
+Implement risk change detection.
+
+### Step 12
+Implement alert deduplication and alert lifecycle.
+
+### Step 13
+Implement AI risk interpretation.
+
+### Step 14
+Connect backend APIs.
+
+### Step 15
+Connect the frontend.
+
+### Step 16
+Connect map markers and incident layers.
+
+### Step 17
+Connect realtime updates.
+
+### Step 18
+Run tests and fix issues.
+
+### Step 19
+Run the complete emergency workflow.
+
+### Step 20
+Document the implemented features, required API keys, errors and limitations.
+
+Do not stop after creating the folders or files.
+
+Do not leave TODOs for the core features.
+
+---
+
+# 24. FINAL DELIVERY REPORT
+
+After implementation, provide a truthful report.
+
+## A. Implemented
+
+List the features actually implemented.
+
+## B. Backend
+
+List the services, endpoints and calculations.
+
+## C. Database
+
+List the schema changes and migrations.
+
+## D. Real integrations
+
+List the providers actually connected and tested.
+
+## E. Real-time
+
+Explain which events update which frontend modules.
+
+## F. Risk engine
+
+Explain the score formula, weights, thresholds, missing-data policy and versioning.
+
+## G. AI
+
+Explain the AI agent, provider, output validation and limitations.
+
+## H. Frontend
+
+List the pages and features actually connected.
+
+## I. Tests
+
+Report:
+
+- Tests executed
+- Passed
+- Failed
+- Fixed
+- Not tested
+
+## J. API keys required
+
+Provide exact names of any keys still required and the corresponding configuration variables.
+
+## K. Run instructions
+
+Provide exact local commands for the existing project.
+
+## L. Remaining issues
+
+List any unfinished functionality honestly.
+
+---
+
+## FINAL COMMAND
+
+Implement Phase 3 directly into my existing RESQFLOW AI codebase.
+
+Build a genuine emergency intelligence engine that uses validated incidents, real weather data, deterministic risk calculations, evidence-backed AI explanations, persistent assessments, automated reassessment, risk-change detection, alerts, and realtime frontend updates.
+
+Do not merely make the website look complete.
+
+**MAKE THE SYSTEM FUNCTION. CONNECT THE DATA. RUN THE TESTS. FIX THE ERRORS. VERIFY THE WORKFLOW.**

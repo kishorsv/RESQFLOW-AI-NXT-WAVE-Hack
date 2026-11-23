@@ -1,0 +1,1614 @@
+# PHASE 6 — RESQFLOW AI
+# Autonomous Emergency Coordination & Multi-Agent Intelligence Network
+
+## PROJECT
+
+RESQFLOW AI — Autonomous Emergency Response & Supply Chain Intelligence Network
+
+## MISSION
+
+Transform the existing RESQFLOW AI platform into a unified, multi-agent emergency intelligence and coordination system.
+
+Integrate Phase 3 emergency intelligence, Phase 4 inventory intelligence and Phase 5 logistics into one AI-powered coordination layer.
+
+The AI must understand a developing emergency, retrieve verified operational data, analyze its consequences, coordinate specialist agents, identify resource and logistics constraints, produce an actionable response plan, monitor changes, and recommend appropriate next actions to authorized human operators.
+
+This must be implemented inside the existing project. Do not rebuild the application.
+
+---
+
+# 1. NON-NEGOTIABLE RULES
+
+Before implementation:
+
+1. Inspect the complete existing codebase.
+2. Review all previously implemented phases.
+3. Verify existing backend services, database tables, API integrations and authentication.
+4. Identify which Phase 3, 4 and 5 features are actually working.
+5. Create a dependency and integration map.
+6. Reuse existing working modules.
+7. Create only missing components.
+8. Never replace existing features with simulated implementations.
+9. Never claim an integration is live if it is not.
+10. Never fabricate emergency data, AI results, inventory, vehicles, weather or dispatch activity.
+
+AI agents must only use authorized backend tools.
+
+Every agent must have:
+- A defined role
+- A defined objective
+- A restricted set of tools
+- Validated inputs
+- Structured output
+- Execution limits
+- Failure handling
+- Traceability
+- Data source awareness
+
+AI must never independently execute dangerous emergency actions.
+
+All high-impact actions must require human approval.
+
+---
+
+# 2. MULTI-AGENT ARCHITECTURE
+
+Implement a modular agent architecture.
+
+The central coordinator must orchestrate specialized agents.
+
+Architecture:
+
+User / Emergency Event
+↓
+AI Coordination Orchestrator
+↓
+Task Classification
+↓
+Context Retrieval
+↓
+Specialized Agents
+↓
+Evidence Validation
+↓
+Conflict Resolution
+↓
+Response Plan Generation
+↓
+Human Approval
+↓
+Authorized Execution
+↓
+Realtime Monitoring
+
+Create an agent registry.
+
+Each agent must register:
+
+- Agent ID
+- Agent name
+- Version
+- Responsibility
+- Enabled status
+- Tools
+- Permissions
+- Model configuration
+- Maximum execution time
+- Maximum tool calls
+- Output schema
+- Error handling policy
+
+Do not allow an agent to access tools outside its permissions.
+
+---
+
+# 3. AGENT 1 — EMERGENCY INTELLIGENCE AGENT
+
+Name: Emergency Intelligence Agent
+
+Responsibility:
+
+Understand active incidents and assess their current emergency state.
+
+Retrieve actual data from:
+
+- Incidents
+- Incident reports
+- Risk assessments
+- Weather observations
+- Incident history
+- Verified alerts
+- Geographic context
+- Affected population
+- Vulnerability information
+
+Analyze:
+
+- Incident severity
+- Risk score
+- Risk trajectory
+- Escalation potential
+- Population exposure
+- Vulnerable populations
+- Incident uncertainty
+- Missing critical information
+
+Output:
+
+- Incident summary
+- Current status
+- Risk level
+- Risk change
+- Key risk drivers
+- Immediate concerns
+- Potential escalation
+- Required verification
+- Evidence references
+- Confidence
+- Data freshness
+
+Never invent missing emergency information.
+
+Never independently verify or close an incident.
+
+---
+
+# 4. AGENT 2 — ENVIRONMENTAL & WEATHER AGENT
+
+Name: Environmental Intelligence Agent
+
+Responsibility:
+
+Analyze environmental conditions affecting active emergencies.
+
+Use real environmental data integrations already configured.
+
+Analyze:
+
+- Rainfall
+- Forecast rainfall
+- Temperature
+- Wind
+- Humidity
+- Storm conditions
+- Flood-related indicators
+- Heat risk
+- Environmental exposure
+- Relevant forecast changes
+
+Connect environmental observations with incidents.
+
+Identify:
+
+- Weather-related escalation
+- Changing environmental risk
+- Forecast uncertainty
+- Areas potentially requiring attention
+- Possible impacts on response timing
+
+Output:
+
+- Environmental briefing
+- Current observations
+- Forecast summary
+- Risk changes
+- Potential impact
+- Source and timestamp
+- Confidence
+- Missing data
+
+Environmental conclusions must be grounded in real provider responses.
+
+Do not claim an official warning exists unless an official warning source confirms it.
+
+---
+
+# 5. AGENT 3 — RESOURCE INTELLIGENCE AGENT
+
+Name: Resource Intelligence Agent
+
+Responsibility:
+
+Understand supply availability across the network.
+
+Retrieve actual data from:
+
+- Warehouses
+- Inventory items
+- Stock balances
+- Reservations
+- Incoming supplies
+- Stock movements
+- Resource shortages
+- Relief requests
+- Historical demand
+
+Determine:
+
+- Available supplies
+- Reserved supplies
+- Unavailable supplies
+- Critical shortages
+- Overstocked resources
+- Resources at risk of expiry
+- Supply imbalance between warehouses
+- Incoming stock that is not yet available
+- Resources required by active incidents
+
+Output:
+
+- Resource availability report
+- Shortage report
+- Critical unmet demand
+- Resource distribution
+- Replenishment needs
+- Suggested stock movement
+- Evidence references
+- Data freshness
+
+Never treat reserved or unverified incoming stock as freely available.
+
+Never modify inventory autonomously.
+
+---
+
+# 6. AGENT 4 — LOGISTICS & ROUTE AGENT
+
+Name: Logistics Intelligence Agent
+
+Responsibility:
+
+Evaluate how resources can reach emergency locations.
+
+Retrieve:
+
+- Warehouse coordinates
+- Inventory availability
+- Vehicles
+- Drivers
+- Fleet status
+- Dispatches
+- Route data
+- ETA
+- Delivery history
+- Road hazard reports
+- Route restrictions
+
+Evaluate:
+
+- Warehouse suitability
+- Resource availability
+- Vehicle availability
+- Capacity
+- Route options
+- Travel time
+- Delivery deadline
+- Known hazards
+- Route uncertainty
+- Dispatch conflicts
+
+Output:
+
+- Logistics plan
+- Warehouse recommendations
+- Vehicle recommendations
+- Route options
+- Estimated travel times
+- Delivery feasibility
+- Constraints
+- Known hazards
+- Tracking status
+- Missing information
+
+Do not claim live tracking unless a genuine tracking source exists.
+
+Do not claim a route is safe unless the safety information is independently verified by an appropriate source.
+
+Never dispatch automatically.
+
+---
+
+# 7. AGENT 5 — PRIORITY & HUMAN IMPACT AGENT
+
+Name: Human Impact and Priority Agent
+
+Responsibility:
+
+Help ensure emergency response priorities are based on human impact, not only infrastructure or convenience.
+
+Analyze available verified information:
+
+- Affected population
+- Number of displaced people
+- Vulnerable populations
+- Medical needs
+- Water availability
+- Shelter needs
+- Food requirements
+- Incident severity
+- Time sensitivity
+- Access limitations
+- Unfulfilled demand
+- Existing response coverage
+
+Identify potential:
+
+- Priority population
+- Critical unmet needs
+- Resource inequity
+- Under-served incidents
+- Delayed response
+- Vulnerability concerns
+
+Output:
+
+- Human impact summary
+- Priority recommendation
+- Unmet needs
+- Equity concerns
+- Justification
+- Evidence references
+- Missing information
+
+Do not infer sensitive attributes about individuals.
+
+Do not fabricate population or vulnerability counts.
+
+---
+
+# 8. AGENT 6 — RESPONSE PLANNING AGENT
+
+Name: Response Planning Agent
+
+Responsibility:
+
+Combine the outputs of specialist agents into a coherent emergency response proposal.
+
+Inputs:
+
+- Emergency Intelligence Agent output
+- Environmental Agent output
+- Resource Agent output
+- Logistics Agent output
+- Human Impact Agent output
+- Verified database context
+- Existing response activity
+
+Build a structured response plan.
+
+The plan must include:
+
+- Situation overview
+- Incident priority
+- Immediate actions
+- Recommended resources
+- Proposed quantities
+- Proposed supply sources
+- Suggested transportation
+- Route options
+- Estimated timing
+- Potential bottlenecks
+- Unmet demand
+- Risk mitigation
+- Coordination requirements
+- Human approval requirements
+- Evidence
+- Uncertainties
+- Next reassessment conditions
+
+Avoid duplicated recommendations.
+
+Resolve conflicts between agents transparently.
+
+If the agents cannot agree, identify the disagreement and escalate it for human review.
+
+The response plan must not directly execute dispatch, stock changes, incident verification, public warnings or other sensitive actions.
+
+---
+
+# 9. AGENT 7 — RESPONSE MONITORING AGENT
+
+Name: Response Monitoring Agent
+
+Responsibility:
+
+Monitor active incidents, approved response plans, resource availability and logistics activity for meaningful changes.
+
+Monitor event sources:
+
+- Incident updates
+- Risk score changes
+- New weather observations
+- Verified reports
+- Inventory changes
+- Reservation changes
+- Warehouse status
+- Vehicle status
+- Dispatch status
+- Route changes
+- Delivery delays
+- New alerts
+
+Identify meaningful changes:
+
+- Incident escalation
+- Weather worsening
+- Supply becoming unavailable
+- Warehouse becoming unavailable
+- Route becoming inaccessible according to verified information
+- Delivery delay
+- Vehicle failure
+- New critical demand
+- Allocation conflict
+- Partial delivery
+- Emergency demand remaining unmet
+
+Do not generate repetitive alerts for insignificant changes.
+
+Use deduplication, cooldowns and change thresholds.
+
+Output:
+
+- Monitoring event
+- Severity
+- What changed
+- Why it matters
+- Related incident
+- Related dispatch or inventory
+- Recommended action
+- Evidence
+- Timestamp
+
+The monitoring agent must not execute dangerous operations.
+
+---
+
+# 10. AGENT 8 — VERIFICATION & SAFETY AGENT
+
+Name: Evidence and Safety Verification Agent
+
+Responsibility:
+
+Verify that AI recommendations are based on actual facts and valid operational constraints.
+
+For every proposed plan, validate:
+
+- Incident exists
+- Incident is in a valid state
+- Risk data exists
+- Data timestamps are reasonable
+- Requested resources exist
+- Resource quantities are available
+- Stock is not double-allocated
+- Warehouse is operational
+- Vehicle is available
+- Driver assignment is valid
+- Vehicle capacity is sufficient
+- Route is actually returned by provider
+- ETA has a valid source
+- Claims are evidence-supported
+- User has permission
+- Action requires approval
+- Plan does not violate safety constraints
+
+Return:
+
+- Validation status
+- Verified facts
+- Unsupported claims
+- Violations
+- Warnings
+- Missing data
+- Approval requirements
+- Recommended corrections
+
+Validation statuses:
+
+- VALID
+- VALID_WITH_WARNINGS
+- INCOMPLETE
+- REJECTED
+
+Reject plans with critical violations.
+
+This agent must use deterministic backend validation wherever possible. AI language reasoning is not a substitute for code-level validation.
+
+---
+
+# 11. CENTRAL AI ORCHESTRATOR
+
+Create the central orchestration service.
+
+Name:
+
+RESQFLOW Coordination Orchestrator
+
+Responsibilities:
+
+1. Receive a coordination request.
+2. Validate request permissions.
+3. Identify related incident.
+4. Retrieve verified operational context.
+5. Identify relevant agents.
+6. Build agent tasks.
+7. Execute tasks within configured limits.
+8. Manage timeouts.
+9. Collect agent results.
+10. Validate results.
+11. Detect contradictions.
+12. Resolve conflicts or escalate.
+13. Generate unified response plan.
+14. Run safety verification.
+15. Store complete coordination session.
+16. Publish status updates.
+17. Present recommendations.
+18. Await human approval.
+19. Execute approved operations through backend services.
+20. Monitor outcome.
+
+Implement:
+
+- Agent task registry
+- Task scheduler
+- Dependency graph
+- Execution timeout
+- Retry policy
+- Agent concurrency limits
+- Maximum cost or token budget
+- Cancellation
+- Error recovery
+- Partial-result handling
+- Structured logs
+- Tracing
+- Version tracking
+
+Use parallel execution only when agent tasks are independent.
+
+Use sequential execution when one agent depends on another agent's results.
+
+Do not allow infinite agent loops.
+
+---
+
+# 12. COORDINATION WORKFLOW
+
+Implement an end-to-end emergency coordination workflow.
+
+Example:
+
+An active flood incident is reported.
+
+Step 1 — Context
+
+Retrieve the incident, location, risk assessment, weather observations, affected population, and incident reports.
+
+Step 2 — Task decomposition
+
+The orchestrator determines which specialist agents are needed.
+
+Step 3 — Parallel intelligence
+
+Emergency, environmental, resource, and human-impact agents analyze relevant data in parallel where possible.
+
+Step 4 — Logistics analysis
+
+The logistics agent evaluates feasible warehouses, vehicles, route options and delivery constraints.
+
+Step 5 — Plan synthesis
+
+The response planner combines findings into a structured response proposal.
+
+Step 6 — Verification
+
+The safety agent checks the plan against actual data, permissions and resource availability.
+
+Step 7 — Conflict resolution
+
+The orchestrator identifies contradictions, missing information, infeasible actions and uncertainty.
+
+Step 8 — Response presentation
+
+Present the plan to the authorized emergency commander.
+
+Step 9 — Human decision
+
+The human may approve, modify, reject, request additional analysis or defer.
+
+Step 10 — Controlled execution
+
+Approved actions are executed through existing backend services and transaction-safe APIs.
+
+Step 11 — Monitoring
+
+The monitoring agent tracks meaningful changes and recommends reassessment.
+
+Step 12 — Reassessment
+
+If conditions change significantly, the orchestrator produces an updated plan and clearly explains what changed.
+
+---
+
+# 13. STRUCTURED AI OUTPUT CONTRACTS
+
+All agent outputs must be schema-validated.
+
+Use Pydantic models or the existing structured-output framework.
+
+General agent response:
+
+{
+  "agent_id": "string",
+  "agent_version": "string",
+  "session_id": "uuid",
+  "task_id": "uuid",
+  "status": "completed | partial | failed | timed_out",
+  "summary": "string",
+  "findings": [],
+  "recommendations": [],
+  "evidence": [],
+  "missing_information": [],
+  "warnings": [],
+  "confidence": 0.0,
+  "data_freshness": {},
+  "created_at": "timestamp",
+  "execution_time_ms": 0
+}
+
+Evidence object:
+
+{
+  "evidence_id": "uuid",
+  "source_type": "database | provider | verified_report | calculation",
+  "source_id": "string",
+  "claim": "string",
+  "observed_at": "timestamp",
+  "retrieved_at": "timestamp",
+  "source_status": "fresh | stale | unavailable | unverified"
+}
+
+Recommendation object:
+
+{
+  "recommendation_id": "uuid",
+  "type": "string",
+  "priority": "low | normal | high | urgent | critical",
+  "title": "string",
+  "description": "string",
+  "action_type": "advisory | approval_required",
+  "proposed_parameters": {},
+  "reasoning": "string",
+  "evidence_ids": [],
+  "constraints": [],
+  "risk": "string",
+  "requires_human_approval": true
+}
+
+Use strict schemas.
+
+Reject malformed outputs.
+
+Do not accept tool calls or operational actions embedded in unvalidated free text.
+
+---
+
+# 14. EVIDENCE-GROUNDED REASONING
+
+Create an evidence system.
+
+Every important AI claim should link to evidence.
+
+Examples:
+
+- Flood risk increased because verified rainfall observations rose.
+- Supply allocation is incomplete because available inventory is insufficient.
+- Warehouse C was selected because stock and routing estimates support the delivery plan.
+- Dispatch may be delayed because the assigned vehicle is unavailable.
+
+Each claim must be classified as:
+
+- VERIFIED FACT
+- CALCULATED RESULT
+- AI INTERPRETATION
+- ASSUMPTION
+- UNKNOWN
+
+Display those distinctions clearly.
+
+The system must not turn assumptions into verified facts.
+
+Implement evidence retrieval, evidence references and timestamps.
+
+If evidence is missing or stale, the AI must state the uncertainty.
+
+---
+
+# 15. CONFLICT RESOLUTION ENGINE
+
+Implement conflict detection.
+
+Examples:
+
+- Agent A recommends Warehouse A.
+- Agent B recommends Warehouse B due to a shortage.
+- Risk Agent reports a high-priority incident.
+- Logistics Agent reports a route unavailable.
+- Human Impact Agent identifies another emergency with greater unmet need.
+
+The orchestrator must:
+
+1. Identify conflicting recommendations.
+2. Identify which facts caused the disagreement.
+3. Determine whether one recommendation is infeasible.
+4. Revalidate actual operational data.
+5. Compare priorities and constraints.
+6. Produce a transparent resolution if possible.
+7. Otherwise escalate to human decision.
+
+Do not silently select an agent's recommendation.
+
+Show the conflict and reasoning in the UI.
+
+---
+
+# 16. HUMAN APPROVAL & CONTROL
+
+Create a comprehensive human-in-the-loop control layer.
+
+Require approval for:
+
+- Incident verification
+- Incident escalation if configured
+- Resource allocation confirmation
+- Inventory adjustments
+- Warehouse transfers
+- Dispatch approval
+- Driver assignment if restricted
+- Route changes under restricted conditions
+- Public alerts
+- Resource reallocation
+- Cancellation of active operations
+- Other configured high-impact actions
+
+Approval must be separate from AI recommendation.
+
+Implement:
+
+- Approve
+- Reject
+- Modify
+- Request re-analysis
+- Request another agent
+- Defer
+- Escalate
+- Cancel
+
+Before executing an approval:
+
+1. Revalidate permissions.
+2. Revalidate incident state.
+3. Revalidate inventory.
+4. Revalidate reservations.
+5. Revalidate vehicle and driver.
+6. Revalidate route data when applicable.
+7. Revalidate the proposal's expiration.
+8. Validate the action parameters.
+9. Execute through existing backend service.
+10. Record audit log.
+11. Publish realtime event.
+12. Return actual execution result.
+
+If conditions changed, invalidate the approval and require review.
+
+---
+
+# 17. AI COORDINATION MEMORY
+
+Implement session-based coordination memory.
+
+The AI may maintain:
+
+- Coordination session summary
+- Previous recommendations
+- Human decisions
+- Rejected plans
+- Reason for rejection
+- Active constraints
+- Incident timeline
+- Current response objectives
+- Reassessment triggers
+
+Memory must be scoped by organization, incident and authorized access.
+
+Distinguish:
+
+- Session context
+- Verified incident history
+- Human decisions
+- AI-generated conclusions
+
+Do not allow AI-generated conclusions to become verified facts merely because they were stored in memory.
+
+Implement:
+
+- Memory creation
+- Memory update
+- Memory expiration
+- Memory retrieval
+- Context compression
+- Versioning
+- Access control
+- Audit history
+
+Do not store unnecessary personal or sensitive information.
+
+---
+
+# 18. SCENARIO SIMULATION ENGINE
+
+Create a simulation module for emergency response planning.
+
+The simulation must operate on an isolated copy of scenario data.
+
+Allow authorized users to simulate:
+
+- Flood escalation
+- Sudden rainfall increase
+- Warehouse closure
+- Resource shortage
+- Vehicle breakdown
+- Route disruption
+- New emergency request
+- Increased affected population
+- Delivery delay
+- Power outage
+- Multiple simultaneous incidents
+
+Simulation output:
+
+- Scenario name
+- Initial state
+- Changed conditions
+- Predicted operational impact
+- Resource changes
+- Allocation consequences
+- Delivery time changes
+- Potential shortages
+- Response plan alternatives
+- Assumptions
+- Confidence and uncertainty
+
+Simulation must never alter live inventory, real dispatches, active incidents or real notifications.
+
+Clearly label:
+
+SIMULATION — NOT A LIVE EMERGENCY
+
+Never mix simulated results with operational dashboards.
+
+---
+
+# 19. AI COORDINATION DASHBOARD
+
+Integrate the AI command center into the existing RESQFLOW UI.
+
+Create:
+
+### A. AI Command Center
+
+Display:
+
+- Active coordination sessions
+- Active incidents being analyzed
+- Agents currently working
+- Completed agent tasks
+- Failed agent tasks
+- Pending human approvals
+- Active recommendations
+- Critical warnings
+- Last coordination update
+
+### B. Agent Status Panel
+
+For each agent:
+
+- Name
+- Responsibility
+- Status
+- Current task
+- Last execution
+- Execution time
+- Data sources
+- Warnings
+- Confidence
+- Error state
+
+Agent states:
+
+- IDLE
+- QUEUED
+- RUNNING
+- COMPLETED
+- PARTIAL
+- FAILED
+- TIMED_OUT
+
+Do not fabricate agent status animations.
+
+### C. Coordination Timeline
+
+Display:
+
+- Coordination started
+- Context retrieved
+- Agent tasks created
+- Agents completed
+- Conflicts detected
+- Safety validation
+- Plan generated
+- Human approval
+- Execution
+- Monitoring
+- Reassessment
+
+Every timeline event must be database-backed.
+
+### D. Unified Response Plan
+
+Display:
+
+- Incident summary
+- Priority
+- Human impact
+- Weather/environment
+- Resource availability
+- Warehouse recommendations
+- Allocation proposal
+- Fleet and dispatch plan
+- Route risk
+- Delivery estimates
+- Unmet demand
+- Warnings
+- Evidence
+- Confidence
+- Approval controls
+
+### E. Evidence Explorer
+
+Allow users to open evidence references and view:
+
+- Claim
+- Source
+- Timestamp
+- Freshness
+- Data type
+- Actual underlying record
+- Verification status
+
+---
+
+# 20. PROACTIVE INTELLIGENCE
+
+Implement proactive analysis based on real event triggers.
+
+Trigger a coordination reassessment when:
+
+- Incident risk crosses a threshold.
+- A critical new incident is verified.
+- Weather conditions significantly change.
+- A warehouse becomes unavailable.
+- A resource shortage becomes critical.
+- A dispatch is delayed.
+- A route hazard is verified.
+- A delivery is incomplete.
+- A new high-priority relief request arrives.
+- A vehicle becomes unavailable.
+
+Implement:
+
+- Event-based triggers
+- Debouncing
+- Deduplication
+- Priority queue
+- Cooldown
+- Retry
+- Rate limits
+- Trigger audit
+- Organization limits
+
+The AI should proactively recommend what needs attention, not spam users.
+
+Do not run expensive AI tasks on every minor database update.
+
+Use deterministic rules to decide whether an AI reassessment is necessary.
+
+---
+
+# 21. AI MODEL PROVIDER ABSTRACTION
+
+Inspect the existing AI integration.
+
+Reuse configured providers.
+
+Create an abstraction layer if needed to support:
+
+- Gemini
+- OpenAI
+- Configured compatible providers
+
+Requirements:
+
+- Provider selection
+- Model configuration
+- Structured output
+- Timeout
+- Retry
+- Rate limits
+- Token or cost tracking
+- Fallback behavior
+- Provider health
+- Logging
+- Error handling
+
+Do not hardcode provider keys.
+
+Do not expose secret keys in the frontend.
+
+If AI fails:
+
+- Preserve verified emergency data.
+- Show AI status unavailable.
+- Do not replace AI output with fabricated analysis.
+- Allow deterministic calculations and existing dashboards to continue working.
+
+---
+
+# 22. SECURITY, SAFETY & PROMPT INJECTION DEFENSE
+
+Treat all external data as untrusted.
+
+Potential untrusted inputs:
+
+- Incident descriptions
+- Citizen reports
+- Uploaded documents
+- Weather provider text
+- Road reports
+- AI memory
+- External websites
+- Database text fields
+
+Prevent prompt injection.
+
+Instructions found inside reports, documents or external data must never override system instructions or tool permissions.
+
+Implement:
+
+- Input sanitization where appropriate
+- Tool allowlists
+- Strict parameter validation
+- Authorization checks
+- Output schema validation
+- Agent isolation
+- Tool-call limits
+- Rate limiting
+- Audit logging
+- Secret protection
+- Organization-level isolation
+- Data access restrictions
+- Safe error handling
+
+AI agents must not execute arbitrary code, SQL, shell commands, or unrestricted web requests.
+
+---
+
+# 23. DATABASE DESIGN
+
+Audit existing tables first.
+
+Reuse current schema and create only missing entities.
+
+Potential tables:
+
+- `ai_agents`
+- `ai_agent_versions`
+- `ai_coordination_sessions`
+- `ai_agent_tasks`
+- `ai_agent_results`
+- `ai_coordination_events`
+- `ai_evidence_records`
+- `ai_recommendations`
+- `ai_response_plans`
+- `ai_plan_actions`
+- `ai_approval_requests`
+- `ai_approval_events`
+- `ai_conflicts`
+- `ai_session_memory`
+- `ai_simulation_sessions`
+- `ai_simulation_results`
+- `ai_trigger_events`
+
+Requirements:
+
+- UUID identifiers
+- Foreign keys
+- Indexes
+- Organization isolation
+- Incident scoping
+- Role-based permissions
+- Row-level security
+- Version tracking
+- Timestamps
+- Retention policies
+- Audit history
+
+Do not store entire provider responses if unnecessary.
+
+Store useful evidence references, normalized data and structured AI outputs.
+
+---
+
+# 24. BACKEND API
+
+Implement under existing API versioning.
+
+### Coordination
+
+- `POST /api/v1/ai/coordination/start`
+- `GET /api/v1/ai/coordination`
+- `GET /api/v1/ai/coordination/{session_id}`
+- `POST /api/v1/ai/coordination/{session_id}/cancel`
+- `POST /api/v1/ai/coordination/{session_id}/reanalyze`
+- `POST /api/v1/ai/coordination/{session_id}/agents/{agent_id}/rerun`
+
+### Agents
+
+- `GET /api/v1/ai/agents`
+- `GET /api/v1/ai/agents/{agent_id}`
+- `GET /api/v1/ai/agents/{agent_id}/history`
+- `GET /api/v1/ai/tasks`
+- `GET /api/v1/ai/tasks/{task_id}`
+
+### Plans
+
+- `GET /api/v1/ai/plans`
+- `GET /api/v1/ai/plans/{plan_id}`
+- `POST /api/v1/ai/plans/{plan_id}/validate`
+- `POST /api/v1/ai/plans/{plan_id}/approve`
+- `POST /api/v1/ai/plans/{plan_id}/reject`
+- `POST /api/v1/ai/plans/{plan_id}/modify`
+- `POST /api/v1/ai/plans/{plan_id}/execute`
+
+### Evidence
+
+- `GET /api/v1/ai/evidence`
+- `GET /api/v1/ai/evidence/{evidence_id}`
+
+### Conflict resolution
+
+- `GET /api/v1/ai/conflicts`
+- `GET /api/v1/ai/conflicts/{conflict_id}`
+- `POST /api/v1/ai/conflicts/{conflict_id}/resolve`
+
+### Memory
+
+- `GET /api/v1/ai/sessions/{session_id}/memory`
+- `POST /api/v1/ai/sessions/{session_id}/memory`
+- `PATCH /api/v1/ai/sessions/{session_id}/memory/{memory_id}`
+
+### Simulation
+
+- `POST /api/v1/ai/simulations`
+- `GET /api/v1/ai/simulations`
+- `GET /api/v1/ai/simulations/{simulation_id}`
+- `POST /api/v1/ai/simulations/{simulation_id}/run`
+- `POST /api/v1/ai/simulations/{simulation_id}/compare`
+
+### Monitoring
+
+- `GET /api/v1/ai/monitoring/overview`
+- `GET /api/v1/ai/monitoring/events`
+- `GET /api/v1/ai/monitoring/triggers`
+- `POST /api/v1/ai/monitoring/{trigger_id}/acknowledge`
+
+Implement:
+
+- Authentication
+- Authorization
+- Pagination
+- Filtering
+- Rate limits
+- Input validation
+- Consistent error responses
+- Idempotency for critical operations
+
+---
+
+# 25. REALTIME EVENTS
+
+Reuse the existing realtime provider.
+
+Implement real events for:
+
+- Coordination started
+- Context retrieved
+- Agent task queued
+- Agent task started
+- Agent task completed
+- Agent task failed
+- Agent result updated
+- Conflict detected
+- Validation completed
+- Response plan generated
+- Approval required
+- Approval completed
+- Action executed
+- Trigger fired
+- Reassessment started
+- Reassessment completed
+
+Requirements:
+
+- Organization-level isolation
+- Authorized subscriptions
+- Event timestamps
+- Event deduplication
+- Reconnection handling
+- Subscription cleanup
+- Correct failure states
+- No fake live indicators
+
+---
+
+# 26. PERFORMANCE & RESOURCE LIMITS
+
+Implement safeguards against uncontrolled agent execution.
+
+Configure:
+
+- Maximum agents per session
+- Maximum parallel agents
+- Maximum tool calls per agent
+- Maximum coordination duration
+- Maximum retries
+- Maximum tokens per agent
+- Maximum total token budget
+- Maximum provider cost where trackable
+- Agent task timeout
+- Session timeout
+- Rate limits
+- Cancellation
+
+Use a task queue for longer-running coordination jobs if required by the existing architecture.
+
+Never block the main web request while agents perform lengthy tasks.
+
+Return a session ID and allow the frontend to subscribe to actual task progress.
+
+---
+
+# 27. FRONTEND IMPLEMENTATION
+
+Integrate into the existing dashboard.
+
+Do not replace the current frontend.
+
+Add:
+
+## AI Command Center
+
+- Agent overview
+- Active coordination
+- Session list
+- Incident analysis
+- AI response plans
+- Approval queue
+- Conflict warnings
+- Agent task history
+- Coordination timeline
+
+## Incident AI Panel
+
+On each incident:
+
+- Analyze incident
+- Start coordination
+- View previous sessions
+- View AI recommendations
+- View risk changes
+- View resource requirements
+- View logistics
+- View evidence
+- Reassess
+
+## AI Response Plan
+
+Sections:
+
+- Situation
+- Priority
+- Human impact
+- Environmental conditions
+- Resource requirements
+- Warehouse recommendations
+- Allocation plan
+- Transportation plan
+- Route information
+- Warnings
+- Unmet needs
+- Evidence
+- Confidence
+- Approval
+
+## Agent Collaboration View
+
+Show which agents contributed to a recommendation.
+
+Display:
+
+- Agent
+- Task
+- Status
+- Finding
+- Evidence
+- Warnings
+- Execution duration
+
+## Approval Center
+
+Show pending high-impact actions.
+
+Provide:
+
+- Review
+- Modify
+- Approve
+- Reject
+- Defer
+- Re-analyze
+
+Make the UI responsive and consistent with existing RESQFLOW design.
+
+---
+
+# 28. ANALYTICS
+
+Create AI coordination analytics based on actual records.
+
+Metrics:
+
+- Total coordination sessions
+- Completed sessions
+- Failed sessions
+- Average coordination time
+- Agent success rate
+- Pending approvals
+- Recommendations generated
+- Recommendations accepted
+- Recommendations modified
+- Recommendations rejected
+- Conflicts detected
+- Validation failure rate
+- Reassessment count
+- Provider availability
+- AI usage and cost if available
+
+Do not invent AI performance metrics.
+
+Do not claim AI recommendations saved lives or reduced response time unless supported by valid outcome data and a proper evaluation.
+
+---
+
+# 29. TESTING REQUIREMENTS
+
+Implement automated tests.
+
+## Agent tests
+
+- Agent registry
+- Permission restrictions
+- Input validation
+- Structured output
+- Agent timeout
+- Agent failure
+- Retry
+- Cancellation
+- Tool restrictions
+
+## Orchestrator tests
+
+- Coordination initiation
+- Parallel execution
+- Sequential dependencies
+- Partial results
+- Conflict detection
+- Plan generation
+- Verification
+- Approval
+- Session persistence
+
+## Evidence tests
+
+- Missing evidence
+- Stale evidence
+- Invalid reference
+- Unsupported claim
+- Source unavailable
+- Evidence access denied
+
+## Safety tests
+
+- Prompt injection in incident report
+- Malicious instructions in external text
+- Unauthorized tool invocation
+- Unauthorized dispatch
+- AI trying to alter stock
+- AI trying to bypass human approval
+- Cross-organization data leakage
+
+## Simulation tests
+
+- Isolation from live data
+- No live inventory mutation
+- No dispatch mutation
+- Simulation labeling
+- Scenario reproducibility
+
+## Realtime tests
+
+- Agent status updates
+- Session events
+- Reconnection
+- Duplicate events
+- Authorization
+- Stale connection status
+
+---
+
+# 30. END-TO-END DEMONSTRATION
+
+Build and run an actual database-backed test scenario using test data clearly marked as test data.
+
+Scenario:
+
+1. Create a test flood incident.
+2. Add verified test incident information.
+3. Run risk assessment.
+4. Retrieve environmental information if provider is available.
+5. Create a test relief request.
+6. Retrieve warehouse inventory.
+7. Retrieve actual test warehouse availability.
+8. Retrieve fleet information.
+9. Run emergency intelligence agent.
+10. Run environmental intelligence agent.
+11. Run resource intelligence agent.
+12. Run logistics agent.
+13. Run human-impact agent.
+14. Generate unified response plan.
+15. Run safety and evidence validation.
+16. Identify conflicts and constraints.
+17. Produce recommendations.
+18. Display the response plan.
+19. Require human approval.
+20. Approve a test plan using an authorized test account.
+21. Execute permitted test actions using existing backend services.
+22. Verify inventory and dispatch updates.
+23. Verify audit records.
+24. Verify realtime events.
+25. Run monitoring reassessment.
+26. Verify that no simulated values were mixed into real operational data.
+
+If a provider is unavailable, record the failure and test fallback behavior.
+
+Do not use a live emergency or real dispatch for demonstrations.
+
+---
+
+# 31. IMPLEMENTATION ORDER
+
+Execute the work sequentially.
+
+1. Repository audit
+2. Phase 3–5 integration verification
+3. AI provider audit
+4. Agent architecture
+5. Agent registry
+6. Agent permissions and tool registry
+7. Context retrieval
+8. Emergency intelligence agent
+9. Environmental intelligence agent
+10. Resource intelligence agent
+11. Logistics intelligence agent
+12. Human impact agent
+13. Response planner
+14. Monitoring agent
+15. Safety verification agent
+16. Orchestrator
+17. Structured output contracts
+18. Evidence system
+19. Conflict resolution
+20. Human approval system
+21. Coordination memory
+22. Scenario simulation
+23. Proactive triggers
+24. AI command center UI
+25. Realtime integration
+26. Security hardening
+27. Database migrations
+28. Automated testing
+29. End-to-end validation
+30. Deployment verification
+
+Do not skip tests.
+
+Do not mark features complete merely because UI screens exist.
+
+---
+
+# 32. FINAL IMPLEMENTATION REPORT
+
+After implementation, provide a factual report.
+
+Include:
+
+- Current architecture
+- Phase 3–5 verification
+- Agent architecture
+- Agents implemented
+- Agent tools and permissions
+- Orchestrator behavior
+- Context retrieval
+- Evidence system
+- Conflict resolution
+- AI response plan
+- Approval system
+- Memory
+- Simulation
+- Proactive triggers
+- Realtime events
+- UI modules
+- Database tables
+- API endpoints
+- Provider integrations
+- Tests executed
+- Test results
+- Performance
+- Security review
+- Environment variables
+- Deployment status
+- Limitations
+- Incomplete features
+
+Clearly distinguish:
+
+- Implemented
+- Tested
+- Partially implemented
+- Not implemented
+
+---
+
+# FINAL GOAL
+
+RESQFLOW AI must become an evidence-grounded, multi-agent emergency coordination system.
+
+The intelligence network must be able to:
+
+Understand emergencies.
+Analyze environmental conditions.
+Determine human needs.
+Find real available resources.
+Evaluate logistics.
+Identify conflicts.
+Create coordinated response plans.
+Validate its own recommendations.
+Explain every important decision.
+Ask authorized humans for approval.
+Execute permitted actions.
+Monitor changing conditions.
+Reassess when necessary.
+
+The system must be transparent, resilient, permission-controlled, traceable and operationally honest.
+
+Do not create a fake AI-agent demo.
+
+Build a real multi-agent coordination engine integrated into the existing RESQFLOW AI platform.

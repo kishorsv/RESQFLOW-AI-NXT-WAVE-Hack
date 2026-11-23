@@ -1,0 +1,11 @@
+{
+  "name": "Remix RESQFLOW AI",
+  "description": "Autonomous Emergency Response \u0026 Supply Chain Intelligence Network — Predict risks, coordinate resources, deliver relief, save lives.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

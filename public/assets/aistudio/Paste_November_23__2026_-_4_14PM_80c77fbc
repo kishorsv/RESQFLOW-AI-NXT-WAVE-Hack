@@ -1,0 +1,1368 @@
+# RESQFLOW AI — FULL SYSTEM AUDIT, PERFORMANCE ENGINEERING, LOAD TESTING, SECURITY & PRODUCTION RELIABILITY
+
+Act as a principal software architect, senior full-stack engineer, DevOps/SRE engineer, application security engineer, database performance engineer, QA automation engineer, and cloud scalability specialist.
+
+I have completed my RESQFLOW AI website and its features. The application is expected to be used by many users simultaneously, including during emergencies when traffic may suddenly increase.
+
+I do not want to add new features or rebuild the application. I want you to thoroughly audit, test, repair, optimize, and verify the EXISTING application so it operates smoothly, loads fast, remains secure, handles concurrent users, and is resilient to failures.
+
+## PROJECT
+
+**RESQFLOW AI — Autonomous Emergency Response & Supply Chain Intelligence Network**
+
+Core areas include:
+
+- Authentication and authorization
+- User profiles and roles
+- Emergency incident management
+- Risk assessment and intelligence
+- Weather and environmental data
+- Emergency alerts and notifications
+- Relief requests
+- Warehouses and inventory
+- Resource allocation
+- Logistics and route planning
+- Vehicles and dispatch
+- AI multi-agent coordination
+- Realtime updates
+- Command Center dashboard
+- Maps and visualizations
+- Demo mode
+- Database and API integrations
+
+---
+
+# PHASE 0 — STRICT SAFETY & AUDIT RULES
+
+Before doing anything:
+
+1. Inspect the complete existing project structure.
+2. Understand the current architecture and actual technology stack.
+3. Identify the existing production deployment.
+4. Identify frontend, backend, database, authentication, APIs, realtime, and external services.
+5. Create a baseline of the current working state.
+6. Identify current bugs, performance bottlenecks, and security risks.
+7. Reuse the existing implementation.
+8. Do not rebuild the application.
+9. Do not remove working features.
+10. Do not replace real APIs with mock data.
+11. Do not change production data.
+12. Do not run destructive database operations.
+13. Do not expose secrets.
+14. Do not make unverified claims.
+15. Do not deploy breaking changes automatically.
+
+Before modifying critical files, create a rollback-capable checkpoint using the existing Git workflow.
+
+If a test requires a real production service, expensive resource, destructive operation, or permission not provided, do not perform it without authorization. Use a safe isolated environment.
+
+**Audit first. Fix second. Test third. Deploy only after validation.**
+
+---
+
+# PHASE 1 — COMPLETE APPLICATION INVENTORY
+
+Analyze the entire codebase and create an inventory.
+
+## Frontend
+
+Inspect:
+
+- Routes
+- Pages
+- Components
+- Layouts
+- Navigation
+- Forms
+- UI state
+- Loading states
+- Error states
+- Suspense boundaries
+- Data fetching
+- API client
+- WebSocket/realtime client
+- Authentication state
+- Responsive design
+- Accessibility
+- Asset sizes
+- Animation performance
+- Rendering bottlenecks
+- Memory leaks
+
+## Backend
+
+Inspect:
+
+- Server startup
+- API routers
+- Business logic
+- Middleware
+- Authentication
+- Authorization
+- Input validation
+- Database access
+- Connection pooling
+- Caching
+- Rate limiting
+- Async operations
+- Background tasks
+- Job queues
+- WebSocket connections
+- Error handling
+- Timeouts
+- Retry policies
+- Graceful shutdown
+
+## Database
+
+Inspect:
+
+- Schema
+- Tables
+- Relations
+- Foreign keys
+- Indexes
+- Query performance
+- RLS policies
+- Transactions
+- Connection limits
+- Duplicate records
+- Data integrity
+- Migration safety
+- Query patterns
+- Large-table behavior
+
+## External services
+
+Inspect every integration:
+
+- AI providers
+- Weather APIs
+- Map providers
+- Routing services
+- Authentication provider
+- Email providers
+- Notification services
+- Realtime providers
+- File storage
+
+Create a complete system dependency map.
+
+Identify which services are essential, optional, or capable of degrading independently.
+
+---
+
+# PHASE 2 — FULL FUNCTIONAL TESTING
+
+Test the entire application, not only the homepage.
+
+Create automated tests for all existing features.
+
+## A. Authentication
+
+Test:
+
+- Signup
+- Login
+- Google login
+- OAuth redirect and callback
+- Session persistence
+- Session expiration
+- Logout
+- Password reset
+- Unauthorized access
+- Protected routes
+- Role-based permissions
+- Multiple browser sessions
+- Authentication errors
+- User profile initialization
+
+Ensure authentication failures do not break the entire application.
+
+## B. Emergency incidents
+
+Test:
+
+- Create incident
+- View incident
+- Edit incident
+- Delete if permitted
+- Search
+- Filtering
+- Sorting
+- Pagination
+- Duplicate detection
+- Verification
+- Escalation
+- Assignment
+- Resolution
+- Reopening
+- Incident history
+- Invalid coordinates
+- Invalid payloads
+- Concurrent incident creation
+
+Ensure incident data does not disappear or become duplicated.
+
+## C. Risk intelligence
+
+Test:
+
+- Risk calculations
+- Missing input data
+- Invalid weather data
+- Stale observations
+- Reassessment
+- Risk history
+- Risk changes
+- AI interpretations
+- Evidence references
+- Uncertainty handling
+- Risk alert generation
+- Concurrent assessment requests
+
+Verify deterministic calculations against known test cases.
+
+## D. Weather & environmental data
+
+Test:
+
+- API success
+- API timeout
+- Rate limiting
+- Provider failure
+- Invalid responses
+- Empty responses
+- Stale data
+- Retry
+- Cache behavior
+- Multiple concurrent requests
+
+Never convert provider failures into fake live data.
+
+## E. Relief requests
+
+Test:
+
+- Create request
+- Edit request
+- Status changes
+- Priority
+- Quantity validation
+- Request duplication
+- Concurrent updates
+- Assignment
+- Completion
+- History
+
+## F. Warehouse & inventory
+
+Test:
+
+- Stock creation
+- Stock updates
+- Stock movement
+- Incoming supplies
+- Reservations
+- Allocation
+- Shortage detection
+- Expiry handling if implemented
+- Low-stock alerts
+- Concurrent stock changes
+- Insufficient stock
+- Rollback after transaction failure
+
+Inventory must never become negative through concurrent allocation.
+
+Use atomic database transactions or appropriate locking where necessary.
+
+## G. Allocation & logistics
+
+Test:
+
+- Warehouse selection
+- Resource matching
+- Allocation validation
+- Vehicle availability
+- Dispatch workflow
+- Route calculation
+- Invalid routes
+- Provider failures
+- ETA handling
+- Cancellation
+- Concurrent allocation
+- Dispatch state transitions
+
+Prevent duplicate allocations and dispatches.
+
+## H. AI multi-agent coordination
+
+Test:
+
+- Agent startup
+- Agent availability
+- Task assignment
+- Agent execution
+- Agent timeouts
+- Invalid AI responses
+- JSON/schema validation
+- Agent failures
+- Partial results
+- Retry behavior
+- Conflicting recommendations
+- Orchestrator failures
+- Cancelled tasks
+- Duplicate tasks
+- AI provider rate limits
+- Cost controls
+- Prompt injection protection
+
+AI failure must not crash the core emergency application.
+
+AI must never independently perform unauthorized high-impact operations.
+
+## I. Realtime functionality
+
+Test:
+
+- Connection
+- Reconnection
+- Disconnection
+- Authentication
+- Event delivery
+- Duplicate events
+- Missing events
+- Rapid updates
+- Multiple subscribers
+- Subscription cleanup
+- Network interruption
+- Offline recovery
+
+Realtime failure must not make the entire application unusable.
+
+Provide a fallback refresh or normal API data-fetching mechanism where appropriate.
+
+## J. Maps and navigation
+
+Test:
+
+- Map loading
+- Markers
+- Incident layers
+- Warehouse locations
+- Route display
+- Map provider failure
+- Invalid coordinates
+- Zoom
+- Mobile rendering
+- API rate limits
+
+The rest of the website must remain usable if the map fails to load.
+
+---
+
+# PHASE 3 — FRONTEND PERFORMANCE ENGINEERING
+
+Make the website fast, smooth, responsive, and lightweight.
+
+## 1. Initial loading
+
+Measure:
+
+- Initial page load
+- Time to first render
+- Time to interactive
+- Largest Contentful Paint
+- Cumulative Layout Shift
+- Interaction to Next Paint
+- JavaScript bundle size
+- CSS size
+- Image size
+- Network request count
+
+Optimize:
+
+- Bundle size
+- Code splitting
+- Lazy-loaded routes
+- Lazy-loaded components
+- Image optimization
+- Font loading
+- Dependency size
+- Unnecessary API requests
+- Duplicate requests
+- Rendering
+- Hydration if applicable
+
+Do not lazy-load essential hero content in a way that makes the homepage feel blank.
+
+## 2. Frontend responsiveness
+
+Test:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+Ensure:
+
+- No layout overflow
+- No horizontal scrolling unless intended
+- No broken components
+- No overlapping content
+- Buttons remain accessible
+- Tables and dashboards remain usable
+- Navigation works on mobile
+- Forms remain usable
+- Loading states are stable
+
+## 3. React and UI optimization
+
+If the project uses React, inspect:
+
+- Unnecessary re-renders
+- Large component trees
+- Expensive calculations
+- Excessive context updates
+- State management problems
+- Unstable component keys
+- Memory leaks
+- Uncleaned event listeners
+- Uncleaned subscriptions
+- Animation loops
+- Excessive DOM nodes
+
+Use memoization only where measurements justify it.
+
+Do not blindly add useMemo, useCallback, or memo everywhere.
+
+## 4. Image and asset optimization
+
+Optimize:
+
+- Image formats
+- Image dimensions
+- Responsive sources
+- Lazy loading
+- Hero images
+- Compression
+- Asset caching
+- Fonts
+- Icons
+
+Prevent oversized images from slowing the website.
+
+## 5. Animation optimization
+
+Ensure:
+
+- Animations remain smooth.
+- Avoid expensive layout-triggering animation.
+- Prefer transform and opacity.
+- Reduce unnecessary background animation.
+- Respect prefers-reduced-motion.
+- Remove unnecessary continuously running loops.
+- Avoid degrading mobile performance.
+
+---
+
+# PHASE 4 — API PERFORMANCE & BACKEND OPTIMIZATION
+
+Audit every API endpoint.
+
+Measure:
+
+- Response time
+- Throughput
+- Error rate
+- CPU usage
+- Memory usage
+- Database wait time
+- External API wait time
+- Request queueing
+
+## Optimize
+
+- Slow endpoints
+- N+1 queries
+- Repeated database requests
+- Blocking operations
+- Excessive serialization
+- Large payloads
+- Missing pagination
+- Inefficient filtering
+- Unnecessary joins
+- Duplicate external API calls
+- Unbounded concurrency
+
+## API requirements
+
+Where appropriate, implement or improve:
+
+- Request validation
+- Response validation
+- Pagination
+- Query limits
+- Timeouts
+- Safe retries
+- Idempotency
+- Caching
+- Rate limiting
+- Concurrency limits
+- Structured error responses
+
+Do not retry non-idempotent operations blindly.
+
+Do not retry requests indefinitely.
+
+Prevent retry storms.
+
+Use exponential backoff with jitter where appropriate.
+
+## API response performance targets
+
+Establish measurable goals for the deployed system under defined conditions.
+
+Initial engineering targets:
+
+- Lightweight API read endpoints: p95 under 300 ms
+- Standard database-backed requests: p95 under 500 ms
+- API error rate: under 1% under normal test load
+- No unexplained request timeouts under expected capacity
+- No unbounded request queue growth
+
+These are targets, not guaranteed outcomes. Measure the actual application and report the results.
+
+---
+
+# PHASE 5 — DATABASE PERFORMANCE & INTEGRITY
+
+Thoroughly inspect the production database architecture, but run tests against an isolated test database.
+
+## Analyze
+
+- Slow queries
+- Missing indexes
+- Unused indexes
+- Query plans
+- Sequential scans
+- Connection pool size
+- Connection saturation
+- Lock contention
+- Deadlocks
+- Transaction duration
+- Table growth
+- RLS overhead
+- Realtime overhead
+- Database connection limits
+
+## Improve
+
+Where justified:
+
+- Indexes
+- Query optimization
+- Connection pooling
+- Transactions
+- Bulk operations
+- Pagination
+- Query limits
+- Efficient aggregation
+- Data retention policies
+- Safe migration practices
+
+## Data integrity tests
+
+Verify:
+
+- No orphaned records
+- No duplicate records where prohibited
+- No invalid references
+- No negative inventory
+- No invalid allocation quantities
+- No inconsistent dispatch status
+- No cross-user data leakage
+- No cross-organization data leakage
+
+Do not run destructive cleanup on production.
+
+Never remove or alter real user data to improve performance.
+
+---
+
+# PHASE 6 — REAL CONCURRENT USER & LOAD TESTING
+
+This is one of the highest-priority phases.
+
+I want to understand how many concurrent users the website can actually support and where it begins to slow down.
+
+Do not use vague claims like "supports unlimited users."
+
+Create a realistic load-testing strategy.
+
+## A. Test environment
+
+Use:
+
+- Isolated staging deployment
+- Test database
+- Synthetic users
+- Synthetic data
+- Separate credentials
+- Controlled test traffic
+
+Do not send uncontrolled load to the live production website.
+
+Do not test against third-party APIs at high volume without authorization.
+
+## B. User scenarios
+
+Create realistic virtual-user journeys:
+
+### Scenario 1 — Homepage visitor
+
+- Open homepage
+- Load images and assets
+- Navigate sections
+- Open login page
+
+### Scenario 2 — Authenticated dashboard user
+
+- Login
+- Open dashboard
+- Load incidents
+- Load risk overview
+- View map
+- View resource status
+
+### Scenario 3 — Emergency operator
+
+- Open incident list
+- Filter incidents
+- Open incident detail
+- Update incident
+- Create incident report
+- View risk assessment
+
+### Scenario 4 — Logistics user
+
+- Open inventory
+- View warehouse stock
+- Search resources
+- View relief requests
+- Generate allocation proposal
+
+### Scenario 5 — AI user
+
+- Start AI coordination session
+- Retrieve agent results
+- View plan
+- Validate recommendations
+
+AI calls must be controlled so load tests do not generate uncontrolled AI costs.
+
+### Scenario 6 — Realtime users
+
+- Connect
+- Subscribe
+- Receive test events
+- Disconnect
+- Reconnect
+
+## C. Gradual load test
+
+Start conservatively.
+
+Suggested test stages:
+
+| Stage | Concurrent virtual users | Duration |
+|---|---:|---:|
+| Baseline | 1–5 | 2 min |
+| Low load | 10 | 5 min |
+| Normal load | 25 | 5 min |
+| Medium load | 50 | 10 min |
+| High load | 100 | 10 min |
+| Stress test | 200 | Controlled |
+| Capacity test | Increase gradually | Stop at failure threshold |
+
+Only perform the stages that the environment and resource limits safely permit.
+
+These user counts are test levels, not assumptions that the current server can handle them.
+
+Do not jump directly to 1,000 users.
+
+Do not execute the entire stress test against production.
+
+## D. Measure at each stage
+
+Record:
+
+- Concurrent users
+- Requests per second
+- Successful requests
+- Failed requests
+- HTTP status codes
+- p50 latency
+- p90 latency
+- p95 latency
+- p99 latency
+- Average response time
+- Timeouts
+- CPU
+- Memory
+- Database connections
+- Database latency
+- Queue depth
+- Realtime connection count
+- External API latency
+- Server restart count
+
+Create a performance report.
+
+Identify the first bottleneck.
+
+## E. Failure thresholds
+
+Define safe stop conditions before testing.
+
+Stop or reduce load if:
+
+- Error rate exceeds 5% for sustained periods.
+- p95 latency exceeds the defined critical threshold.
+- CPU remains saturated.
+- Memory approaches the safe limit.
+- Database connections are exhausted.
+- Request queue grows continuously.
+- Server restarts unexpectedly.
+- Database begins failing.
+- External service limits are approached.
+- Test traffic impacts other users.
+
+Do not continue stressing a system after it has begun destabilizing.
+
+## F. Capacity determination
+
+Estimate the sustainable concurrent user capacity based on actual results.
+
+Report:
+
+- Stable concurrency
+- Peak tested concurrency
+- Concurrency at which performance degraded
+- Bottleneck
+- Recommended production capacity
+- Safety margin
+- Scaling recommendation
+
+Do not extrapolate a tested capacity into an unsupported unlimited-user claim.
+
+---
+
+# PHASE 7 — SERVER RESILIENCE & OVERLOAD PROTECTION
+
+Make the server resilient to sudden traffic spikes.
+
+Inspect the server architecture and determine whether it is capable of handling concurrent requests efficiently.
+
+Implement only appropriate safeguards.
+
+## Protection mechanisms
+
+- Request timeouts
+- Connection limits
+- Concurrency limits
+- Rate limiting
+- Request queue management
+- Graceful overload responses
+- Memory protection
+- CPU-intensive work isolation
+- Background processing for long tasks
+- Safe caching
+- Circuit breakers for failing external services
+- Retry limits
+- Graceful shutdown
+- Health checks
+
+## Overload behavior
+
+When the server becomes overloaded:
+
+- Do not crash immediately.
+- Do not allow memory to grow without control.
+- Do not create unlimited pending tasks.
+- Do not overwhelm the database.
+- Do not retry every failed request at once.
+- Do not queue unlimited AI tasks.
+- Return appropriate retryable responses where necessary.
+- Preserve critical operations.
+- Reject nonessential work safely when necessary.
+
+Use appropriate HTTP responses, such as 429 or 503, when warranted.
+
+Emergency incident intake and essential operations should be prioritized over expensive nonessential analytics or AI workloads where the architecture permits.
+
+---
+
+# PHASE 8 — EXTERNAL API FAILURE RESILIENCE
+
+The application depends on external services.
+
+Test failure of each provider independently.
+
+## Test scenarios
+
+- AI provider unavailable
+- AI provider timeout
+- Weather provider unavailable
+- Routing API unavailable
+- Map tiles unavailable
+- Authentication provider outage
+- Database temporary disconnection
+- Realtime disconnection
+- Email provider failure
+- Slow network
+- DNS/connectivity issue
+
+## Requirements
+
+- Appropriate timeouts
+- Bounded retries
+- Retry backoff
+- Circuit breaker where appropriate
+- Graceful fallback
+- Cached data only when valid
+- Clear stale-data labeling
+- Provider status indicators
+- Error recovery
+- No fake live data
+
+The homepage must not crash because an AI API is unavailable.
+
+The command center must not crash because weather data is unavailable.
+
+The inventory module must not crash because a map provider is unavailable.
+
+Critical functionality should remain usable when nonessential dependencies fail.
+
+---
+
+# PHASE 9 — SECURITY & PENETRATION-STYLE REVIEW
+
+Perform a defensive security audit of the application.
+
+Do not perform destructive tests against production.
+
+## Authentication & authorization
+
+Test:
+
+- Unauthenticated access
+- Unauthorized roles
+- Token expiration
+- Invalid tokens
+- Role escalation
+- Session handling
+- OAuth redirects
+- Protected APIs
+
+## Application security
+
+Check:
+
+- SQL injection
+- XSS
+- CSRF where applicable
+- SSRF
+- Open redirects
+- IDOR
+- Path traversal
+- Input validation
+- File upload validation
+- Rate-limit bypass
+- API abuse
+- Sensitive data exposure
+- CORS misconfiguration
+- Security headers
+- Dependency vulnerabilities
+
+## Firebase/Supabase security
+
+If applicable, inspect:
+
+- Firebase rules
+- Firestore rules
+- Supabase RLS
+- Database permissions
+- Authenticated user isolation
+- Storage policies
+- Public keys
+- Secret keys
+- Service-role credentials
+
+Ensure no user can access another user's private data.
+
+Ensure backend permissions are not dependent only on frontend controls.
+
+## Secret protection
+
+Check:
+
+- Git history where feasible
+- `.env` files
+- Build output
+- Source maps
+- Frontend bundles
+- Logs
+- Deployment environment variables
+
+Never expose private API keys, service-role keys, credentials, or secrets.
+
+If a secret is found exposed, report it and recommend rotation. Do not reproduce the secret in the report.
+
+---
+
+# PHASE 10 — AUTOMATED TESTING & CI
+
+Create or improve an automated testing system.
+
+Use the project's existing tools where possible.
+
+Implement appropriate:
+
+- Unit tests
+- Component tests
+- API tests
+- Integration tests
+- Database tests
+- Authentication tests
+- End-to-end tests
+- Regression tests
+- Performance smoke tests
+- Build tests
+
+## Test important user journeys
+
+Homepage → login → dashboard
+
+Signup → account creation → profile
+
+Incident → risk assessment → alert
+
+Relief request → inventory → allocation
+
+Allocation → dispatch → route
+
+AI coordination → plan → verification → approval
+
+Realtime update → dashboard refresh
+
+Logout → protected route blocked
+
+## CI pipeline
+
+Where the project already has CI or can safely support it, configure a pipeline that checks:
+
+1. Install dependencies
+2. TypeScript validation
+3. Lint
+4. Unit tests
+5. Integration tests
+6. Security/dependency checks
+7. Production build
+8. Performance smoke checks
+
+Do not deploy if critical checks fail.
+
+Avoid introducing expensive or unreliable checks that unnecessarily block development.
+
+---
+
+# PHASE 11 — DEPLOYMENT & PRODUCTION VERIFICATION
+
+Audit the current deployment.
+
+Do not deploy automatically before reviewing the results.
+
+## Verify
+
+- Production build
+- Environment variables
+- Hosting configuration
+- Backend deployment
+- Frontend deployment
+- Database connectivity
+- Auth domains
+- OAuth redirects
+- API URLs
+- HTTPS
+- CORS
+- Health checks
+- Realtime
+- WebSocket support
+- Server startup
+- Server restart behavior
+- Deployment logs
+- Rollback capability
+
+## Deployment safety
+
+Implement or verify:
+
+- Staging before production
+- Build validation
+- Deployment health checks
+- Smoke tests after deployment
+- Rollback plan
+- Safe database migrations
+- Backward compatibility
+- Environment separation
+
+Do not run destructive migrations.
+
+Do not overwrite production configuration blindly.
+
+Do not deploy if authentication, core API, or database is broken.
+
+## Post-deployment tests
+
+After deployment, verify:
+
+- Website opens
+- Homepage loads
+- Login opens
+- Authentication works
+- Dashboard opens
+- APIs respond
+- Database connection works
+- Incident module works
+- Inventory module works
+- AI module works if provider available
+- Realtime connects
+- Logout works
+- No critical console errors
+- No server crash or restart loop
+
+Verify using the actual deployed URL and report which tests were actually completed.
+
+---
+
+# PHASE 12 — MONITORING & OBSERVABILITY
+
+Make the system diagnosable.
+
+Add or improve monitoring without overloading the application.
+
+## Monitor
+
+- Server uptime
+- API availability
+- Response latency
+- Error rates
+- CPU
+- Memory
+- Database connections
+- Slow queries
+- Realtime connections
+- External service failures
+- Queue depth
+- AI request duration
+- AI cost and usage
+- Deployment health
+
+## Logging
+
+Use structured logs.
+
+Include appropriate:
+
+- Timestamp
+- Severity
+- Service
+- Request ID
+- Route
+- Error code
+- Duration
+- Correlation ID
+
+Do not log passwords, secrets, tokens, or sensitive personal data.
+
+## Health endpoints
+
+Where appropriate, implement or verify:
+
+- Liveness
+- Readiness
+- Database health
+- External provider status
+- Realtime status
+
+Health checks must not expose sensitive internal configuration.
+
+Distinguish:
+
+HEALTHY
+DEGRADED
+UNAVAILABLE
+
+The website should communicate degraded service instead of pretending every service is working.
+
+---
+
+# PHASE 13 — CACHING & SCALABILITY REVIEW
+
+Evaluate the appropriate scaling strategy based on actual architecture.
+
+Inspect:
+
+- Frontend CDN caching
+- Static assets
+- API caching
+- Weather caching
+- Map data caching
+- Database pooling
+- Realtime fanout
+- Background job processing
+- AI request queues
+- Horizontal scaling compatibility
+- Session consistency
+
+Do not cache private user data across users.
+
+Do not cache emergency information without freshness metadata.
+
+Use stale-data policies carefully.
+
+Avoid caching operations that must reflect transactional inventory state.
+
+Identify which components can scale independently.
+
+If the backend currently depends on in-memory state, determine whether horizontal scaling would break sessions, events, queues, or consistency.
+
+If so, propose and implement an appropriate shared-state solution only where needed and safe.
+
+---
+
+# PHASE 14 — PERFORMANCE BUDGET
+
+Establish and measure the following targets where realistic.
+
+## Frontend
+
+- Fast initial rendering
+- No oversized unnecessary JavaScript bundles
+- Core homepage visible quickly on normal connections
+- No major layout shifts
+- Responsive interactions
+- No long main-thread blocking tasks
+- Dashboard modules load efficiently
+- Heavy modules load only when needed
+
+## Backend
+
+- Lightweight reads: target p95 under 300 ms
+- Standard APIs: target p95 under 500 ms
+- No unbounded tasks or queues
+- No excessive DB connection use
+- No cascading service failures
+
+## Website
+
+- Aim for Lighthouse Performance 90+ on the public landing page when realistic for the test environment.
+- Aim for accessibility 90+.
+- Aim for SEO 90+.
+- Aim for best-practice score 90+.
+
+Do not manipulate Lighthouse scores or hide features to fake performance.
+
+Report real results and explain any limitations.
+
+---
+
+# PHASE 15 — RECOVERY & CHAOS TESTING
+
+Use an isolated environment to test controlled failure scenarios.
+
+Simulate:
+
+- Backend restart
+- Database temporary failure
+- Slow API
+- AI provider outage
+- Realtime disconnection
+- Network interruption
+- Invalid provider response
+- Temporary high load
+- Browser refresh during operation
+
+Verify:
+
+- Application recovers
+- No duplicate critical actions
+- No data corruption
+- No loss of committed transactions
+- No infinite retry
+- No endless spinner
+- No blank screen
+- User receives understandable feedback
+
+Do not simulate destructive failures on production.
+
+---
+
+# PHASE 16 — FINAL EXECUTION ORDER
+
+Follow this order strictly:
+
+1. Full codebase inventory
+2. Baseline test
+3. Bug and error audit
+4. Authentication audit
+5. Frontend performance audit
+6. Backend API audit
+7. Database integrity audit
+8. Functional test suite
+9. Security audit
+10. Performance profiling
+11. Controlled load test
+12. Bottleneck identification
+13. Targeted fixes
+14. Regression testing
+15. Production build
+16. Staging deployment
+17. Staging verification
+18. Deployment approval
+19. Production deployment if authorized
+20. Production smoke test
+21. Final report
+
+Do not skip testing before fixes.
+
+Do not skip regression testing after fixes.
+
+Do not skip deployment verification.
+
+---
+
+# PHASE 17 — FINAL AUDIT REPORT
+
+Create a comprehensive report based on actual findings.
+
+## 1. Executive Summary
+
+- Overall health
+- Critical problems
+- Current reliability
+- Production readiness
+
+## 2. Bugs Found
+
+For each issue:
+
+- Description
+- Severity
+- Root cause
+- Affected feature
+- Fix
+- Verification result
+
+Severity:
+
+- P0 — Critical
+- P1 — High
+- P2 — Medium
+- P3 — Low
+
+## 3. Functional Test Results
+
+Report:
+
+- Tests passed
+- Tests failed
+- Tests skipped
+- Tests not implemented
+
+## 4. Performance Report
+
+Include:
+
+- Homepage loading time
+- Lighthouse scores
+- API latency
+- p50/p95/p99
+- Requests per second
+- Error rate
+- CPU
+- Memory
+- Database latency
+- Concurrent users tested
+
+## 5. Capacity & Scaling
+
+Report:
+
+- Highest stable tested concurrency
+- Performance degradation threshold
+- Actual bottleneck
+- Recommended capacity
+- Scaling recommendations
+- Required server upgrade if needed
+
+Do not invent capacity numbers.
+
+## 6. Security Report
+
+Report:
+
+- Authentication
+- Authorization
+- Database isolation
+- Secrets
+- Vulnerabilities
+- Dependency issues
+- Security fixes
+- Remaining risks
+
+## 7. Deployment Report
+
+Report:
+
+- Production build
+- Staging
+- Production deployment
+- Health checks
+- Post-deployment verification
+- Rollback status
+
+## 8. Remaining Issues
+
+List everything still unresolved.
+
+Do not hide failures.
+
+## 9. Final Verdict
+
+Use one of:
+
+- NOT READY
+- READY FOR TESTING
+- STAGING VERIFIED
+- PRODUCTION READY WITH MEASURED LIMITATIONS
+
+Explain the verdict with evidence.
+
+# FINAL OBJECTIVE
+
+Transform the existing RESQFLOW AI application into a thoroughly tested, performance-optimized, secure, resilient, and scalable application.
+
+The website must load quickly, operate smoothly, support concurrent users within its measured capacity, preserve data integrity, resist overload, recover from failures, handle external API outages gracefully, and deploy reliably.
+
+Do not promise unlimited users.
+
+Do not make superficial changes.
+
+Do not merely tell me what could be fixed.
+
+Audit the real code, fix the real issues, run tests, measure performance, verify deployment, and provide honest results.
+
+Every feature must either work, gracefully degrade, or clearly report its unavailable status. No silent failures, fake success states, unbounded processing, or preventable crashes.

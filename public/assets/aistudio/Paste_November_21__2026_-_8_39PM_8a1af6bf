@@ -1,0 +1,1359 @@
+# PHASE 5 — RESQFLOW AI
+## Smart Resource Allocation, Fleet Intelligence, Route Optimization & Emergency Dispatch Engine
+
+**Project:** RESQFLOW AI — Autonomous Emergency Response & Supply Chain Intelligence Network
+
+**Phase:** 5
+
+**Objective:** Transform RESQFLOW AI into an intelligent emergency logistics coordination platform that connects active incidents, relief demands, real warehouse inventory, available vehicles, transport routes, dispatch teams and delivery tracking.
+
+This phase must integrate directly with the existing Phase 1–4 implementation.
+
+---
+
+## 1. CRITICAL IMPLEMENTATION INSTRUCTIONS
+
+Before writing code:
+
+- Audit the entire existing repository.
+- Verify Phase 1–4 functionality and current database schema.
+- Reuse the existing FastAPI backend, Supabase database, authentication, realtime services, maps, inventory, incidents, risk engine and UI.
+- Do not rebuild the website.
+- Do not redesign the existing dashboard from scratch.
+- Do not create duplicate tables, duplicate API endpoints or duplicate business logic.
+- Preserve every previously working feature.
+- Implement backend logic before connecting frontend actions.
+- All actions must persist to the actual database.
+- No fake vehicles, fabricated dispatches, simulated deliveries, hardcoded routes or fake realtime tracking.
+- Do not claim a road is safe based only on a routing API.
+- If live vehicle GPS is unavailable, clearly show tracking unavailable.
+- If route data is unavailable, report that honestly.
+- No actual dispatch without authorized human approval.
+
+The implementation must be modular, production-oriented, testable and extensible.
+
+---
+
+# 2. SMART RELIEF ALLOCATION ENGINE
+
+Build a real intelligent allocation engine.
+
+The system must receive a verified relief request and identify the most suitable warehouses, available resources and feasible supply combinations.
+
+### Input
+
+- Incident ID
+- Incident coordinates
+- Incident severity
+- Incident risk score
+- Incident priority
+- Requested resource types
+- Requested quantities
+- Delivery deadline
+- Affected population
+- Vulnerability indicators
+- Access restrictions
+- Verified relief demand
+
+### Warehouse evaluation
+
+Evaluate all eligible warehouses using:
+
+1. Actual available stock
+2. Reserved stock
+3. Warehouse operational status
+4. Geographic distance
+5. Estimated travel time
+6. Vehicle availability
+7. Vehicle capacity
+8. Route accessibility
+9. Delivery urgency
+10. Incident risk and priority
+11. Competing relief requests
+12. Stock expiry and quality
+13. Expected delivery time
+
+The nearest warehouse must not automatically win.
+
+### Allocation result
+
+Return:
+
+- Recommended warehouse
+- Resource
+- Requested quantity
+- Available quantity
+- Proposed allocation quantity
+- Remaining shortage
+- Estimated distance
+- Estimated travel duration
+- Selected vehicle if available
+- Delivery priority
+- Reason for recommendation
+- Confidence
+- Data freshness
+- Constraints
+- Alternative warehouses
+
+Provide transparent reasoning.
+
+Example:
+
+> Warehouse B was selected because it has sufficient verified medical supplies, an operational status, and a shorter estimated delivery time than the alternatives. Warehouse A is closer but lacks enough unreserved stock to fulfil the request.
+
+The above is illustrative only. Generate recommendations using actual data.
+
+---
+
+# 3. MULTI-WAREHOUSE ALLOCATION OPTIMIZER
+
+Implement an allocation optimizer capable of distributing one emergency request across multiple warehouses.
+
+Example:
+
+A verified incident requires:
+
+- 500 food kits
+- 300 water units
+- 100 medical kits
+
+Possible supply:
+
+- Warehouse A: 200 food kits, 150 water units
+- Warehouse B: 250 food kits, 100 medical kits
+- Warehouse C: 100 food kits, 300 water units
+
+The engine must determine whether the demand can be satisfied using one warehouse or multiple warehouses.
+
+Implement:
+
+- Full allocation
+- Partial allocation
+- Multi-warehouse allocation
+- Shortage detection
+- Warehouse ranking
+- Allocation alternatives
+- Allocation optimization
+- Allocation conflicts
+- Reservation conflicts
+
+Do not invent supply values.
+
+Use a configurable scoring or optimization model. Document the factors and weights.
+
+Optimize for:
+
+- Fulfillment percentage
+- Delivery time
+- Incident priority
+- Warehouse availability
+- Transportation capacity
+- Route viability
+- Supply freshness
+- Resource scarcity
+- Fairness between simultaneous incidents
+
+Avoid starving lower-priority incidents indefinitely. Add configurable fairness or aging logic.
+
+---
+
+# 4. ALLOCATION PRIORITY ENGINE
+
+Implement a transparent relief allocation priority score.
+
+Suggested dimensions:
+
+- Incident risk
+- Verified severity
+- Number of affected people
+- Vulnerable population
+- Urgency of requested resource
+- Time since request
+- Critical unmet demand
+- Supply scarcity
+- Access limitations
+
+Suggested output:
+
+- Priority score
+- Priority band
+- Reasoning
+- Evidence
+- Missing information
+- Timestamp
+- Score version
+
+Priority levels:
+
+- LOW
+- NORMAL
+- HIGH
+- URGENT
+- CRITICAL
+
+Keep scoring deterministic and configurable.
+
+AI may explain or summarize the result, but must not invent input values or override safety rules.
+
+---
+
+# 5. VEHICLE & FLEET MANAGEMENT
+
+Create a real vehicle management system.
+
+Each vehicle must have:
+
+- Vehicle ID
+- Registration number
+- Vehicle name
+- Type
+- Organization
+- Assigned warehouse
+- Capacity
+- Capacity unit or dimensional constraints
+- Driver
+- Driver contact
+- Current location
+- Location timestamp
+- Availability
+- Operational status
+- Fuel or battery status if provided
+- Maintenance status
+- Equipment
+- Last service date
+- Created timestamp
+- Updated timestamp
+
+Vehicle types:
+
+- Ambulance
+- Relief truck
+- Cargo truck
+- Pickup
+- Rescue vehicle
+- Water tanker
+- Bus
+- Utility vehicle
+- Motorcycle
+- Boat
+- Other
+
+Vehicle statuses:
+
+- AVAILABLE
+- ASSIGNED
+- LOADING
+- DISPATCHED
+- EN_ROUTE
+- DELIVERING
+- RETURNING
+- UNAVAILABLE
+- MAINTENANCE
+
+Implement:
+
+- Add vehicle
+- Edit vehicle
+- Register driver
+- Assign driver
+- Assign warehouse
+- Update vehicle status
+- Update location when a real source exists
+- Vehicle availability management
+- Capacity tracking
+- Maintenance tracking
+- Fleet overview
+- Vehicle history
+- Vehicle map display
+
+Prevent assigning a vehicle to overlapping active dispatches.
+
+---
+
+# 6. DRIVER & RESPONDER MANAGEMENT
+
+Create a driver/responder assignment module.
+
+Track:
+
+- Driver ID
+- Name
+- Contact information
+- Organization
+- Availability
+- Assigned vehicle
+- Assigned dispatch
+- Operational status
+- Certification or qualification if relevant
+- Last known location, if shared
+- Last location update
+- Assignment history
+
+Status:
+
+- Available
+- Assigned
+- On Duty
+- Off Duty
+- Unavailable
+
+Implement role-based restrictions.
+
+A driver must not be assigned to multiple active dispatches unless the system explicitly supports safe scheduling.
+
+Do not expose sensitive driver information to unauthorized users.
+
+---
+
+# 7. REAL ROUTE OPTIMIZATION ENGINE
+
+Integrate real route providers with the existing map.
+
+Use the existing route provider if one has already been implemented.
+
+Otherwise support configurable providers such as:
+
+- OSRM for road routing
+- OpenRouteService for routing and relevant route features
+- Another approved routing API configured through environment variables
+
+Build a provider abstraction so the application can change routing providers without rewriting dispatch logic.
+
+### Route calculation must use:
+
+- Warehouse coordinates
+- Incident destination coordinates
+- Actual road network
+- Vehicle type where supported
+- Route distance
+- Estimated duration
+- Route geometry
+- Provider response
+- Timestamp
+- Routing status
+
+Calculate alternative routes where supported.
+
+Compare:
+
+- Route distance
+- Estimated travel time
+- Road accessibility information if available
+- Route restrictions if available
+- User-provided closure information
+- Reported hazards
+- Available alternatives
+
+### Route statuses
+
+- ROUTE_AVAILABLE
+- ROUTE_UNAVAILABLE
+- ROUTE_STALE
+- ROUTE_REQUIRES_REVIEW
+
+Do not fabricate route duration or distance.
+
+Do not describe routes as safe unless verified authoritative safety data exists.
+
+A standard routing provider is not a disaster-road safety verification system.
+
+---
+
+# 8. EMERGENCY ROAD CONDITIONS & ROUTE RISK
+
+Build a separate route risk assessment layer.
+
+Collect supported information from:
+
+- Verified road closure reports
+- Field responder reports
+- Authoritative road alerts
+- Incident locations
+- Flood-risk information
+- Weather information
+- Infrastructure restrictions
+- Reported landslides
+- Verified road hazards
+
+For each route segment when data is available, evaluate:
+
+- Known closures
+- Flooded road reports
+- Landslide reports
+- Severe weather exposure
+- Report age
+- Source reliability
+- Route proximity to incident hazards
+
+Return:
+
+- Route risk band
+- Identified hazards
+- Hazard locations
+- Source
+- Source timestamp
+- Confidence
+- Missing information
+- Last verification time
+
+Risk bands:
+
+- UNKNOWN
+- LOW
+- MODERATE
+- HIGH
+- BLOCKED
+
+If there is no road condition feed, show:
+
+**Road safety data unavailable — route has not been safety verified.**
+
+Never turn missing information into a LOW-risk route.
+
+Never autonomously instruct drivers to enter dangerous conditions.
+
+---
+
+# 9. ROUTE SELECTION & ALTERNATIVE ROUTES
+
+The system must compare available routes.
+
+The shortest route may not be the best route during an emergency.
+
+Consider:
+
+- Travel duration
+- Distance
+- Known closures
+- Reported hazards
+- Incident severity
+- Vehicle restrictions
+- Verified accessibility
+- Delivery urgency
+- Route data freshness
+
+Display:
+
+### Recommended route
+- Distance
+- ETA
+- Provider
+- Route risk status
+- Known restrictions
+- Reason for selection
+
+### Alternative route
+- Distance
+- ETA
+- Difference in duration
+- Difference in distance
+- Known hazards
+- Why it is an alternative
+
+If hazard information is incomplete, clearly state that route safety is uncertain.
+
+Do not fabricate alternative routes when the provider returns only one route.
+
+---
+
+# 10. DISPATCH PLANNING ENGINE
+
+Build a dispatch planning workflow.
+
+The dispatch engine should combine:
+
+- Incident
+- Relief request
+- Approved allocation
+- Warehouse
+- Resource inventory
+- Vehicle
+- Driver
+- Route
+- Delivery destination
+- Delivery deadline
+- Priority
+- Dispatch team
+
+### Dispatch planning workflow
+
+1. Select verified relief request.
+2. Validate incident status.
+3. Validate relief request status.
+4. Check resource availability.
+5. Run allocation optimizer.
+6. Select warehouse or warehouses.
+7. Select suitable vehicles.
+8. Check vehicle capacity.
+9. Calculate route.
+10. Evaluate available route risk information.
+11. Estimate delivery time.
+12. Check deadline feasibility.
+13. Prepare dispatch plan.
+14. Present plan to authorized personnel.
+15. Obtain approval.
+16. Reserve stock.
+17. Assign vehicle and driver.
+18. Create dispatch record.
+19. Begin dispatch workflow.
+
+The plan must be generated using actual data.
+
+---
+
+# 11. DISPATCH APPROVAL SYSTEM
+
+Implement human-in-the-loop approval.
+
+Dispatch must not become active until an authorized user approves it.
+
+Display a dispatch approval panel:
+
+- Incident
+- Risk score
+- Relief request
+- Requested resources
+- Allocation breakdown
+- Warehouse selection
+- Vehicle
+- Driver
+- Route
+- Distance
+- Estimated time
+- Route risk
+- Hazard reports
+- Delivery deadline
+- Expected arrival
+- Allocation reasoning
+- Data freshness
+- Missing information
+- Warnings
+
+Actions:
+
+- Approve Dispatch
+- Reject Plan
+- Edit Allocation
+- Change Warehouse
+- Change Vehicle
+- Change Driver
+- Recalculate Route
+- Cancel
+
+Before approval, revalidate:
+
+- Inventory
+- Reservations
+- Vehicle availability
+- Driver availability
+- Incident state
+- Route availability
+
+If any critical condition has changed, require a refreshed plan.
+
+---
+
+# 12. DISPATCH LIFECYCLE
+
+Implement a proper dispatch state machine.
+
+Lifecycle:
+
+`DRAFT → PENDING_APPROVAL → APPROVED → LOADING → DISPATCHED → EN_ROUTE → ARRIVED → DELIVERING → DELIVERED → COMPLETED`
+
+Additional states:
+
+- REJECTED
+- CANCELLED
+- FAILED
+- DELAYED
+- RETURNING
+- PARTIALLY_DELIVERED
+
+Implement transition validation.
+
+Examples:
+
+- Cannot dispatch without approval.
+- Cannot load resources that are not reserved.
+- Cannot assign an unavailable vehicle.
+- Cannot assign an unavailable driver.
+- Cannot complete delivery without delivery confirmation.
+- Cannot mark a cancelled dispatch as delivered without a valid reopening workflow.
+
+Every status change must be logged.
+
+---
+
+# 13. REAL-TIME DISPATCH TRACKING
+
+Implement realtime dispatch updates.
+
+Realtime events:
+
+- Dispatch plan created
+- Dispatch approved
+- Vehicle assigned
+- Loading started
+- Loading completed
+- Dispatch departed
+- Vehicle location updated
+- ETA changed
+- Hazard detected
+- Route changed
+- Delivery started
+- Delivery completed
+- Partial delivery
+- Dispatch cancelled
+
+If a GPS device, driver application or supported tracking integration exists:
+
+- Subscribe to genuine location updates.
+- Validate timestamps.
+- Reject invalid coordinates.
+- Detect stale location.
+- Store location history appropriately.
+- Limit location access by permissions.
+
+If no live GPS exists:
+
+- Show last known location, if available.
+- Show its timestamp.
+- Label vehicle tracking UNAVAILABLE or STALE.
+- Never animate vehicles using fabricated coordinates.
+- Never show an artificial LIVE badge.
+
+---
+
+# 14. ETA & DELIVERY TIME INTELLIGENCE
+
+Implement delivery ETA monitoring.
+
+Use actual routing provider duration and actual vehicle location when available.
+
+Calculate:
+
+- Initial ETA
+- Current ETA
+- Planned delivery time
+- Actual departure
+- Actual arrival
+- Delivery deadline
+- Delay
+- ETA change history
+
+Track:
+
+- ON_TIME
+- AT_RISK
+- DELAYED
+- UNKNOWN
+
+If route data or GPS is unavailable, do not create false ETA predictions.
+
+If conditions change:
+
+- Recalculate ETA when supported.
+- Identify the cause of the change.
+- Notify the dispatch manager.
+- Recommend action.
+- Do not change the route automatically without approved policy.
+
+---
+
+# 15. DELIVERY CONFIRMATION SYSTEM
+
+Create a delivery verification workflow.
+
+The authorized responder should be able to record:
+
+- Dispatch ID
+- Incident ID
+- Delivery location
+- Delivered items
+- Requested quantity
+- Dispatched quantity
+- Delivered quantity
+- Remaining quantity
+- Damaged quantity
+- Recipient or receiving organization
+- Delivery timestamp
+- Confirmation status
+- Notes
+- Evidence attachment if supported
+
+Delivery statuses:
+
+- PENDING
+- DELIVERED
+- PARTIALLY_DELIVERED
+- FAILED
+- RETURNED
+
+When delivery is confirmed:
+
+1. Validate dispatch.
+2. Validate delivery quantities.
+3. Update delivered quantities.
+4. Update relief request fulfillment.
+5. Update inventory ledger where required.
+6. Release or reconcile reservations.
+7. Update dispatch status.
+8. Publish realtime events.
+9. Record audit log.
+10. Recalculate remaining demand.
+
+Use transactional operations.
+
+Do not allow delivered quantities to exceed dispatched quantities without a correction workflow.
+
+---
+
+# 16. MULTI-INCIDENT RESOURCE COORDINATION
+
+Build a system-wide allocation overview.
+
+When several emergencies are active, display:
+
+- Active incidents
+- Incident risk
+- Priority
+- Requested supplies
+- Available resources
+- Already allocated resources
+- Pending dispatches
+- Vehicles currently committed
+- Critical shortages
+- Unfulfilled demands
+- Delivery deadlines
+
+The system should help identify:
+
+- Resource conflicts
+- Competing warehouse requests
+- Multiple incidents requiring the same scarce supply
+- Underutilized warehouses
+- Overloaded fleets
+- Delayed deliveries
+- Unserved high-priority incidents
+
+Implement a transparent priority and fairness policy.
+
+Do not silently move resources between emergencies.
+
+Any reallocation affecting an already approved or active dispatch must require authorization and produce an audit record.
+
+---
+
+# 17. AI LOGISTICS ASSISTANT
+
+Integrate the existing AI provider into the logistics module.
+
+The AI must use structured, verified backend data.
+
+### Capabilities
+
+- Explain why a warehouse was selected.
+- Compare allocation options.
+- Summarize route alternatives.
+- Explain resource shortages.
+- Identify dispatch bottlenecks.
+- Highlight overdue deliveries.
+- Summarize active emergency logistics.
+- Recommend alternative supply plans.
+- Explain expected consequences of a proposed reallocation.
+
+### Structured AI output
+
+Return:
+
+- Summary
+- Recommended action
+- Allocation explanation
+- Warehouse comparison
+- Route comparison
+- Risks
+- Constraints
+- Missing data
+- Evidence references
+- Confidence
+- Timestamp
+
+AI must not:
+
+- Invent inventory
+- Invent road conditions
+- Invent vehicle availability
+- Invent GPS data
+- Invent route distances
+- Invent ETA
+- Approve dispatch
+- Change stock
+- Dispatch vehicles autonomously
+- Override verified incident priority
+- Make unverified safety claims
+
+AI recommendations are advisory.
+
+---
+
+# 18. PREMIUM LOGISTICS COMMAND CENTER
+
+Integrate Phase 5 into the existing RESQFLOW AI dashboard.
+
+Do not replace the previous dashboard.
+
+Add functional modules:
+
+### A. Allocation Overview
+
+- Total relief requests
+- Fully fulfilled
+- Partially fulfilled
+- Unfulfilled
+- Pending allocation
+- Critical unmet demand
+
+### B. Fleet Overview
+
+- Total registered vehicles
+- Available vehicles
+- Assigned vehicles
+- Active dispatch vehicles
+- Vehicles under maintenance
+- Tracking unavailable
+
+### C. Dispatch Overview
+
+- Pending approvals
+- Active dispatches
+- En-route
+- Delayed
+- Delivered
+- Failed
+
+### D. Logistics Map
+
+Display:
+
+- Active incidents
+- Warehouses
+- Vehicles
+- Dispatch destinations
+- Selected routes
+- Route alternatives when available
+- Reported hazards
+- Delivery status
+
+All map data must be connected to the real backend.
+
+---
+
+# 19. DISPATCH MANAGEMENT UI
+
+Create a professional dispatch-management workspace.
+
+Table columns:
+
+- Dispatch ID
+- Incident
+- Priority
+- Warehouse
+- Destination
+- Resources
+- Vehicle
+- Driver
+- ETA
+- Route status
+- Dispatch status
+- Updated time
+- Actions
+
+Filters:
+
+- Incident
+- Priority
+- Dispatch status
+- Warehouse
+- Vehicle
+- Date
+- Route risk
+- Delivery status
+
+Actions:
+
+- View
+- Approve
+- Edit plan
+- Recalculate
+- Track
+- Cancel
+- Confirm delivery
+
+Each action must be permission-protected and functional.
+
+---
+
+# 20. ALLOCATION WORKSPACE
+
+Create a dedicated resource allocation workspace.
+
+Show the following clearly:
+
+**Emergency demand**
+- Requested supplies
+- Quantity
+- Priority
+- Delivery deadline
+
+**Supply sources**
+- Warehouse
+- Available stock
+- Reserved stock
+- Operational status
+
+**Allocation proposal**
+- Selected warehouse
+- Proposed quantity
+- Fulfillment percentage
+- Remaining shortage
+
+**Transportation**
+- Available vehicle
+- Capacity
+- Driver
+- Estimated route
+- ETA
+
+**Recommendation**
+- Allocation score
+- Reasoning
+- Constraints
+- Alternatives
+
+Allow authorized users to edit the proposal before approval.
+
+Provide a clear visual distinction between AI recommendations and confirmed allocations.
+
+---
+
+# 21. REALTIME ARCHITECTURE
+
+Reuse existing realtime infrastructure.
+
+Implement appropriate events for:
+
+- Allocation created
+- Allocation updated
+- Allocation approved
+- Reservation created
+- Reservation released
+- Vehicle assigned
+- Dispatch created
+- Dispatch approved
+- Dispatch status updated
+- GPS updated
+- ETA changed
+- Hazard reported
+- Delivery completed
+
+Requirements:
+
+- Organization isolation
+- Authorized subscriptions
+- Reconnection handling
+- Duplicate event prevention
+- Event timestamps
+- Subscription cleanup
+- Optimistic UI rollback when a server action fails
+
+Never display realtime status if the connection is disconnected.
+
+---
+
+# 22. DATABASE & BACKEND INTEGRATION
+
+Inspect Phase 2 and Phase 4 schema before adding anything.
+
+Reuse existing tables.
+
+Create only missing entities.
+
+Potential tables:
+
+- `vehicles`
+- `drivers`
+- `vehicle_assignments`
+- `allocations`
+- `allocation_items`
+- `allocation_plans`
+- `route_records`
+- `route_hazards`
+- `dispatches`
+- `dispatch_items`
+- `dispatch_events`
+- `vehicle_locations`
+- `delivery_confirmations`
+- `delivery_items`
+- `dispatch_approvals`
+
+Use:
+
+- UUID IDs
+- Foreign keys
+- Indexes
+- Organization isolation
+- Row-level security
+- Audit history
+- Transaction-safe stock reservations
+- Transaction-safe dispatch creation
+- Validated status transitions
+- Timestamped records
+
+Maintain consistency with existing inventory stock and reservation records.
+
+---
+
+# 23. API ENDPOINTS
+
+Implement using the existing API architecture and versioning.
+
+### Allocation
+
+- `GET /api/v1/allocations`
+- `POST /api/v1/allocations/optimize`
+- `POST /api/v1/allocations`
+- `GET /api/v1/allocations/{allocation_id}`
+- `PATCH /api/v1/allocations/{allocation_id}`
+- `POST /api/v1/allocations/{allocation_id}/approve`
+- `POST /api/v1/allocations/{allocation_id}/reject`
+- `POST /api/v1/allocations/{allocation_id}/recalculate`
+
+### Fleet
+
+- `GET /api/v1/fleet/overview`
+- `GET /api/v1/vehicles`
+- `POST /api/v1/vehicles`
+- `GET /api/v1/vehicles/{vehicle_id}`
+- `PATCH /api/v1/vehicles/{vehicle_id}`
+- `GET /api/v1/vehicles/{vehicle_id}/history`
+- `POST /api/v1/vehicles/{vehicle_id}/assign-driver`
+- `POST /api/v1/vehicles/{vehicle_id}/status`
+
+### Drivers
+
+- `GET /api/v1/drivers`
+- `POST /api/v1/drivers`
+- `GET /api/v1/drivers/{driver_id}`
+- `PATCH /api/v1/drivers/{driver_id}`
+- `POST /api/v1/drivers/{driver_id}/availability`
+
+### Routing
+
+- `POST /api/v1/routes/optimize`
+- `POST /api/v1/routes/alternatives`
+- `GET /api/v1/routes/{route_id}`
+- `GET /api/v1/routes/{route_id}/risk`
+- `POST /api/v1/routes/{route_id}/recalculate`
+
+### Dispatch
+
+- `GET /api/v1/dispatches`
+- `POST /api/v1/dispatches/plan`
+- `POST /api/v1/dispatches`
+- `GET /api/v1/dispatches/{dispatch_id}`
+- `PATCH /api/v1/dispatches/{dispatch_id}`
+- `POST /api/v1/dispatches/{dispatch_id}/approve`
+- `POST /api/v1/dispatches/{dispatch_id}/reject`
+- `POST /api/v1/dispatches/{dispatch_id}/load`
+- `POST /api/v1/dispatches/{dispatch_id}/depart`
+- `POST /api/v1/dispatches/{dispatch_id}/arrive`
+- `POST /api/v1/dispatches/{dispatch_id}/deliver`
+- `POST /api/v1/dispatches/{dispatch_id}/cancel`
+- `GET /api/v1/dispatches/{dispatch_id}/events`
+- `GET /api/v1/dispatches/{dispatch_id}/tracking`
+
+### Delivery
+
+- `POST /api/v1/deliveries/confirm`
+- `GET /api/v1/deliveries`
+- `GET /api/v1/deliveries/{delivery_id}`
+- `POST /api/v1/deliveries/{delivery_id}/verify`
+
+### Analytics
+
+- `GET /api/v1/logistics/overview`
+- `GET /api/v1/logistics/analytics/allocations`
+- `GET /api/v1/logistics/analytics/fleet`
+- `GET /api/v1/logistics/analytics/dispatches`
+- `GET /api/v1/logistics/analytics/delivery-performance`
+
+Implement pagination, filtering, request validation, authentication, authorization, rate limiting and consistent error responses.
+
+---
+
+# 24. SECURITY & PERMISSIONS
+
+Enforce backend and database permissions.
+
+### Emergency Commander
+- Review emergency allocation
+- Approve critical allocations
+- Approve dispatch
+- Review route risks
+- Authorize reallocation
+
+### Logistics Manager
+- Create allocation plans
+- Manage fleet
+- Assign vehicles
+- Plan routes
+- Create dispatches
+- Monitor deliveries
+
+### Warehouse Operator
+- View authorized warehouse
+- Prepare loading
+- Confirm loading
+- Record loading discrepancies
+
+### Field Responder
+- View assigned dispatch
+- Report hazards
+- Confirm arrival
+- Submit delivery records
+
+### Analyst
+- View logistics analytics
+- Generate permitted reports
+
+### Admin
+- Manage configuration
+- Manage roles and access
+- Review audit logs
+
+Prevent unauthorized dispatch, allocation, cancellation, stock changes, driver assignments and location access.
+
+---
+
+# 25. TESTING & VALIDATION
+
+Create comprehensive automated tests.
+
+### Allocation tests
+- Single warehouse allocation
+- Multiple warehouse allocation
+- Partial allocation
+- Insufficient inventory
+- Critical incident prioritization
+- Competing emergency requests
+- Fairness policy
+- Reservation conflicts
+
+### Fleet tests
+- Vehicle creation
+- Driver assignment
+- Vehicle availability
+- Capacity limits
+- Concurrent dispatch assignment
+- Maintenance status restrictions
+
+### Route tests
+- Valid route
+- No route returned
+- Provider timeout
+- Invalid coordinates
+- Stale hazard information
+- Multiple route alternatives
+- Route-risk unknown
+- Routing provider failure
+
+### Dispatch tests
+- Plan creation
+- Approval
+- Rejection
+- Loading
+- Departure
+- Arrival
+- Delivery
+- Cancellation
+- Invalid state transitions
+- Concurrent dispatch actions
+
+### Security tests
+- Unauthorized approval
+- Unauthorized cancellation
+- Unauthorized vehicle assignment
+- Cross-organization data access
+- Location access restrictions
+
+### End-to-end scenario
+
+Run a real database-backed workflow:
+
+1. Create an incident.
+2. Verify its risk assessment.
+3. Create a relief request.
+4. Request supplies.
+5. Retrieve actual warehouse inventory.
+6. Run multi-warehouse allocation.
+7. Compare allocation alternatives.
+8. Reserve stock.
+9. Select available vehicle.
+10. Assign authorized driver.
+11. Calculate real road routes.
+12. Review route information and risk data.
+13. Generate dispatch plan.
+14. Approve dispatch using an authorized account.
+15. Confirm loading.
+16. Mark departure.
+17. Update tracking only using a genuine source.
+18. Record arrival.
+19. Confirm delivered quantity.
+20. Update inventory ledger.
+21. Reconcile reservations.
+22. Update relief demand.
+23. Update incident logistics summary.
+24. Verify realtime dashboard updates.
+25. Verify audit history.
+
+Do not report a test as passed if it was not executed.
+
+---
+
+# 26. PERFORMANCE & PRODUCTION QUALITY
+
+Implement:
+
+- Efficient database queries
+- Pagination
+- Indexes
+- Cache where appropriate
+- Provider request limits
+- Route caching with expiration
+- Retry policies
+- Timeout handling
+- Idempotency for critical operations
+- Transaction-safe allocation
+- Transaction-safe dispatch creation
+- Concurrency controls
+- Realtime cleanup
+- Monitoring
+- Structured logs
+- API health checks
+- Error tracking
+
+Ensure that failed routing or AI providers do not crash the entire dashboard.
+
+---
+
+# 27. REQUIRED ENVIRONMENT CONFIGURATION
+
+Audit existing environment configuration and reuse current keys.
+
+Potential variables:
+
+Frontend:
+
+- `VITE_API_BASE_URL`
+- Existing Supabase public configuration
+
+Backend:
+
+- `DATABASE_URL`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `OSRM_BASE_URL`
+- `OPENROUTESERVICE_API_KEY`
+- `GEMINI_API_KEY`
+- `OPENAI_API_KEY`
+- `REDIS_URL`
+- `JWT_SECRET`
+- `CORS_ORIGINS`
+
+Only configure providers that are actually used.
+
+Never expose secrets in frontend code, GitHub, logs or API responses.
+
+---
+
+# 28. IMPLEMENTATION ORDER
+
+Follow this sequence:
+
+1. Audit current repository and Phase 1–4.
+2. Verify incident, warehouse, inventory and relief request integrations.
+3. Database design review.
+4. Create required migrations.
+5. Allocation engine.
+6. Multi-warehouse optimization.
+7. Allocation priority scoring.
+8. Fleet and vehicle management.
+9. Driver management.
+10. Routing provider integration.
+11. Route risk information.
+12. Route alternatives.
+13. Dispatch planning.
+14. Human approval workflow.
+15. Dispatch state machine.
+16. Realtime dispatch events.
+17. Tracking integration.
+18. ETA and delivery monitoring.
+19. Delivery confirmation.
+20. Inventory reconciliation.
+21. Multi-incident coordination.
+22. AI logistics assistant.
+23. Command center frontend.
+24. Map integration.
+25. Security testing.
+26. Automated tests.
+27. Deployment and health verification.
+28. Final implementation report.
+
+Do not start Phase 6 until Phase 5 has been implemented, integrated and tested.
+
+---
+
+# 29. FINAL IMPLEMENTATION REPORT
+
+After implementation, provide:
+
+- Architecture changes
+- Features implemented
+- Files created
+- Files modified
+- Database migrations
+- Allocation algorithm
+- Priority scoring logic
+- Fleet management functionality
+- Driver management functionality
+- Route providers integrated
+- Route risk information sources
+- Dispatch workflow
+- Human approval logic
+- Realtime events
+- Delivery confirmation
+- Inventory reconciliation
+- AI functionality
+- Frontend pages
+- API endpoints
+- Tests executed
+- Actual test results
+- Environment variables required
+- Deployment verification
+- Known limitations
+- Incomplete features
+
+Separate implemented features from planned features.
+
+---
+
+## FINAL MISSION
+
+RESQFLOW AI must be able to transform a real emergency into an actionable and traceable logistics operation:
+
+**Emergency detected → Risk assessed → Relief demand verified → Resources located → Supply allocated → Vehicle selected → Route evaluated → Dispatch approved → Supplies delivered → Inventory reconciled → Emergency demand updated.**
+
+The system must be transparent, evidence-driven, realtime where genuine data is available, reliable under failure and designed for human-controlled emergency operations.
+
+Build an operational emergency logistics platform—not a fake fleet dashboard, not a static map, and not an AI-generated demo.

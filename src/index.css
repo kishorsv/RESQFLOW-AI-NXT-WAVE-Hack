@@ -1,0 +1,574 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* ============================================================================
+   RESQFLOW AI — MIDNIGHT COMMAND GLOBAL DESIGN TOKENS
+   Light Mode (default :root) & Midnight Command Dark Mode (.dark)
+   ============================================================================ */
+
+:root {
+  /* Backgrounds */
+  --rf-bg-primary: #F4F7FB;
+  --rf-bg-secondary: #EDF2F8;
+  --rf-bg-page: #F4F7FB;
+  --rf-bg-sidebar: #FFFFFF;
+  --rf-bg-topbar: rgba(255, 255, 255, 0.88);
+
+  /* Surfaces */
+  --rf-surface-elevated: #FFFFFF;
+  --rf-surface-card: #FFFFFF;
+  --rf-surface-hover: #F8FAFD;
+  --rf-surface-raised: #EDF2F8;
+
+  /* Text */
+  --rf-text-primary: #111827;
+  --rf-text-secondary: #475569;
+  --rf-text-muted: #64748B;
+
+  /* Borders */
+  --rf-border-default: #DCE4EF;
+  --rf-border-strong: #C5D2E3;
+  --rf-border-active: rgba(88, 105, 232, 0.48);
+  --rf-border-focus: #5869E8;
+
+  /* Brand */
+  --rf-brand: #5869E8;
+  --rf-brand-hover: #4758D6;
+  --rf-brand-soft: rgba(88, 105, 232, 0.10);
+  --rf-brand-glow: rgba(88, 105, 232, 0.20);
+  --rf-cyan: #089FCB;
+  --rf-cyan-soft: rgba(8, 159, 203, 0.10);
+
+  /* Semantic Status */
+  --rf-success: #15966C;
+  --rf-success-soft: rgba(21, 150, 108, 0.11);
+  --rf-warning: #B97716;
+  --rf-warning-soft: rgba(185, 119, 22, 0.11);
+  --rf-danger: #E5465D;
+  --rf-danger-soft: rgba(229, 70, 93, 0.11);
+  --rf-critical: #D92D45;
+  --rf-info: #2563EB;
+
+  /* Elevation */
+  --rf-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.03);
+  --rf-shadow-elevated: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --rf-radius-card: 16px;
+  --rf-radius-control: 10px;
+}
+
+.dark {
+  /* Backgrounds */
+  --rf-bg-primary: #080D18;
+  --rf-bg-secondary: #0B1220;
+  --rf-bg-page: #0A101C;
+  --rf-bg-sidebar: #0A0F19;
+  --rf-bg-topbar: rgba(10, 15, 25, 0.86);
+
+  /* Surfaces */
+  --rf-surface-elevated: #111A2A;
+  --rf-surface-card: #131D2D;
+  --rf-surface-hover: #19263A;
+  --rf-surface-raised: #1C293C;
+
+  /* Text */
+  --rf-text-primary: #F1F5F9;
+  --rf-text-secondary: #CBD5E1;
+  --rf-text-muted: #8FA0B9;
+
+  /* Borders */
+  --rf-border-default: rgba(148, 163, 184, 0.12);
+  --rf-border-strong: rgba(148, 163, 184, 0.22);
+  --rf-border-active: rgba(109, 124, 255, 0.48);
+  --rf-border-focus: #7C8BFF;
+
+  /* Brand */
+  --rf-brand: #6D7CFF;
+  --rf-brand-hover: #8190FF;
+  --rf-brand-soft: rgba(109, 124, 255, 0.14);
+  --rf-brand-glow: rgba(109, 124, 255, 0.24);
+  --rf-cyan: #35C8F5;
+  --rf-cyan-soft: rgba(53, 200, 245, 0.12);
+
+  /* Semantic Status */
+  --rf-success: #35D6A0;
+  --rf-success-soft: rgba(53, 214, 160, 0.12);
+  --rf-warning: #FFB547;
+  --rf-warning-soft: rgba(255, 181, 71, 0.12);
+  --rf-danger: #FF5C70;
+  --rf-danger-soft: rgba(255, 92, 112, 0.12);
+  --rf-critical: #FF465A;
+  --rf-info: #61B8FF;
+
+  /* Elevation */
+  --rf-shadow-card: 0 1px 2px rgba(2, 6, 23, 0.35), 0 8px 24px rgba(2, 6, 23, 0.22);
+  --rf-shadow-elevated: 0 16px 40px rgba(2, 6, 23, 0.48);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--rf-bg-primary);
+    color: var(--rf-text-primary);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--rf-bg-primary);
+    color: var(--rf-text-primary);
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--rf-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================================
+   UNIFIED COMPONENT PRIMITIVES
+   ============================================================================ */
+
+.rf-card {
+  background-color: var(--rf-surface-elevated);
+  border: 1px solid var(--rf-border-default);
+  border-radius: var(--rf-radius-card);
+  box-shadow: var(--rf-shadow-card);
+  transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rf-card-interactive:hover {
+  background-color: var(--rf-surface-hover);
+  border-color: var(--rf-border-strong);
+  transform: translateY(-1px);
+}
+
+.rf-card-surface {
+  background-color: var(--rf-surface-card);
+  border: 1px solid var(--rf-border-default);
+  border-radius: 12px;
+}
+
+.rf-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 1rem;
+  border-radius: var(--rf-radius-control);
+  background-color: var(--rf-brand);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  transition: background-color 160ms ease, box-shadow 180ms ease, transform 160ms ease;
+}
+
+.rf-btn-primary:hover:not(:disabled) {
+  background-color: var(--rf-brand-hover);
+  box-shadow: 0 6px 20px var(--rf-brand-glow);
+}
+
+.rf-btn-primary:active:not(:disabled) {
+  transform: translateY(0.5px);
+}
+
+.rf-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.rf-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 0.95rem;
+  border-radius: var(--rf-radius-control);
+  background-color: var(--rf-surface-elevated);
+  border: 1px solid var(--rf-border-strong);
+  color: var(--rf-text-primary);
+  font-weight: 500;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.rf-btn-secondary:hover:not(:disabled) {
+  background-color: var(--rf-surface-hover);
+  border-color: var(--rf-border-active);
+}
+
+.rf-btn-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.rf-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 1rem;
+  border-radius: var(--rf-radius-control);
+  background-color: var(--rf-danger);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  transition: opacity 160ms ease;
+}
+
+.rf-btn-danger:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.rf-input {
+  min-height: 42px;
+  border-radius: var(--rf-radius-control);
+  border: 1px solid var(--rf-border-strong);
+  background-color: var(--rf-bg-secondary);
+  color: var(--rf-text-primary);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.rf-input:focus {
+  border-color: var(--rf-border-focus);
+  box-shadow: 0 0 0 3px var(--rf-brand-soft);
+  outline: none;
+}
+
+/* ============================================================================
+   WORKSPACE HARMONY — UNIFY LEGACY SUB-VIEWS TO MIDNIGHT COMMAND TOKENS
+   (Uses CSS variables cleanly without brittle color inversions)
+   ============================================================================ */
+
+.dark .rf-workspace .dark\:bg-slate-900,
+.dark .rf-workspace .dark\:bg-slate-900\/80,
+.dark .rf-workspace .dark\:bg-slate-900\/90,
+.dark .rf-workspace .dark\:bg-slate-900\/60 {
+  background-color: var(--rf-surface-elevated);
+}
+
+.dark .rf-workspace .dark\:bg-slate-950,
+.dark .rf-workspace .dark\:bg-slate-950\/60,
+.dark .rf-workspace .dark\:bg-slate-950\/50 {
+  background-color: var(--rf-bg-secondary);
+}
+
+.dark .rf-workspace .dark\:border-slate-800,
+.dark .rf-workspace .dark\:border-slate-800\/70 {
+  border-color: var(--rf-border-default);
+}
+
+.dark .rf-workspace .dark\:border-slate-700 {
+  border-color: var(--rf-border-strong);
+}
+
+.rf-workspace .border-slate-200 {
+  border-color: var(--rf-border-default);
+}
+
+.rf-workspace .bg-slate-50 {
+  background-color: var(--rf-bg-secondary);
+}
+
+.rf-workspace .rounded-xl {
+  border-radius: 16px;
+}
+
+.rf-workspace .rounded-lg {
+  border-radius: 10px;
+}
+
+.rf-workspace table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.rf-workspace table th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.rf-workspace table td,
+.rf-workspace table th {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+
+.rf-workspace input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.rf-workspace select {
+  min-height: 40px;
+}
+
+/* ============================================================================
+   CINEMATIC LANDING & COMMAND MOTION SYSTEM
+   (Compositor-only transform/opacity, reduced-motion aware)
+   ============================================================================ */
+
+@keyframes rf-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rf-float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes rf-ambient-drift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(18px, -12px, 0) scale(1.04);
+    opacity: 0.78;
+  }
+}
+
+@keyframes rf-route-flow {
+  from {
+    stroke-dashoffset: 36;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes rf-ring-expand {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes rf-shimmer {
+  0% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes rf-hero-zoom {
+  0% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1.09);
+  }
+}
+
+@keyframes rf-scroll-line {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+}
+
+.rf-hero-kenburns {
+  animation: rf-hero-zoom 22s ease-out forwards;
+}
+
+.rf-scroll-beam {
+  animation: rf-scroll-line 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.rf-animate-in {
+  animation: rf-fade-up 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.rf-float-1 {
+  animation: rf-float-slow 7.5s ease-in-out infinite;
+}
+
+.rf-float-2 {
+  animation: rf-float-slow 9s ease-in-out 1.4s infinite;
+}
+
+.rf-float-3 {
+  animation: rf-float-slow 8.2s ease-in-out 2.8s infinite;
+}
+
+.rf-ambient-orb {
+  animation: rf-ambient-drift 16s ease-in-out infinite;
+}
+
+.rf-route-dash {
+  stroke-dasharray: 6 6;
+  animation: rf-route-flow 2.4s linear infinite;
+}
+
+.rf-node-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rf-ring-expand 3.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.rf-skeleton {
+  background: var(--rf-surface-raised);
+  border-radius: 8px;
+  animation: rf-shimmer 1.6s ease-in-out infinite;
+}
+
+.rf-hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.dark .rf-hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(109, 124, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(53, 200, 245, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rf-animate-in,
+  .rf-float-1,
+  .rf-float-2,
+  .rf-float-3,
+  .rf-ambient-orb,
+  .rf-route-dash,
+  .rf-node-ring,
+  .rf-skeleton,
+  .rf-hero-kenburns,
+  .rf-scroll-beam {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Official Google Sign-In Material Button Styling */
+.gsi-material-button {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-appearance: none;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #111827;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  height: 38px;
+  letter-spacing: 0.01em;
+  outline: none;
+  overflow: hidden;
+  padding: 0 14px;
+  position: relative;
+  text-align: center;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  vertical-align: middle;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .gsi-material-button {
+  background-color: #131D2D;
+  border-color: rgba(148, 163, 184, 0.22);
+  color: #F1F5F9;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  gap: 8px;
+}
+
+.gsi-material-button:hover {
+  border-color: var(--rf-border-active);
+  background-color: #F8FAFD;
+}
+
+.dark .gsi-material-button:hover {
+  background-color: #19263A;
+}
+
+.gsi-material-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Sleek Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.24);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(109, 124, 255, 0.45);
+}

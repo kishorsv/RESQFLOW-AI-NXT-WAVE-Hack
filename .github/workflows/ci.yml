@@ -1,0 +1,66 @@
+name: RESQFLOW AI CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: TypeScript & Static Lint
+        run: npm run lint
+
+      - name: Production Build
+        run: npm run build
+
+      - name: Bundle Budget Verification
+        run: |
+          node -e '
+            const fs = require("fs");
+            const html = fs.readFileSync("dist/index.html", "utf8");
+            for (const lazyChunk of ["Tactical3DTwinView", "BarChart", "AnalyticsView", "EmergencyMapView"]) {
+              if (html.includes(lazyChunk)) {
+                throw new Error("Homepage HTML must not eagerly preload " + lazyChunk);
+              }
+            }
+            const assets = fs.readdirSync("dist/assets");
+            const entry = assets.find((f) => /^index-.*\.js$/.test(f));
+            const sizeKb = Math.round(fs.statSync("dist/assets/" + entry).size / 1024);
+            console.log("Entry JS bundle:", entry, sizeKb + " KB");
+            if (sizeKb > 2600) {
+              throw new Error("Entry JS bundle exceeded 2600 KB budget: " + sizeKb + " KB");
+            }
+          '
+
+      - name: Start Server & Run Audit Regression Suite
+        env:
+          PORT: '3000'
+          NODE_ENV: 'production'
+        run: |
+          npx tsx server.ts > /tmp/resqflow-ci.log 2>&1 &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID 2>/dev/null || true" EXIT
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:3000/api/v1/health/live > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          npm run test:audit

@@ -1,0 +1,138 @@
+{
+  "entities": {
+    "UserPublicProfile": {
+      "title": "UserPublicProfile",
+      "description": "Public operational responder profile without sensitive PII",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "role": {
+          "type": "string",
+          "enum": ["super_admin", "emergency_commander", "logistics_manager", "warehouse_operator", "field_responder", "analyst", "citizen_reporter"]
+        },
+        "orgId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "role", "orgId", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated PII document restricted to document owner and admins",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 254 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "notificationChannel": { "type": "string", "enum": ["in_app", "email", "both"] },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "notificationChannel", "updatedAt"]
+    },
+    "Incident": {
+      "title": "Incident",
+      "description": "Verified or reported emergency incident record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "orgId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "minLength": 3, "maxLength": 180 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "type": { "type": "string", "maxLength": 64 },
+        "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "status": { "type": "string", "enum": ["reported", "under_review", "verified", "active", "escalated", "contained", "resolved", "archived"] },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "region": { "type": "string", "maxLength": 120 },
+        "peopleAffected": { "type": "number" },
+        "riskScore": { "type": "number" },
+        "priorityScore": { "type": "number" },
+        "mode": { "type": "string", "enum": ["operational", "demo"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "orgId", "title", "description", "type", "severity", "status", "lat", "lng", "region", "peopleAffected", "mode", "createdAt", "updatedAt"]
+    },
+    "ReliefRequest": {
+      "title": "ReliefRequest",
+      "description": "Emergency supply and relief request linked to an incident",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "incidentId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "locationName": { "type": "string", "minLength": 2, "maxLength": 180 },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "peopleAffected": { "type": "number" },
+        "urgency": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "status": { "type": "string", "enum": ["submitted", "verified", "prioritized", "allocated", "approved", "dispatched", "delivered", "closed"] },
+        "priorityScore": { "type": "number" },
+        "mode": { "type": "string", "enum": ["operational", "demo"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "incidentId", "locationName", "lat", "lng", "peopleAffected", "urgency", "status", "mode", "createdAt", "updatedAt"]
+    },
+    "FieldNote": {
+      "title": "FieldNote",
+      "description": "Operational field note stored in Firestore",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "content": { "type": "string", "minLength": 1, "maxLength": 4000 },
+        "incidentId": { "type": "string", "maxLength": 128 },
+        "pinned": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "title", "content", "pinned", "createdAt", "updatedAt"]
+    },
+    "UserNotification": {
+      "title": "UserNotification",
+      "description": "User-scoped operational alert",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "eventType": { "type": "string", "maxLength": 80 },
+        "severity": { "type": "string", "enum": ["info", "warning", "high", "critical"] },
+        "title": { "type": "string", "maxLength": 160 },
+        "message": { "type": "string", "maxLength": 1000 },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "eventType", "severity", "title", "message", "read", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserPublicProfile" },
+      "description": "Public responder profile (non-PII fields)"
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Isolated PII document accessible strictly to owner or admin"
+    },
+    "/incidents/{incidentId}": {
+      "schema": { "$ref": "#/entities/Incident" },
+      "description": "Emergency incident records synced per owner"
+    },
+    "/relief_requests/{requestId}": {
+      "schema": { "$ref": "#/entities/ReliefRequest" },
+      "description": "Relief supply requests synced per owner"
+    },
+    "/field_notes/{noteId}": {
+      "schema": { "$ref": "#/entities/FieldNote" },
+      "description": "Responder field notes stored in Firestore"
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/UserNotification" },
+      "description": "User-specific emergency notifications"
+    }
+  }
+}

@@ -1,0 +1,306 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Default-Deny Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Primitive Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Zero-DB-read admin check for list queries (prevents O(n) read amplification)
+    function isListAdmin() {
+      return isVerified() && request.auth.token.email == 'kishukishorsv123@gmail.com';
+    }
+
+    // Full trusted admin check for single-document operations
+    function isAdmin() {
+      return isListAdmin() || (
+        isVerified() && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // --- Validation Blueprints ---
+    function isValidUserPublic(data) {
+      return data.keys().hasAll(['uid', 'displayName', 'role', 'orgId', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['uid', 'displayName', 'role', 'orgId', 'createdAt', 'updatedAt'])
+        && isValidId(data.uid)
+        && data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 120
+        && data.role is string && data.role in ['super_admin', 'emergency_commander', 'logistics_manager', 'warehouse_operator', 'field_responder', 'analyst', 'citizen_reporter']
+        && isValidId(data.orgId)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidUserPrivate(data) {
+      return data.keys().hasAll(['uid', 'email', 'notificationChannel', 'updatedAt'])
+        && data.keys().hasOnly(['uid', 'email', 'phone', 'notificationChannel', 'updatedAt'])
+        && isValidId(data.uid)
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 254
+        && (!('phone' in data) || (data.phone is string && data.phone.size() <= 40))
+        && data.notificationChannel is string && data.notificationChannel in ['in_app', 'email', 'both']
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidIncident(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'orgId', 'title', 'description', 'type', 'severity', 'status', 'lat', 'lng', 'region', 'peopleAffected', 'mode', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'orgId', 'title', 'description', 'type', 'severity', 'status', 'lat', 'lng', 'region', 'peopleAffected', 'riskScore', 'priorityScore', 'mode', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && isValidId(data.orgId)
+        && data.title is string && data.title.size() >= 3 && data.title.size() <= 180
+        && data.description is string && data.description.size() >= 1 && data.description.size() <= 2000
+        && data.type is string && data.type.size() >= 1 && data.type.size() <= 64
+        && data.severity is string && data.severity in ['low', 'medium', 'high', 'critical']
+        && data.status is string && data.status in ['reported', 'under_review', 'verified', 'active', 'escalated', 'contained', 'resolved', 'archived']
+        && data.lat is number && data.lat >= -90 && data.lat <= 90
+        && data.lng is number && data.lng >= -180 && data.lng <= 180
+        && data.region is string && data.region.size() >= 1 && data.region.size() <= 120
+        && data.peopleAffected is number && data.peopleAffected >= 0
+        && (!('riskScore' in data) || (data.riskScore is number && data.riskScore >= 0 && data.riskScore <= 100))
+        && (!('priorityScore' in data) || (data.priorityScore is number && data.priorityScore >= 0 && data.priorityScore <= 100))
+        && data.mode is string && data.mode in ['operational', 'demo']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidReliefRequest(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'incidentId', 'locationName', 'lat', 'lng', 'peopleAffected', 'urgency', 'status', 'mode', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'incidentId', 'locationName', 'lat', 'lng', 'peopleAffected', 'urgency', 'status', 'priorityScore', 'mode', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && isValidId(data.incidentId)
+        && data.locationName is string && data.locationName.size() >= 2 && data.locationName.size() <= 180
+        && data.lat is number && data.lat >= -90 && data.lat <= 90
+        && data.lng is number && data.lng >= -180 && data.lng <= 180
+        && data.peopleAffected is number && data.peopleAffected >= 0
+        && data.urgency is string && data.urgency in ['low', 'medium', 'high', 'critical']
+        && data.status is string && data.status in ['submitted', 'verified', 'prioritized', 'allocated', 'approved', 'dispatched', 'delivered', 'closed']
+        && (!('priorityScore' in data) || (data.priorityScore is number && data.priorityScore >= 0 && data.priorityScore <= 100))
+        && data.mode is string && data.mode in ['operational', 'demo']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidFieldNote(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'title', 'content', 'pinned', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'title', 'content', 'incidentId', 'pinned', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && data.title is string && data.title.size() >= 1 && data.title.size() <= 160
+        && data.content is string && data.content.size() >= 1 && data.content.size() <= 4000
+        && (!('incidentId' in data) || (data.incidentId is string && data.incidentId.size() <= 128))
+        && data.pinned is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll(['id', 'userId', 'eventType', 'severity', 'title', 'message', 'read', 'createdAt'])
+        && data.keys().hasOnly(['id', 'userId', 'eventType', 'severity', 'title', 'message', 'read', 'createdAt'])
+        && isValidId(data.id)
+        && isValidId(data.userId)
+        && data.eventType is string && data.eventType.size() >= 1 && data.eventType.size() <= 80
+        && data.severity is string && data.severity in ['info', 'warning', 'high', 'critical']
+        && data.title is string && data.title.size() >= 1 && data.title.size() <= 160
+        && data.message is string && data.message.size() >= 1 && data.message.size() <= 1000
+        && data.read is bool
+        && data.createdAt is timestamp;
+    }
+
+    // --- Collection Rules ---
+
+    // Trusted Admin Registry
+    match /admins/{adminUid} {
+      allow get: if isValidId(adminUid) && (isOwner(adminUid) || isAdmin());
+      allow list, create, update, delete: if false;
+    }
+
+    // Connectivity probe document
+    match /test/connection {
+      allow get: if isSignedIn();
+      allow list, create, update, delete: if false;
+    }
+
+    // User Public Profiles (Non-PII)
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isSignedIn() && (resource.data.uid == request.auth.uid || isListAdmin());
+      allow create: if isVerified()
+        && isValidId(userId)
+        && isValidUserPublic(incoming())
+        && incoming().uid == userId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (isOwner(userId) && incoming().role in ['field_responder', 'citizen_reporter'])
+        );
+      allow update: if isVerified()
+        && isValidId(userId)
+        && isValidUserPublic(incoming())
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (isOwner(userId) && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'updatedAt']))
+        );
+      allow delete: if isValidId(userId) && isAdmin();
+
+      // Isolated PII Subcollection
+      match /private/{docId} {
+        allow get: if isValidId(userId) && isValidId(docId) && (isOwner(userId) || isAdmin());
+        allow list: if isSignedIn() && (resource.data.uid == request.auth.uid || isListAdmin());
+        allow create: if isVerified()
+          && isValidId(userId) && isValidId(docId)
+          && isValidUserPrivate(incoming())
+          && incoming().uid == userId
+          && incoming().updatedAt == request.time
+          && (isOwner(userId) || isAdmin());
+        allow update: if isVerified()
+          && isValidId(userId) && isValidId(docId)
+          && isValidUserPrivate(incoming())
+          && incoming().uid == existing().uid
+          && incoming().updatedAt == request.time
+          && (
+            isAdmin() ||
+            (isOwner(userId) && incoming().diff(existing()).affectedKeys().hasOnly(['email', 'phone', 'notificationChannel', 'updatedAt']))
+          );
+        allow delete: if isValidId(userId) && isValidId(docId) && (isOwner(userId) || isAdmin());
+      }
+    }
+
+    // Emergency Incidents
+    match /incidents/{incidentId} {
+      allow get: if isValidId(incidentId) && isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || isListAdmin());
+      allow create: if isVerified()
+        && isValidId(incidentId)
+        && isValidIncident(incoming())
+        && incoming().id == incidentId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerified()
+        && isValidId(incidentId)
+        && isValidIncident(incoming())
+        && incoming().id == existing().id
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            existing().ownerId == request.auth.uid
+            && existing().status != 'archived'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'severity', 'status', 'peopleAffected', 'riskScore', 'priorityScore', 'updatedAt'])
+          )
+        );
+      allow delete: if isValidId(incidentId) && isAdmin();
+    }
+
+    // Relief Requests
+    match /relief_requests/{requestId} {
+      allow get: if isValidId(requestId) && isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || isListAdmin());
+      allow create: if isVerified()
+        && isValidId(requestId)
+        && isValidReliefRequest(incoming())
+        && incoming().id == requestId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerified()
+        && isValidId(requestId)
+        && isValidReliefRequest(incoming())
+        && incoming().id == existing().id
+        && incoming().ownerId == existing().ownerId
+        && incoming().incidentId == existing().incidentId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            existing().ownerId == request.auth.uid
+            && existing().status != 'closed'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['urgency', 'status', 'peopleAffected', 'priorityScore', 'updatedAt'])
+          )
+        );
+      allow delete: if isValidId(requestId) && isAdmin();
+    }
+
+    // Responder Field Notes
+    match /field_notes/{noteId} {
+      allow get: if isValidId(noteId) && isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || isListAdmin());
+      allow create: if isVerified()
+        && isValidId(noteId)
+        && isValidFieldNote(incoming())
+        && incoming().id == noteId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerified()
+        && isValidId(noteId)
+        && isValidFieldNote(incoming())
+        && incoming().id == existing().id
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (existing().ownerId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'pinned', 'incidentId', 'updatedAt']))
+        );
+      allow delete: if isValidId(noteId) && isVerified() && (existing().ownerId == request.auth.uid || isAdmin());
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow get: if isValidId(notificationId) && isSignedIn() && (existing().userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isListAdmin());
+      allow create: if isVerified()
+        && isValidId(notificationId)
+        && isValidNotification(incoming())
+        && incoming().id == notificationId
+        && incoming().userId == request.auth.uid
+        && incoming().createdAt == request.time;
+      allow update: if isVerified()
+        && isValidId(notificationId)
+        && isValidNotification(incoming())
+        && incoming().id == existing().id
+        && incoming().userId == existing().userId
+        && incoming().createdAt == existing().createdAt
+        && (
+          isAdmin() ||
+          (existing().userId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['read']))
+        );
+      allow delete: if isValidId(notificationId) && isVerified() && (existing().userId == request.auth.uid || isAdmin());
+    }
+  }
+}
