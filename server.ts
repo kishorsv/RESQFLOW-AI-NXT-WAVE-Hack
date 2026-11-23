@@ -6045,7 +6045,7 @@ api.post('/demo/reset', requirePermission('admin:reset_demo'), (req: AuthedReque
 app.use('/api/v1', api);
 
 // Ensure unknown /api/* requests always receive JSON 404 rather than falling through to SPA index.html
-app.all('/api/*', (_req, res) => {
+app.all(['/api', '/api/*'], (_req, res) => {
   res.status(404).json({ error: 'API endpoint not found.', code: 'API_NOT_FOUND' });
 });
 

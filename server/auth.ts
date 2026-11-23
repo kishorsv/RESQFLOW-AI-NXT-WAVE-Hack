@@ -28,7 +28,15 @@ function markTokenHashRevoked(tokenHash: string): void {
 
 function getSessionSigningSecret(): string {
   const configured = sanitizeEnvValue(process.env.SESSION_SECRET || process.env.AUTH_SECRET);
-  return configured || RUNTIME_EPHEMERAL_SECRET;
+  if (configured) return configured;
+  const serverApiKey = sanitizeEnvValue(process.env.GEMINI_API_KEY);
+  if (serverApiKey) {
+    return crypto
+      .createHmac('sha256', 'resqflow-session-key-derivation-v1')
+      .update(serverApiKey)
+      .digest('hex');
+  }
+  return RUNTIME_EPHEMERAL_SECRET;
 }
 
 const SIGNUP_ALLOWED_ROLES: UserRole[] = ['field_responder', 'analyst', 'citizen_reporter'];

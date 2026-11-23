@@ -36,7 +36,11 @@
     },
     {
       "source": "/__/firebase/init.json",
-      "destination": "/api/firebase-init"
+      "destination": "/api?__vercel_path=/__/firebase/init.json"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api?__vercel_path=/api/$1"
     },
     {
       "source": "/((?!api/|__/).*)",
